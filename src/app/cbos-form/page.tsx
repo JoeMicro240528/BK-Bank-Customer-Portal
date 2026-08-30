@@ -279,6 +279,7 @@ const copy = {
     primary_income_other: "Income source, other",
     income_other_sources: "Other income sources",
     monthly_income_range: "Monthly income range",
+    salary_certificate: "Salary certificate from employer",
     annual_income_range: "Annual income range",
     annual_income_amount: "Annual income amount",
     source_funds_open_account: "Funds used to open account",
@@ -430,6 +431,7 @@ const copy = {
     primary_income_other: "مصدر دخل آخر",
     income_other_sources: "مصادر دخل إضافية",
     monthly_income_range: "نطاق الدخل الشهري",
+    salary_certificate: "شهادة راتب من جهة العمل",
     annual_income_range: "نطاق الدخل السنوي",
     annual_income_amount: "مبلغ الدخل السنوي",
     source_funds_open_account: "مصدر أموال فتح الحساب",
@@ -1460,6 +1462,24 @@ export default function Home() {
                   value={form.source_funds_fund_account}
                   onChange={(value) => setField("source_funds_fund_account", value)}
                 />
+
+                <label className="field">
+                  <span>
+                    {t.salary_certificate} <span style={{ color: "var(--muted)", fontWeight: "normal", fontSize: "0.85em" }}>({t.optional})</span>
+                  </span>
+                  <input 
+                    type="file" 
+                    accept=".pdf,.png,.jpg,.jpeg" 
+                    style={{ 
+                      padding: "0.5rem", 
+                      border: "1px solid var(--line)", 
+                      borderRadius: "8px", 
+                      background: "white",
+                      width: "100%",
+                      fontFamily: "inherit"
+                    }} 
+                  />
+                </label>
               </FieldSection>
 
               <FieldBlock title={t.expectedTransactions}>
