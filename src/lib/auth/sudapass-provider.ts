@@ -76,9 +76,9 @@ export default function SudapassProvider<P extends SudapassProfile>(): OAuthConf
         birthDate: profile.birthdate,
         gender: normalizeSudapassGender(profile.gender),
         email: profile.email,
-        phone: profile.phone_number,
+        phone_number: profile.phone_number,
         nationality: profileWithNationality.nationality,
-        image: pictureUrl,
+        picture: pictureUrl,
       };
 
       return mappedProfile;
