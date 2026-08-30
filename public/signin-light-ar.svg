@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 200 44" width="200" height="44">
+  <defs>
+    <linearGradient id="lg1ar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0" stop-color="#298aff"/>
+      <stop offset="1" stop-color="#2049f9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="200" height="44" rx="8" ry="8" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+
+  <!-- Centered content group -->
+  <g transform="translate(32, 0)">
+    <!-- Logo -->
+    <g transform="translate(0, 6) scale(0.13)">
+      <path fill="#1138a5" d="M136.5,139.8l-14.56,8.41-14.35-8.29c.59-.12,1.2-.18,1.83-.18h26.07c.34,0,.68.02,1.01.06Z"/>
+      <polygon fill="url(#lg1ar)" points="121.94 104.35 121.94 148.21 107.58 139.92 83.98 126.28 121.94 104.35"/>
+      <path fill="url(#lg1ar)" opacity="0.89" d="M212.86,156.88v48.46l-68.09-39.34v51.5c0,5.13-4.15,9.28-9.28,9.28h-26.07c-5.13,0-9.28-4.15-9.28-9.28v-52.09l-69.11,39.94v-48.46l52.95-30.6,23.6,13.64,14.35,8.29,14.56-8.41,23.4-13.52,52.96,30.6Z"/>
+      <polygon fill="url(#lg1ar)" points="159.9 126.28 136.5 139.8 121.94 148.21 121.94 104.35 159.9 126.28"/>
+      <polygon fill="#1ad353" points="212.86 47.23 212.86 95.68 159.9 126.28 136.5 139.8 121.94 148.21 107.58 139.92 83.98 126.28 31.03 95.68 31.03 47.23 121.94 99.75 212.86 47.23"/>
+      <rect fill="url(#lg1ar)" x="100.14" y="22.18" width="44.63" height="44.63" rx="8.37" ry="8.37" transform="translate(240.5 -10.63) rotate(135)"/>
+    </g>
+
+    <!-- Arabic Text -->
+    <text x="44" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#6b7280">تسجيل الدخول عبر</text>
+    <text x="44" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="600" fill="#1138a5">سوداباس</text>
+  </g>
+</svg>
