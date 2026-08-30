@@ -34,6 +34,9 @@ export default function ProfilePage() {
     email: language === "ar" ? "البريد الإلكتروني" : "Email Address",
     nationalId: language === "ar" ? "الرقم الوطني" : "National ID",
     phone: language === "ar" ? "رقم الهاتف" : "Phone Number",
+    birthDate: language === "ar" ? "تاريخ الميلاد" : "Date of Birth",
+    gender: language === "ar" ? "الجنس" : "Gender",
+    nationality: language === "ar" ? "الجنسية" : "Nationality",
     continue: language === "ar" ? "متابعة" : "Continue",
     logout: language === "ar" ? "تسجيل خروج" : "Sign out",
   };
@@ -92,7 +95,27 @@ export default function ProfilePage() {
             {user.phone && (
               <div className="detail-item">
                 <span className="detail-label">{t.phone}</span>
-                <span className="detail-value">{user.phone}</span>
+                <span className="detail-value" dir="ltr">{user.phone}</span>
+              </div>
+            )}
+            {user.birthDate && (
+              <div className="detail-item">
+                <span className="detail-label">{t.birthDate}</span>
+                <span className="detail-value">{user.birthDate}</span>
+              </div>
+            )}
+            {user.gender && (
+              <div className="detail-item">
+                <span className="detail-label">{t.gender}</span>
+                <span className="detail-value">
+                  {user.gender === "male" ? (language === "ar" ? "ذكر" : "Male") : (user.gender === "female" ? (language === "ar" ? "أنثى" : "Female") : user.gender)}
+                </span>
+              </div>
+            )}
+            {user.nationality && (
+              <div className="detail-item">
+                <span className="detail-label">{t.nationality}</span>
+                <span className="detail-value">{user.nationality}</span>
               </div>
             )}
             {/* You can add more fields from SudaPass if needed here */}
