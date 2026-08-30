@@ -64,8 +64,8 @@ export default function ProfilePage() {
       <section className="profile-container">
         <div className="profile-card glass-panel">
           <div className="profile-header">
-            {user.photo ? (
-              <img src={user.photo} alt={user.name || "Profile"} className="profile-avatar" />
+            {user.picture ? (
+              <img src={user.picture} alt={user.name || "Profile"} className="profile-avatar" />
             ) : (
               <div className="profile-avatar-fallback">
                 <UserCircle size={48} />
@@ -92,10 +92,10 @@ export default function ProfilePage() {
                 {user.email || "N/A"}
               </span>
             </div>
-            {user.phone && (
+            {user.phone_number && (
               <div className="detail-item">
                 <span className="detail-label">{t.phone}</span>
-                <span className="detail-value" dir="ltr">{user.phone}</span>
+                <span className="detail-value" dir="ltr">{user.phone_number}</span>
               </div>
             )}
             {user.birthDate && (

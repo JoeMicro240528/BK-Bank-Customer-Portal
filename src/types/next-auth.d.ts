@@ -9,9 +9,9 @@ declare module "next-auth" {
       national_id?: string;
       birthDate?: string;
       gender?: string;
-      phone?: string;
+      phone_number?: string;
       nationality?: string;
-      photo?: string;
+      picture?: string;
       access_token?: string;
     };
     error?: "RefreshTokenError";
@@ -22,9 +22,9 @@ declare module "next-auth" {
     national_id?: string;
     birthDate?: string;
     gender?: string;
-    phone?: string;
+    phone_number?: string;
     nationality?: string;
-    image?: string;
+    picture?: string;
   }
 }
 
@@ -34,9 +34,9 @@ declare module "next-auth/jwt" {
     national_id?: string;
     birthDate?: string;
     gender?: string;
-    phone?: string;
+    phone_number?: string;
     nationality?: string;
-    photo?: string;
+    picture?: string;
     access_token?: string;
     refresh_token?: string;
     expires_at?: number;

@@ -2090,7 +2090,7 @@ function buildFormFromSudaPass(
     birth_country_id: "",
     nationality_id: nationalityId,
     marital_status: "",
-    mobile_personal: user.phone || "",
+    mobile_personal: user.phone_number || "",
     education_level: "",
     email: user.email || "",
     identity_lines: [
