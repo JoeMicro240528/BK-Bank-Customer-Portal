@@ -25,8 +25,6 @@ import Image from "next/image";
 import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { ApiClientError, frontendApi } from "@/lib/api";
-import { mockSudaPassUsers } from "@/lib/sudapass-mock";
-import type { SudaPassIdentity } from "@/lib/sudapass-mock";
 import type {
   AUFRequestCreate,
   AUFRequestRead,
@@ -559,7 +557,6 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("en");
   const { data: session, status: sessionStatus } = useSession();
   const [ownerId, setOwnerId] = useState("");
-  const [sudaPassIdentifier, setSudaPassIdentifier] = useState("");
   const [loginError, setLoginError] = useState("");
   const [currentStep, setCurrentStep] = useState(0);
   const [form, setForm] = useState<FormState>(initialForm);
@@ -820,25 +817,9 @@ export default function Home() {
     }));
   }
 
-  function selectSudaPassUser(identifier: string) {
-    const user = mockSudaPassUsers.find((candidate) => candidate.nationalId === identifier);
-    setSudaPassIdentifier(user?.nationalId || identifier);
+  function loginWithSudaPass() {
     setLoginError("");
-  }
-
-  function loginWithSudaPass(event?: FormEvent<HTMLFormElement>) {
-    if (event) event.preventDefault();
-    setLoginError("");
-
-    if (sudaPassIdentifier) {
-      signIn("mock-sudapass", { nationalId: sudaPassIdentifier, redirect: false }).then((res) => {
-        if (res?.error) {
-          setLoginError(t.sudapassInvalid);
-        }
-      });
-    } else {
-      signIn("sudapass");
-    }
+    signIn("sudapass");
   }
 
   function handleSignOut() {
@@ -854,8 +835,6 @@ export default function Home() {
     setNotice("");
     setError("");
     setLoginError("");
-    selectSudaPassUser("");
-    
     signOut({ redirect: false });
   }
 
@@ -1039,39 +1018,11 @@ export default function Home() {
             <p>{t.sudapassSubtitle}</p>
           </div>
 
-          <form className="login-panel login-form" onSubmit={loginWithSudaPass}>
-            <TextInput
-              label={t.sudapassId}
-              value={sudaPassIdentifier}
-              onChange={setSudaPassIdentifier}
-              autoComplete="username"
-              required
-            />
+          <div className="login-panel login-form">
             {loginError && <Banner tone="danger" icon={AlertCircle} text={loginError} />}
-            <button type="submit" className="sudapass-image-button" aria-label={t.sudapassLogin}>
+            <button type="button" className="sudapass-image-button" aria-label={t.sudapassLogin} onClick={loginWithSudaPass}>
               <Image src="/signin-light-ar.svg" alt={t.sudapassTitle} width={200} height={44} priority />
             </button>
-          </form>
-        </section>
-
-        <section className="mock-users" aria-label={t.sudapassDemoUsers}>
-          <h2>{t.sudapassDemoUsers}</h2>
-          <div className="mock-user-grid">
-            {mockSudaPassUsers.map((user) => (
-              <button
-                type="button"
-                className="mock-user-card"
-                key={user.id}
-                onClick={() => selectSudaPassUser(user.identity.number)}
-              >
-                <strong>{language === "ar" ? user.nameArabic : user.nameEnglish}</strong>
-                <span>{user.identity.number}</span>
-                <small>
-                  {t.education_level}: {educationLabel(user.educationLevel, language)}
-                </small>
-                <em>{t.sudapassUseDemo}</em>
-              </button>
-            ))}
           </div>
         </section>
       </main>
@@ -2160,29 +2111,6 @@ function countryIdForCode(countries: MasterDataCountry[], code: string, fallback
   const country = countries.find((item) => item.code?.toUpperCase() === code.toUpperCase());
   const id = country?.id ?? fallbackId;
   return id ? String(id) : "";
-}
-
-function educationLabel(value: SudaPassIdentity["educationLevel"], language: Language): string {
-  const labels = {
-    en: {
-      elementary: "Elementary",
-      secondary: "Secondary",
-      diploma: "Diploma",
-      graduate: "Graduate",
-      post_graduate: "Post graduate",
-      other: "Other",
-    },
-    ar: {
-      elementary: "ابتدائي",
-      secondary: "ثانوي",
-      diploma: "دبلوم",
-      graduate: "جامعي",
-      post_graduate: "فوق الجامعي",
-      other: "أخرى",
-    },
-  } as const;
-
-  return labels[language][value];
 }
 
 function emptyIdentityLine(): IdentityFormLine {
