@@ -25,6 +25,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, account }) {
       // On initial sign in
       if (user && account) {
+            console.log("[AUTH SERVER] Provider used:", account.provider);
+    console.log("[AUTH SERVER] Raw user object from provider:", user); // 👈
         return {
           ...token,
           sub: user.id || user.sub,
