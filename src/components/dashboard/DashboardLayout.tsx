@@ -53,8 +53,15 @@ export default function DashboardLayout({
       if (event.key === "Escape") setMenuOpen(false);
     };
 
+    // Stop the page behind the drawer from scrolling while it is open.
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [menuOpen]);
 
   return (
