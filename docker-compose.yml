@@ -1,0 +1,11 @@
+services:
+  nextjs_standalone:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs_standalone_app
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
