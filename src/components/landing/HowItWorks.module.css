@@ -1,0 +1,84 @@
+.section {
+  padding: 30px 28px;
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.section h2 {
+  margin: 0 0 22px;
+  font-size: 18px;
+  text-align: center;
+  color: var(--ink);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--surface-muted);
+}
+
+.stepIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--brand-soft, #e6f6ee);
+  color: var(--brand-strong, #0b5d3a);
+}
+
+.stepIcon svg {
+  stroke: currentColor;
+}
+
+.stepIndex {
+  position: absolute;
+  top: 12px;
+  inset-inline-end: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--brand, #0f7a4d);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.step strong {
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.stepDesc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

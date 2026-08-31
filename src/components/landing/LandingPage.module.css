@@ -1,0 +1,31 @@
+.page {
+  --brand: #0f7a4d;
+  --brand-strong: #0b5d3a;
+  --brand-soft: #e6f6ee;
+
+  width: min(1220px, calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 24px 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.heroShell {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+  gap: 28px;
+  align-items: start;
+  padding: 12px 4px 28px;
+}
+
+.heroPanel {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .heroShell {
+    grid-template-columns: 1fr;
+  }
+}
