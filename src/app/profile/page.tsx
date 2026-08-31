@@ -3,7 +3,9 @@
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { UserCircle, Mail, ShieldCheck, ChevronLeft, LogOut, ArrowRight, ArrowLeft } from "lucide-react";
+import { UserCircle, Mail, ShieldCheck, LogOut, ArrowRight, ArrowLeft } from "lucide-react";
+import Avatar from "@/components/ui/Avatar";
+import { formatBirthDate, formatGender, formatNationality } from "@/lib/format";
 
 export default function ProfilePage() {
   const { data: session, status } = useSession();
@@ -67,13 +69,13 @@ export default function ProfilePage() {
       <section className="profile-container">
         <div className="profile-card glass-panel">
           <div className="profile-header">
-            {user.picture ? (
-              <img src={user.picture} alt={user.name || "Profile"} className="profile-avatar" />
-            ) : (
-              <div className="profile-avatar-fallback">
-                <UserCircle size={48} />
-              </div>
-            )}
+            <Avatar
+              src={user.picture}
+              alt={user.name || "Profile"}
+              size={80}
+              className="profile-avatar"
+              fallbackClassName="profile-avatar-fallback"
+            />
             <div className="profile-title">
               <h2>{user.name}</h2>
               <span className="verified-badge">
@@ -86,7 +88,7 @@ export default function ProfilePage() {
           <div className="profile-details-grid">
             <div className="detail-item">
               <span className="detail-label">{t.nationalId}</span>
-              <span className="detail-value">{user.national_id || user.sub || "N/A"}</span>
+              <span className="detail-value" dir="ltr">{user.national_id || "N/A"}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">{t.email}</span>
@@ -104,21 +106,19 @@ export default function ProfilePage() {
             {user.birthDate && (
               <div className="detail-item">
                 <span className="detail-label">{t.birthDate}</span>
-                <span className="detail-value">{user.birthDate}</span>
+                <span className="detail-value">{formatBirthDate(user.birthDate, language)}</span>
               </div>
             )}
             {user.gender && (
               <div className="detail-item">
                 <span className="detail-label">{t.gender}</span>
-                <span className="detail-value">
-                  {user.gender === "male" ? (language === "ar" ? "ذكر" : "Male") : (user.gender === "female" ? (language === "ar" ? "أنثى" : "Female") : user.gender)}
-                </span>
+                <span className="detail-value">{formatGender(user.gender, language)}</span>
               </div>
             )}
             {user.nationality && (
               <div className="detail-item">
                 <span className="detail-label">{t.nationality}</span>
-                <span className="detail-value">{user.nationality}</span>
+                <span className="detail-value">{formatNationality(user.nationality, language)}</span>
               </div>
             )}
             {/* You can add more fields from SudaPass if needed here */}

@@ -1,6 +1,6 @@
-/* eslint-disable @next/next/no-img-element */
-import { Bell, Globe2, Menu, UserCircle } from "lucide-react";
+import { Bell, Globe2, Menu } from "lucide-react";
 import { Fragment } from "react";
+import Avatar from "@/components/ui/Avatar";
 import styles from "./TopBar.module.css";
 import type { Crumb, DashboardCopy, DashboardUser, Language } from "./types";
 
@@ -87,13 +87,13 @@ export default function TopBar({
             <strong>{user.name}</strong>
             <span>{user.role}</span>
           </span>
-          {user.picture ? (
-            <img className={styles.avatar} src={user.picture} alt={user.name} />
-          ) : (
-            <span className={styles.avatarFallback}>
-              <UserCircle aria-hidden="true" size={26} />
-            </span>
-          )}
+          <Avatar
+            src={user.picture}
+            alt={user.name}
+            size={40}
+            className={styles.avatar}
+            fallbackClassName={styles.avatarFallback}
+          />
         </div>
       </div>
     </header>
