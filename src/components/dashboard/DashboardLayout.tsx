@@ -1,10 +1,13 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import DirectionSync from "@/components/DirectionSync";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
 import { dashboardCopy } from "./copy";
 import styles from "./DashboardLayout.module.css";
-import type { Crumb, DashboardUser, Language, NavKey } from "./types";
+import { navRoutes, type Crumb, type DashboardUser, type Language, type NavKey } from "./types";
 
 export default function DashboardLayout({
   language,
@@ -29,8 +32,12 @@ export default function DashboardLayout({
   onLogout?: () => void;
   children: ReactNode;
 }) {
+  const router = useRouter();
   const t = dashboardCopy[language];
   const dir = language === "ar" ? "rtl" : "ltr";
+
+  // Fall back to route-based navigation when the page doesn't handle it itself.
+  const handleNavigate = onNavigate ?? ((key: NavKey) => router.push(navRoutes[key]));
 
   return (
     <div className={styles.shell} dir={dir}>
@@ -39,7 +46,7 @@ export default function DashboardLayout({
         t={t}
         active={active}
         badges={badges}
-        onNavigate={onNavigate}
+        onNavigate={handleNavigate}
         onLogout={onLogout}
       />
 

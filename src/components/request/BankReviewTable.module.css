@@ -127,7 +127,9 @@
 .timeline {
   display: flex;
   align-items: flex-start;
+  margin: 0;
   padding: 4px 0;
+  list-style: none;
 }
 
 .tStep {

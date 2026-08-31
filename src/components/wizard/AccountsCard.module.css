@@ -1,0 +1,351 @@
+.card {
+  padding: 20px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.head h1 {
+  margin: 0;
+  font-size: 19px;
+  color: var(--ink, #172033);
+}
+
+.head p {
+  margin: 5px 0 0;
+  font-size: 13px;
+  color: var(--muted, #64748b);
+  line-height: 1.6;
+}
+
+.headIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 11px;
+  background: var(--brand-soft, #e6f6ee);
+  color: var(--brand, #0f7a4d);
+}
+
+.headIcon svg {
+  stroke: currentColor;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.notice svg {
+  flex: none;
+  margin-top: 1px;
+  stroke: currentColor;
+}
+
+.section {
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.sectionTitle {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  color: var(--ink, #172033);
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--ink, #172033);
+}
+
+.required {
+  color: #e11d48;
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.control select,
+.control input {
+  width: 100%;
+  height: 44px;
+  padding-inline: 38px 34px;
+  border: 1px solid var(--line, #d8dee8);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--ink, #172033);
+  font-size: 13.5px;
+  outline: none;
+  appearance: none;
+}
+
+.control input {
+  padding-inline-end: 12px;
+}
+
+.control select:focus,
+.control input:focus {
+  border-color: var(--brand, #0f7a4d);
+  box-shadow: 0 0 0 3px rgba(15, 122, 77, 0.12);
+}
+
+.control select:disabled {
+  background: var(--surface-muted, #f8fafc);
+  color: var(--muted, #64748b);
+  cursor: not-allowed;
+}
+
+/* leading icon / bank chip */
+.controlIcon {
+  position: absolute;
+  inset-inline-start: 11px;
+  display: inline-flex;
+  align-items: center;
+  pointer-events: none;
+  color: var(--muted, #64748b);
+}
+
+.controlIcon svg {
+  stroke: currentColor;
+}
+
+.bankChip {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.caret {
+  position: absolute;
+  inset-inline-end: 11px;
+  display: inline-flex;
+  pointer-events: none;
+  color: var(--muted, #64748b);
+}
+
+.caret svg {
+  stroke: currentColor;
+}
+
+.addButton {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1.5px dashed var(--line, #d8dee8);
+  border-radius: 11px;
+  background: transparent;
+  color: var(--brand-strong, #0b5d3a);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addButton:hover:not(:disabled) {
+  border-color: var(--brand, #0f7a4d);
+  background: var(--brand-soft, #e6f6ee);
+}
+
+.addButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.addButton svg {
+  stroke: currentColor;
+}
+
+/* --- added accounts table --- */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 10px 12px;
+  background: var(--surface-muted, #f8fafc);
+  color: var(--muted, #64748b);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: start;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px;
+  border-top: 1px solid var(--line-soft, #eef2f7);
+  font-size: 13px;
+  color: var(--ink, #172033);
+  vertical-align: middle;
+}
+
+.bankCell {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.addedPill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.removeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #e11d48;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  background: #fef2f2;
+}
+
+.removeButton svg {
+  stroke: currentColor;
+}
+
+.empty {
+  padding: 22px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted, #64748b);
+}
+
+/* --- footer actions --- */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.backButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--ink, #172033);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background: var(--surface-muted, #f8fafc);
+}
+
+.continueButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 26px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--brand, #0f7a4d);
+  color: #fff;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.continueButton:hover:not(:disabled) {
+  background: var(--brand-strong, #0b5d3a);
+}
+
+.continueButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.backButton svg,
+.continueButton svg {
+  stroke: currentColor;
+}
+
+@media (max-width: 720px) {
+  .fieldGrid {
+    grid-template-columns: 1fr;
+  }
+}

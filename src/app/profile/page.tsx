@@ -127,7 +127,7 @@ export default function ProfilePage() {
           <div className="profile-actions">
             <button 
               className="btn-primary-large" 
-              onClick={() => router.push("/banks")}
+              onClick={() => router.push("/new-request")}
             >
               {t.continue}
               {language === "ar" ? <ArrowLeft size={20} /> : <ArrowRight size={20} />}

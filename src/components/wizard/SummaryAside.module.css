@@ -1,0 +1,150 @@
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card {
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  overflow: hidden;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line-soft, #eef2f7);
+}
+
+.cardHead h2 {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink, #172033);
+}
+
+.cardHead svg {
+  stroke: currentColor;
+  color: var(--muted, #64748b);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.rowIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--brand-soft, #e6f6ee);
+  color: var(--brand, #0f7a4d);
+}
+
+.rowIcon svg {
+  stroke: currentColor;
+}
+
+.rowText dt {
+  font-size: 11.5px;
+  color: var(--muted, #64748b);
+}
+
+.rowText dd {
+  margin: 2px 0 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink, #172033);
+}
+
+/* notes */
+.notes {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+}
+
+.notesHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.notesHead strong {
+  font-size: 13.5px;
+  color: #b45309;
+}
+
+.notesHead svg {
+  stroke: currentColor;
+  color: #b45309;
+}
+
+.notesList {
+  margin: 0;
+  padding-inline-start: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: #b45309;
+}
+
+/* secure */
+.secure {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 16px;
+  border-radius: 14px;
+  background: var(--brand-soft, #e6f6ee);
+}
+
+.secureIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--brand, #0f7a4d);
+}
+
+.secureIcon svg {
+  stroke: currentColor;
+}
+
+.secure strong {
+  display: block;
+  font-size: 13.5px;
+  color: var(--brand-strong, #0b5d3a);
+}
+
+.secure p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--brand-strong, #0b5d3a);
+}
