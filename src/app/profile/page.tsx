@@ -14,7 +14,10 @@ export default function ProfilePage() {
     if (status === "unauthenticated") {
       router.push("/");
     }
-  }, [status, router]);
+    if (status === "authenticated" && session?.user) {
+      console.log("🟢 Data received from SudaPass session:", session.user);
+    }
+  }, [status, router, session]);
 
   if (status === "loading" || !session?.user) {
     return (
