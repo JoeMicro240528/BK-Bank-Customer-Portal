@@ -112,17 +112,16 @@
   flex: none;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   gap: 2px;
   color: #fff;
-  text-align: start;
+  text-align: center;
 }
 
 .loginText strong {
   display: block;
   font-size: 16px;
   font-weight: 700;
-  text-align: start;
   white-space: nowrap;
 }
 
@@ -130,7 +129,6 @@
   display: block;
   font-size: 12.5px;
   opacity: 0.85;
-  text-align: start;
 }
 
 .privacyNote {
