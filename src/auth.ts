@@ -35,9 +35,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           birthDate: user.birthDate,
           gender: user.gender,
           email: user.email,
-          phone: user.phone,
+          phone_number: user.phone_number,
           nationality: user.nationality,
-          photo: user.image,
+          picture: user.picture || user.image,
           access_token: account.access_token,
           refresh_token: account.refresh_token,
           expires_at: account.expires_at ? account.expires_at * 1000 : Date.now() + 3600 * 1000,
@@ -61,9 +61,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           birthDate: token.birthDate as string | undefined,
           gender: token.gender as string | undefined,
           email: (token.email as string) ?? "",
-          phone: token.phone as string | undefined,
+          phone_number: token.phone_number as string | undefined,
           nationality: token.nationality as string | undefined,
-          photo: token.photo as string | undefined,
+          picture: token.picture as string | undefined,
           access_token: token.access_token as string | undefined,
         };
       }

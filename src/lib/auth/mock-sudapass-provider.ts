@@ -29,9 +29,9 @@ export default function MockSudapassProvider() {
         birthDate: identity.dateOfBirth,
         gender: identity.gender,
         email: identity.email,
-        phone: identity.mobile,
+        phone_number: identity.mobile,
         nationality: identity.nationalityCountryCode,
-        image: "",
+        picture: "",
       };
     },
   });
