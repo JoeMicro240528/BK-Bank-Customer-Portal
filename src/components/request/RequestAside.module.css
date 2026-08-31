@@ -1,0 +1,161 @@
+.aside {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actionButton {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 12px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--ink, #172033);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  background: var(--surface-muted, #f8fafc);
+}
+
+.actionButton svg {
+  stroke: currentColor;
+  color: var(--muted, #64748b);
+}
+
+.card {
+  padding: 16px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--ink, #172033);
+}
+
+.cardTitle svg {
+  stroke: currentColor;
+  color: var(--brand, #0f7a4d);
+}
+
+.summaryList {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin: 0;
+}
+
+.summaryRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.summaryRow dt {
+  color: var(--muted, #64748b);
+}
+
+.summaryRow dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--ink, #172033);
+  text-align: end;
+}
+
+.fieldList {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fieldItem {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  color: var(--ink, #172033);
+}
+
+.fieldItem svg {
+  flex: none;
+  stroke: currentColor;
+  color: var(--brand, #0f7a4d);
+}
+
+.helpCard {
+  composes: card;
+  background: var(--brand-soft, #e6f6ee);
+  border-color: transparent;
+}
+
+.helpCard .cardTitle {
+  color: var(--brand-strong, #0b5d3a);
+}
+
+.helpBody {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--brand-strong, #0b5d3a);
+}
+
+.phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 12px;
+  color: var(--brand-strong, #0b5d3a);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.phone svg {
+  stroke: currentColor;
+}
+
+.chatButton {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--surface, #fff);
+  color: var(--brand-strong, #0b5d3a);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chatButton:hover {
+  background: #f0fdf4;
+}
+
+.chatButton svg {
+  stroke: currentColor;
+}

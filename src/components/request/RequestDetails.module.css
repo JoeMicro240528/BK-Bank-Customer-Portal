@@ -1,0 +1,147 @@
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 16px;
+  align-items: start;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.pageHead {
+  margin-bottom: 2px;
+}
+
+.pageHead h1 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--ink, #172033);
+}
+
+.pageHead p {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted, #64748b);
+}
+
+.card {
+  padding: 18px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+}
+
+.cardTitle {
+  margin: 0 0 14px;
+  font-size: 15px;
+  color: var(--ink, #172033);
+}
+
+.refRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.refLabel {
+  display: block;
+  font-size: 12.5px;
+  color: var(--muted, #64748b);
+}
+
+.refValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+  font-size: 21px;
+  font-weight: 800;
+  color: var(--ink, #172033);
+  letter-spacing: 0.4px;
+}
+
+.copyButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted, #64748b);
+  cursor: pointer;
+}
+
+.copyButton:hover {
+  background: var(--surface-muted, #f8fafc);
+  color: var(--ink, #172033);
+}
+
+.copyButton svg {
+  stroke: currentColor;
+}
+
+.refStatus {
+  margin-top: 9px;
+}
+
+.createdBlock {
+  text-align: end;
+}
+
+.createdValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink, #172033);
+}
+
+.createdValue svg {
+  stroke: currentColor;
+  color: var(--muted, #64748b);
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+
+.noticeInfo {
+  composes: notice;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.noticeWarning {
+  composes: notice;
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.notice svg {
+  flex: none;
+  margin-top: 1px;
+  stroke: currentColor;
+}
+
+@media (max-width: 1080px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}

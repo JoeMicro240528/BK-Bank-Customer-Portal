@@ -1,0 +1,21 @@
+import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import styles from "./StatusPill.module.css";
+import type { BankStatus } from "./types";
+
+const icons: Record<BankStatus, LucideIcon> = {
+  approved: CheckCircle2,
+  under_review: Clock,
+  action_required: AlertCircle,
+};
+
+export default function StatusPill({ status, label }: { status: BankStatus; label: string }) {
+  const Icon = icons[status];
+
+  return (
+    <span className={`${styles.pill} ${styles[status]}`}>
+      <Icon aria-hidden="true" size={13} />
+      {label}
+    </span>
+  );
+}

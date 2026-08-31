@@ -1,3 +1,4 @@
+import DirectionSync from "@/components/DirectionSync";
 import LandingHeader from "./LandingHeader";
 import LandingHero from "./LandingHero";
 import LoginCard from "./LoginCard";
@@ -23,6 +24,7 @@ export default function LandingPage({
 }) {
   return (
     <main className={styles.page} dir={dir}>
+      <DirectionSync language={language} />
       <LandingHeader t={t} language={language} onLanguageChange={onLanguageChange} />
 
       <section className={styles.heroShell}>
