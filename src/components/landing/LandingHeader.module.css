@@ -77,3 +77,28 @@
   outline: none;
   font-size: 14px;
 }
+
+@media (max-width: 640px) {
+  .header {
+    padding: 14px 0;
+    gap: 12px;
+  }
+
+  .brand h1 {
+    font-size: 15px;
+  }
+
+  .brand p {
+    font-size: 12px;
+  }
+
+  .nav {
+    gap: 12px;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .navLink {
+    font-size: 13px;
+  }
+}

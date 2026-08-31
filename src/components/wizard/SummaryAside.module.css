@@ -148,3 +148,17 @@
   line-height: 1.6;
   color: var(--brand-strong, #0b5d3a);
 }
+
+@media (max-width: 900px) {
+  .aside {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .aside {
+    grid-template-columns: 1fr;
+  }
+}

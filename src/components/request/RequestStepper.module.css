@@ -84,3 +84,26 @@
   font-size: 11px;
   color: var(--muted, #64748b);
 }
+
+@media (max-width: 620px) {
+  .step {
+    min-width: 84px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .date {
+    font-size: 10px;
+  }
+
+  .node {
+    width: 30px;
+    height: 30px;
+  }
+
+  .step:not(:first-child)::before {
+    top: 14px;
+  }
+}

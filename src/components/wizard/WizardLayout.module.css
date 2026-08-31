@@ -258,3 +258,44 @@
     margin: 0 5px;
   }
 }
+
+@media (max-width: 720px) {
+  .header {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .brandText span {
+    display: none;
+  }
+
+  .headerActions {
+    gap: 8px;
+  }
+
+  /* Keep the label on the current step only, so the bar stays one line. */
+  .stepBar {
+    padding: 12px 14px;
+    gap: 6px;
+  }
+
+  .stepBarItem {
+    font-size: 0;
+  }
+
+  .stepBarCurrent {
+    font-size: 12.5px;
+  }
+
+  .stepBarLine {
+    width: 14px;
+    margin: 0 2px;
+  }
+
+  .footer {
+    padding: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}

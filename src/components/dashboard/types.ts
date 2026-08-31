@@ -40,5 +40,6 @@ export type DashboardCopy = {
   english: string;
   arabic: string;
   openMenu: string;
+  closeMenu: string;
   notifications: string;
 };

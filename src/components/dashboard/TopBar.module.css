@@ -168,3 +168,34 @@
     display: inline-flex;
   }
 }
+
+@media (max-width: 720px) {
+  .topbar {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .right {
+    gap: 8px;
+  }
+
+  /* The name/role block is the first thing to give up room. */
+  .userText {
+    display: none;
+  }
+
+  .breadcrumb {
+    font-size: 12px;
+  }
+}
+
+/* On the narrowest screens keep only the current page in the breadcrumb. */
+@media (max-width: 520px) {
+  .breadcrumb > *:not(:last-child) {
+    display: none;
+  }
+
+  .langControl select {
+    max-width: 78px;
+  }
+}
