@@ -8,12 +8,14 @@ export interface SudapassProfile {
   national_id?: string;
   national_number?: string;
   birthdate?: string;
+  birthDate?: string;
   gender?: string;
   email?: string;
   email_verified?: boolean;
   phone_number?: string;
   phone_number_verified?: boolean;
   picture?: string;
+  image?: string;
 }
 
 const baseUrl = process.env.SUDAPASS_BASE_URL || "";
@@ -64,7 +66,7 @@ export default function SudapassProvider<P extends SudapassProfile>(): OAuthConf
       const profileWithNationality = profile as P & { nationality?: string };
 
       // Construct full picture URL if it's a relative path
-      let pictureUrl = profile.picture;
+      let pictureUrl = profile.picture || profile.image;
       if (pictureUrl && !pictureUrl.startsWith("http")) {
         pictureUrl = `${baseUrl}${pictureUrl}`;
       }
@@ -73,7 +75,7 @@ export default function SudapassProvider<P extends SudapassProfile>(): OAuthConf
         sub: profile.sub,
         name: profile.name,
         national_id: profile.national_id || profile.national_number,
-        birthDate: profile.birthdate,
+        birthDate: profile.birthdate || profile.birthDate,
         gender: normalizeSudapassGender(profile.gender),
         email: profile.email,
         phone_number: profile.phone_number,
