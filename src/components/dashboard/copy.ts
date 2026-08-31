@@ -18,6 +18,7 @@ export const dashboardCopy: Record<Language, DashboardCopy> = {
     english: "English",
     arabic: "العربية",
     openMenu: "فتح القائمة",
+    closeMenu: "إغلاق القائمة",
     notifications: "الإشعارات",
   },
   en: {
@@ -37,6 +38,7 @@ export const dashboardCopy: Record<Language, DashboardCopy> = {
     english: "English",
     arabic: "Arabic",
     openMenu: "Open menu",
+    closeMenu: "Close menu",
     notifications: "Notifications",
   },
 };

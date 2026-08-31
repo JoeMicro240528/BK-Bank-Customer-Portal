@@ -357,6 +357,22 @@
   }
 }
 
+@media (max-width: 620px) {
+  .welcome {
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .welcome h1 {
+    font-size: 18px;
+  }
+
+  .newRequestButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 @media (max-width: 560px) {
   .stats {
     grid-template-columns: 1fr;

@@ -37,17 +37,19 @@ export default function Sidebar({
   t,
   active,
   badges = {},
+  open = false,
   onNavigate,
   onLogout,
 }: {
   t: DashboardCopy;
   active?: NavKey;
   badges?: Partial<Record<NavKey, number>>;
+  open?: boolean;
   onNavigate?: (key: NavKey) => void;
   onLogout?: () => void;
 }) {
   return (
-    <aside className={styles.sidebar}>
+    <aside className={`${styles.sidebar} ${open ? styles.sidebarOpen : ""}`}>
       <div className={styles.brand}>
         <span className={styles.brandIcon}>
           <ShieldCheck aria-hidden="true" size={22} />

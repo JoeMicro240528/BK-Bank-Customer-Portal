@@ -1,10 +1,11 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import DirectionSync from "@/components/DirectionSync";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
+import sidebarStyles from "./Sidebar.module.css";
 import { dashboardCopy } from "./copy";
 import styles from "./DashboardLayout.module.css";
 import { navRoutes, type Crumb, type DashboardUser, type Language, type NavKey } from "./types";
@@ -33,11 +34,28 @@ export default function DashboardLayout({
   children: ReactNode;
 }) {
   const router = useRouter();
+  const [menuOpen, setMenuOpen] = useState(false);
   const t = dashboardCopy[language];
   const dir = language === "ar" ? "rtl" : "ltr";
 
   // Fall back to route-based navigation when the page doesn't handle it itself.
-  const handleNavigate = onNavigate ?? ((key: NavKey) => router.push(navRoutes[key]));
+  const navigate = onNavigate ?? ((key: NavKey) => router.push(navRoutes[key]));
+
+  const handleNavigate = (key: NavKey) => {
+    setMenuOpen(false);
+    navigate(key);
+  };
+
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
 
   return (
     <div className={styles.shell} dir={dir}>
@@ -46,9 +64,19 @@ export default function DashboardLayout({
         t={t}
         active={active}
         badges={badges}
+        open={menuOpen}
         onNavigate={handleNavigate}
         onLogout={onLogout}
       />
+
+      {menuOpen && (
+        <button
+          type="button"
+          className={sidebarStyles.overlay}
+          aria-label={t.closeMenu}
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
 
       <div className={styles.main}>
         <TopBar
@@ -58,6 +86,7 @@ export default function DashboardLayout({
           language={language}
           notificationCount={notificationCount}
           onLanguageChange={onLanguageChange}
+          onMenuClick={() => setMenuOpen((open) => !open)}
         />
         <main className={styles.content}>{children}</main>
       </div>

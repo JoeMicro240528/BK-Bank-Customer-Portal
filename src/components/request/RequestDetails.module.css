@@ -145,3 +145,26 @@
     grid-template-columns: 1fr;
   }
 }
+
+@media (max-width: 620px) {
+  .card {
+    padding: 14px;
+  }
+
+  .refRow {
+    gap: 12px;
+  }
+
+  .refValue {
+    font-size: 18px;
+  }
+
+  /* Stack the date under the reference instead of pushing it off-edge. */
+  .createdBlock {
+    text-align: start;
+  }
+
+  .pageHead h1 {
+    font-size: 18px;
+  }
+}
