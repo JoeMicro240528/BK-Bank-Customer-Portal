@@ -6,33 +6,28 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
 import { previewUser } from "@/components/dashboard/fixtures";
 import type { Language, NavKey } from "@/components/dashboard/types";
-import RequestDetails from "@/components/request/RequestDetails";
-import { previewRequest } from "@/components/request/fixtures";
+import DashboardHome from "@/components/home/DashboardHome";
+import { previewRequests, previewStats } from "@/components/home/fixtures";
 
 /** Nav targets stay inside /preview so the guarded real routes don't bounce us to login. */
 const previewRoutes: Partial<Record<NavKey, string>> = {
+  home: "/preview/dashboard",
   newRequest: "/preview/new-request",
   myRequests: "/preview/request-details",
 };
 
-export default function RequestDetailsPreview() {
+export default function DashboardPreview() {
   const router = useRouter();
   const [language, setLanguage] = useState<Language>("ar");
   const t = dashboardCopy[language];
-
-  const crumbs = [
-    { label: t.nav.home, href: "#" },
-    { label: t.nav.myRequests, href: "#" },
-    { label: language === "ar" ? "تفاصيل طلب التحديث" : "Update request details" },
-  ];
 
   return (
     <DashboardLayout
       language={language}
       onLanguageChange={setLanguage}
       user={previewUser}
-      crumbs={crumbs}
-      active="myRequests"
+      crumbs={[{ label: t.nav.home }]}
+      active="home"
       badges={{ notifications: 3 }}
       notificationCount={3}
       onNavigate={(key) => {
@@ -40,7 +35,15 @@ export default function RequestDetailsPreview() {
         if (target) router.push(target);
       }}
     >
-      <RequestDetails request={previewRequest} language={language} />
+      <DashboardHome
+        language={language}
+        userName="محمد"
+        stats={previewStats}
+        requests={previewRequests}
+        onNewRequest={() => router.push("/preview/new-request")}
+        onViewRequest={() => router.push("/preview/request-details")}
+        onViewAll={() => router.push("/preview/request-details")}
+      />
     </DashboardLayout>
   );
 }

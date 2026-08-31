@@ -9,6 +9,17 @@ export type NavKey =
   | "faq"
   | "contact";
 
+/** Route each sidebar entry navigates to. */
+export const navRoutes: Record<NavKey, string> = {
+  home: "/dashboard",
+  newRequest: "/new-request",
+  myRequests: "/requests",
+  myData: "/profile",
+  notifications: "/notifications",
+  faq: "/faq",
+  contact: "/contact",
+};
+
 export type DashboardUser = {
   name: string;
   role: string;
