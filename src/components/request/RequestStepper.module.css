@@ -32,7 +32,7 @@
 
 .stepDone:not(:first-child)::before,
 .stepCurrent:not(:first-child)::before {
-  background: #bbf7d0;
+  background: #c3d0ea;
 }
 
 .node {
@@ -56,8 +56,8 @@
 }
 
 .stepDone .node {
-  background: var(--brand, #0f7a4d);
-  border-color: var(--brand, #0f7a4d);
+  background: var(--brand, #283f76);
+  border-color: var(--brand, #283f76);
   color: #fff;
 }
 
