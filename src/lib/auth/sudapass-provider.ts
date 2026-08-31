@@ -39,20 +39,17 @@ export default function SudapassProvider<P extends SudapassProfile>(): OAuthConf
     name: "SUDAPASS",
     type: "oidc",
 
-    // OIDC configuration
+    // NextAuth will auto-discover all endpoints from:
+    // {issuer}/.well-known/openid-configuration
     issuer,
     clientId,
 
     authorization: {
-      url: `${baseUrl}/oauth/authorize`,
+      // Only specify params — URL comes from discovery
       params: {
         scope: configuredScope,
       },
     },
-
-    token: { url: `${baseUrl}/oauth/token` },
-    userinfo: { url: `${baseUrl}/oauth/me` },
-    jwks_endpoint: `${baseUrl}/oauth/jwks`,
 
     idToken: true,
 
