@@ -21,10 +21,11 @@ import {
   WalletCards,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import Image from "next/image";
 import { FormEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { ApiClientError, frontendApi } from "@/lib/api";
+import Banner from "@/components/ui/Banner";
+import LandingPage from "@/components/landing/LandingPage";
 import type {
   AUFRequestCreate,
   AUFRequestRead,
@@ -185,6 +186,37 @@ const copy = {
     sudapassLoaded: "Identity information loaded from SudaPass.",
     sudapassAuthenticatedAs: "Signed in as",
     sudapassUseDemo: "Use this user",
+    navAbout: "About the platform",
+    navHelp: "Help",
+    platformName: "Central Verification Platform",
+    platformTagline: "For updating customer data",
+    heroTitle: "Update your data once for all banks",
+    heroSubtitle:
+      "A secure, centralized platform that lets you update your personal and financial data at every participating bank in a few simple steps.",
+    featureSecureTitle: "Safe & protected",
+    featureSecureDesc: "High-grade protection for your data under the best standards",
+    featureTimeTitle: "Saves your time",
+    featureTimeDesc: "One update instead of repeating the process at every bank",
+    featureBankTitle: "Approved by banks",
+    featureBankDesc: "Your data is updated at every participating bank",
+    welcomeGreeting: "Welcome",
+    welcomeIntro: "To get started updating your data at the banks, please sign in with SudaPass.",
+    trustBadges: "Secure  •  Fast  •  Trusted",
+    privacyNote: "SudaPass is used only to verify your identity. Your data is never shared without your consent.",
+    noAccount: "Don't have a SudaPass account?",
+    createAccount: "Create a new account",
+    howItWorks: "How the platform works",
+    step1Title: "Sign in with SudaPass",
+    step1Desc: "Verify your identity securely and quickly via SudaPass",
+    step2Title: "Update your data",
+    step2Desc: "Review your data and update it in one simple form",
+    step3Title: "Choose banks & accounts",
+    step3Desc: "Pick the banks and branches and add your accounts to update",
+    step4Title: "Submit & track status",
+    step4Desc: "Send your request and track its status from one place",
+    footerRights: "© 2026 Central Verification Platform for updating customer data. All rights reserved.",
+    footerTerms: "Terms & Conditions",
+    footerPrivacy: "Privacy Policy",
     signOut: "Sign out",
     requestStatus: "Request status",
     requestReference: "Request code",
@@ -336,6 +368,37 @@ const copy = {
     sudapassLoaded: "تم تحميل بيانات الهوية من سوداباس.",
     sudapassAuthenticatedAs: "تم تسجيل الدخول باسم",
     sudapassUseDemo: "استخدم هذا المستخدم",
+    navAbout: "عن المنصة",
+    navHelp: "مساعدة",
+    platformName: "منصة التحقق المركزي",
+    platformTagline: "لتحديث بيانات العملاء",
+    heroTitle: "تحديث بياناتك مرة واحدة لجميع البنوك",
+    heroSubtitle:
+      "منصة مركزية وآمنة تتيح لك تحديث بياناتك الشخصية والمالية لدى جميع البنوك المشاركة بخطوات بسيطة وسهلة.",
+    featureSecureTitle: "آمن ومحمي",
+    featureSecureDesc: "حماية عالية لبياناتك وفق أفضل المعايير",
+    featureTimeTitle: "يوفر وقتك",
+    featureTimeDesc: "تحديث واحد يغنيك عن تكرار الإجراءات",
+    featureBankTitle: "معتمد من البنوك",
+    featureBankDesc: "تحديث بياناتك لدى جميع البنوك المشاركة",
+    welcomeGreeting: "مرحباً بك",
+    welcomeIntro: "للبدء في تحديث بياناتك لدى البنوك يرجى تسجيل الدخول عبر سوداباس",
+    trustBadges: "آمن  •  سريع  •  موثوق",
+    privacyNote: "يتم استخدام سوداباس للتحقق من هويتك فقط، ولا تتم مشاركة بياناتك بدون موافقتك.",
+    noAccount: "ليس لديك حساب في سوداباس؟",
+    createAccount: "إنشاء حساب جديد",
+    howItWorks: "كيفية عمل المنصة",
+    step1Title: "تسجيل الدخول عبر سوداباس",
+    step1Desc: "تحقق من هويتك بطريقة آمنة وسريعة عبر سوداباس",
+    step2Title: "تحديث بياناتك",
+    step2Desc: "راجع بياناتك وقم بتحديثها في نموذج واحد مبسط",
+    step3Title: "اختيار البنوك والحسابات",
+    step3Desc: "اختر البنوك وفروعها وأضف حساباتك لتحديثها",
+    step4Title: "إرسال الطلب ومتابعة الحالة",
+    step4Desc: "أرسل طلبك وتابع حالة المراجعة لكل بنك من مكان واحد",
+    footerRights: "جميع الحقوق محفوظة © 2026 منصة التحقق المركزي لتحديث بيانات العملاء",
+    footerTerms: "الشروط والأحكام",
+    footerPrivacy: "سياسة الخصوصية",
     signOut: "تسجيل الخروج",
     requestStatus: "حالة الطلب",
     requestReference: "رمز الطلب",
@@ -978,54 +1041,22 @@ export default function Home() {
   );
   if (sessionStatus === "loading") {
     return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      <div className="page-loading">
+        <Loader2 className="page-loading-spinner" aria-hidden="true" />
       </div>
     );
   }
 
   if (!session?.user) {
     return (
-      <main className="portal auth-portal" dir={dir}>
-        <header className="portal-header">
-          <div>
-            <div className="brand-row">
-              <Building2 aria-hidden="true" size={24} />
-              <p>{t.appSubtitle}</p>
-            </div>
-            <h1>{t.appName}</h1>
-          </div>
-
-          <div className="header-actions">
-            <label className="language-control">
-              <Globe2 aria-hidden="true" size={16} />
-              <span>{t.language}</span>
-              <select value={language} onChange={(event) => setLanguage(event.target.value as Language)}>
-                <option value="en">{t.english}</option>
-                <option value="ar">{t.arabic}</option>
-              </select>
-            </label>
-          </div>
-        </header>
-
-        <section className="login-shell">
-          <div className="login-panel login-intro">
-            <span className="login-provider">
-              <ShieldCheck aria-hidden="true" size={18} />
-              {t.sudapassProvider}
-            </span>
-            <h2>{t.sudapassTitle}</h2>
-            <p>{t.sudapassSubtitle}</p>
-          </div>
-
-          <div className="login-panel login-form">
-            {loginError && <Banner tone="danger" icon={AlertCircle} text={loginError} />}
-            <button type="button" className="sudapass-image-button" aria-label={t.sudapassLogin} onClick={loginWithSudaPass}>
-              <Image src="/signin-light-ar.svg" alt={t.sudapassTitle} width={200} height={44} priority />
-            </button>
-          </div>
-        </section>
-      </main>
+      <LandingPage
+        t={t}
+        dir={dir}
+        language={language}
+        onLanguageChange={setLanguage}
+        loginError={loginError}
+        onLogin={loginWithSudaPass}
+      />
     );
   }
 
@@ -1958,23 +1989,6 @@ function RequestStatus({
       ) : (
         <span className="muted">{labels.noResponse}</span>
       )}
-    </div>
-  );
-}
-
-function Banner({
-  tone,
-  icon: Icon,
-  text,
-}: {
-  tone: "success" | "danger" | "warning";
-  icon: LucideIcon;
-  text: string;
-}) {
-  return (
-    <div className={`banner ${tone}`}>
-      <Icon aria-hidden="true" size={18} />
-      <span>{text}</span>
     </div>
   );
 }
