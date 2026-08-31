@@ -53,8 +53,8 @@
   height: 36px;
   flex: none;
   border-radius: 10px;
-  background: var(--brand-soft, #e6f6ee);
-  color: var(--brand, #0f7a4d);
+  background: var(--brand-soft, #e8edf7);
+  color: var(--brand, #283f76);
 }
 
 .rowIcon svg {
@@ -117,7 +117,7 @@
   gap: 11px;
   padding: 16px;
   border-radius: 14px;
-  background: var(--brand-soft, #e6f6ee);
+  background: var(--brand-soft, #e8edf7);
 }
 
 .secureIcon {
@@ -129,7 +129,7 @@
   flex: none;
   border-radius: 10px;
   background: var(--surface, #fff);
-  color: var(--brand, #0f7a4d);
+  color: var(--brand, #283f76);
 }
 
 .secureIcon svg {
@@ -139,14 +139,14 @@
 .secure strong {
   display: block;
   font-size: 13.5px;
-  color: var(--brand-strong, #0b5d3a);
+  color: var(--brand-strong, #1c2d55);
 }
 
 .secure p {
   margin: 5px 0 0;
   font-size: 12px;
   line-height: 1.6;
-  color: var(--brand-strong, #0b5d3a);
+  color: var(--brand-strong, #1c2d55);
 }
 
 @media (max-width: 900px) {

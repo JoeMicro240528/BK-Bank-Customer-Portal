@@ -99,7 +99,7 @@
   border: 1px solid var(--line-soft, #eef2f7);
   border-radius: 8px;
   background: var(--surface, #fff);
-  color: var(--brand-strong, #0b5d3a);
+  color: var(--brand-strong, #1c2d55);
   font-size: 12.5px;
   font-weight: 600;
   white-space: nowrap;
@@ -107,7 +107,7 @@
 }
 
 .detailsButton:hover {
-  background: var(--brand-soft, #e6f6ee);
+  background: var(--brand-soft, #e8edf7);
 }
 
 .detailsButton svg {
@@ -154,7 +154,7 @@
 }
 
 .tDone:not(:first-child)::before {
-  background: #86efac;
+  background: #93a9d8;
 }
 
 .tCurrent:not(:first-child)::before {
@@ -184,8 +184,8 @@
 }
 
 .tDone .tNode {
-  background: var(--brand, #0f7a4d);
-  border-color: var(--brand, #0f7a4d);
+  background: var(--brand, #283f76);
+  border-color: var(--brand, #283f76);
 }
 
 .tCurrent .tNode {

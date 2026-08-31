@@ -27,8 +27,8 @@
   height: 40px;
   flex: none;
   border-radius: 11px;
-  background: var(--brand-soft, #e6f6ee);
-  color: var(--brand-strong, #0b5d3a);
+  background: var(--brand-soft, #e8edf7);
+  color: var(--brand-strong, #1c2d55);
 }
 
 .brandIcon svg {
@@ -84,8 +84,8 @@
 }
 
 .navItemActive {
-  background: var(--brand-soft, #e6f6ee);
-  color: var(--brand-strong, #0b5d3a);
+  background: var(--brand-soft, #e8edf7);
+  color: var(--brand-strong, #1c2d55);
   font-weight: 700;
 }
 

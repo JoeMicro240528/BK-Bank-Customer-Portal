@@ -10,7 +10,7 @@
   align-items: center;
   gap: 12px;
   padding: 16px;
-  background: var(--brand, #0f7a4d);
+  background: var(--brand, #283f76);
   color: #fff;
 }
 
@@ -71,7 +71,7 @@
 }
 
 .stepCurrent {
-  background: var(--brand-soft, #e6f6ee);
+  background: var(--brand-soft, #e8edf7);
 }
 
 /* connector between step nodes */
@@ -86,7 +86,7 @@
 }
 
 .stepDone:not(:last-child)::before {
-  background: #bbf7d0;
+  background: #c3d0ea;
 }
 
 .node {
@@ -108,13 +108,13 @@
 
 .stepDone .node {
   background: var(--surface, #fff);
-  border-color: var(--brand, #0f7a4d);
-  color: var(--brand, #0f7a4d);
+  border-color: var(--brand, #283f76);
+  color: var(--brand, #283f76);
 }
 
 .stepCurrent .node {
-  background: var(--brand, #0f7a4d);
-  border-color: var(--brand, #0f7a4d);
+  background: var(--brand, #283f76);
+  border-color: var(--brand, #283f76);
   color: #fff;
 }
 
@@ -141,7 +141,7 @@
   margin: 0 12px 14px;
   padding: 14px;
   border-radius: 12px;
-  background: var(--brand-soft, #e6f6ee);
+  background: var(--brand-soft, #e8edf7);
 }
 
 .helpHead {
@@ -153,26 +153,26 @@
 
 .helpHead strong {
   font-size: 13.5px;
-  color: var(--brand-strong, #0b5d3a);
+  color: var(--brand-strong, #1c2d55);
 }
 
 .helpHead svg {
   stroke: currentColor;
-  color: var(--brand-strong, #0b5d3a);
+  color: var(--brand-strong, #1c2d55);
 }
 
 .helpBody {
   margin: 6px 0 10px;
   font-size: 11.5px;
   line-height: 1.6;
-  color: var(--brand-strong, #0b5d3a);
+  color: var(--brand-strong, #1c2d55);
 }
 
 .phone {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  color: var(--brand-strong, #0b5d3a);
+  color: var(--brand-strong, #1c2d55);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;

@@ -17,6 +17,15 @@
   --danger-soft: #fff0ee;
   --focus: #2563eb;
   --shadow: 0 10px 28px rgba(23, 32, 51, 0.08);
+
+  /* Brand palette, matching the Central Bank of Sudan navy (#283f76). */
+  --brand: #283f76;
+  --brand-strong: #1c2d55;
+  --brand-soft: #e8edf7;
+  --brand-tint: #c3d0ea;
+  --brand-light: #3b5eb8;
+  --brand-lighter: #5f7fcc;
+  --brand-wash: #f2f5fc;
 }
 
 * {

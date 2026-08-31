@@ -1,8 +1,4 @@
 .shell {
-  --brand: #0f7a4d;
-  --brand-strong: #0b5d3a;
-  --brand-soft: #e6f6ee;
-
   display: flex;
   flex-direction: row;
   min-height: 100vh;
