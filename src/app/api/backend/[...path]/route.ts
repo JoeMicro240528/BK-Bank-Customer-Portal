@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +13,20 @@ type RouteContext = {
 
 async function proxy(request: NextRequest, context: RouteContext) {
   const { path } = await context.params;
+
+  // The upstream API authorises by X-Owner-Id alone, so that value decides
+  // whose records are returned. It is taken from the server-side session and
+  // never from the request, otherwise a caller could read another person's
+  // data simply by changing the header.
+  const session = await auth();
+  const ownerId = session?.user?.national_id;
+
+  if (!ownerId) {
+    return Response.json({ detail: "Not authenticated." }, { status: 401 });
+  }
+
   const backendUrl = buildBackendUrl(path, request.nextUrl.search);
-  const headers = buildForwardHeaders(request);
+  const headers = buildForwardHeaders(request, ownerId);
 
   try {
     const response = await fetch(backendUrl, {
@@ -58,11 +71,10 @@ function buildBackendUrl(path: string[], search: string): string {
   return `${backendBase()}/${normalizedPath}${search}`;
 }
 
-function buildForwardHeaders(request: NextRequest): Headers {
+function buildForwardHeaders(request: NextRequest, ownerId: string): Headers {
   const headers = new Headers();
   const contentType = request.headers.get("Content-Type");
   const language = request.headers.get("Accept-Language");
-  const ownerId = request.headers.get("X-Owner-Id");
 
   headers.set("Accept", "application/json");
 
@@ -74,9 +86,7 @@ function buildForwardHeaders(request: NextRequest): Headers {
     headers.set("Accept-Language", language);
   }
 
-  if (ownerId) {
-    headers.set("X-Owner-Id", ownerId);
-  }
+  headers.set("X-Owner-Id", ownerId);
 
   // Attached here, server-side, so the Odoo key is never sent to the browser.
   // The client calls this proxy and never sees the credential.

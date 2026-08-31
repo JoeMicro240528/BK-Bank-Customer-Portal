@@ -12,6 +12,11 @@ const API_PROXY_BASE = "/api/backend";
 
 type RequestOptions = {
   language: "en" | "ar";
+  /**
+   * Used only to decide whether the caller is ready to fetch -- it is not sent.
+   * The proxy derives X-Owner-Id from the server-side session, since a
+   * browser-supplied value would let anyone read another person's records.
+   */
   ownerId?: string;
 };
 
@@ -40,9 +45,7 @@ async function requestJson<T>(
     headers.set("Content-Type", "application/json");
   }
 
-  if (options.ownerId) {
-    headers.set("X-Owner-Id", options.ownerId);
-  }
+  // X-Owner-Id is deliberately not set here; the proxy adds it from the session.
 
   const response = await fetch(`${API_PROXY_BASE}${path}`, {
     ...init,
