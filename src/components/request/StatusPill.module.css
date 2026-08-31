@@ -1,0 +1,30 @@
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.pill svg {
+  flex: none;
+  stroke: currentColor;
+}
+
+.approved {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.under_review {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.action_required {
+  background: #ffe4e6;
+  color: #be123c;
+}

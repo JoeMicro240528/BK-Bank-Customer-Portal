@@ -1,0 +1,214 @@
+.wrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+}
+
+.table th {
+  padding: 10px 12px;
+  background: var(--surface-muted, #f8fafc);
+  color: var(--muted, #64748b);
+  font-size: 12px;
+  font-weight: 600;
+  text-align: start;
+  white-space: nowrap;
+}
+
+.table th:first-child {
+  border-start-start-radius: 8px;
+}
+
+.table th:last-child {
+  border-start-end-radius: 8px;
+}
+
+.table td {
+  padding: 12px;
+  font-size: 13px;
+  color: var(--ink, #172033);
+  vertical-align: middle;
+}
+
+.rowMain td {
+  border-top: 1px solid var(--line-soft, #eef2f7);
+}
+
+.rowMain:first-of-type td {
+  border-top: 0;
+}
+
+.bankCell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.bankName {
+  display: block;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.bankNote {
+  display: block;
+  margin-top: 1px;
+  font-size: 11px;
+  color: var(--muted, #64748b);
+}
+
+.branch,
+.account {
+  white-space: nowrap;
+}
+
+.dateStack strong {
+  display: block;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dateStack span {
+  display: block;
+  margin-top: 1px;
+  font-size: 11.5px;
+  color: var(--muted, #64748b);
+}
+
+.detailsButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  color: var(--brand-strong, #0b5d3a);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.detailsButton:hover {
+  background: var(--brand-soft, #e6f6ee);
+}
+
+.detailsButton svg {
+  stroke: currentColor;
+  transition: transform 0.15s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* --- per-bank timeline row --- */
+.timelineCell {
+  padding: 0 12px 16px;
+}
+
+.timeline {
+  display: flex;
+  align-items: flex-start;
+  padding: 4px 0;
+}
+
+.tStep {
+  flex: 1;
+  min-width: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  position: relative;
+}
+
+.tStep:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  top: 9px;
+  inset-inline-end: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--line-soft, #eef2f7);
+}
+
+.tDone:not(:first-child)::before {
+  background: #86efac;
+}
+
+.tCurrent:not(:first-child)::before {
+  background: #fcd34d;
+}
+
+.tBlocked:not(:first-child)::before {
+  background: #fda4af;
+}
+
+.tNode {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--surface, #fff);
+  border: 2px solid var(--line, #d8dee8);
+  color: #fff;
+}
+
+.tNode svg {
+  stroke: currentColor;
+}
+
+.tDone .tNode {
+  background: var(--brand, #0f7a4d);
+  border-color: var(--brand, #0f7a4d);
+}
+
+.tCurrent .tNode {
+  background: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.tBlocked .tNode {
+  background: #e11d48;
+  border-color: #e11d48;
+}
+
+.tLabel {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink, #172033);
+  line-height: 1.4;
+}
+
+.tPending .tLabel {
+  color: var(--muted, #64748b);
+  font-weight: 500;
+}
+
+.tDate {
+  font-size: 10.5px;
+  color: var(--muted, #64748b);
+}

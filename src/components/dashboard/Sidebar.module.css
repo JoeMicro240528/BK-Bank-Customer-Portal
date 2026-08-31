@@ -1,0 +1,129 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 248px;
+  flex: none;
+  padding: 20px 14px;
+  background: var(--surface, #fff);
+  border-inline-end: 1px solid var(--line-soft, #eef2f7);
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 20px;
+}
+
+.brandIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 11px;
+  background: var(--brand-soft, #e6f6ee);
+  color: var(--brand-strong, #0b5d3a);
+}
+
+.brandIcon svg {
+  stroke: currentColor;
+}
+
+.brandText strong {
+  display: block;
+  font-size: 14.5px;
+  color: var(--ink, #172033);
+}
+
+.brandText span {
+  display: block;
+  margin-top: 2px;
+  font-size: 11.5px;
+  color: var(--muted, #64748b);
+}
+
+.navList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted, #64748b);
+  font-size: 14px;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.navItem:hover {
+  background: var(--surface-muted, #f8fafc);
+  color: var(--ink, #172033);
+}
+
+.navItem svg {
+  flex: none;
+  stroke: currentColor;
+}
+
+.navItemActive {
+  background: var(--brand-soft, #e6f6ee);
+  color: var(--brand-strong, #0b5d3a);
+  font-weight: 700;
+}
+
+.navLabel {
+  flex: 1;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #e11d48;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.logout {
+  composes: navItem;
+  color: #e11d48;
+  font-weight: 600;
+}
+
+.logout:hover {
+  background: #fef2f2;
+  color: #be123c;
+}
+
+@media (max-width: 980px) {
+  .sidebar {
+    display: none;
+  }
+}
