@@ -78,6 +78,9 @@ export const frontendApi = {
   getBanks: (options: RequestOptions) =>
     requestJson<MasterDataBank[]>("/master-data/banks", { method: "GET" }, options),
 
+  listRequests: (options: RequestOptions) =>
+    requestJson<AUFRequestRead[]>("/auf-requests", { method: "GET" }, options),
+
   createRequest: (payload: AUFRequestCreate, options: RequestOptions) =>
     requestJson<AUFRequestRead>(
       "/auf-requests",

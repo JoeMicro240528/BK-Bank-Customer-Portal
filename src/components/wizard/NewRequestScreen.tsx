@@ -7,7 +7,7 @@ import SummaryAside from "./SummaryAside";
 import WizardStepBar from "./WizardStepBar";
 import { wizardCopy } from "./copy";
 import styles from "./NewRequestScreen.module.css";
-import type { AddedAccount, Language, WizardStep } from "./types";
+import type { AddedAccount, BankOption, Language, WizardStep } from "./types";
 
 const SUPPORT_PHONE = "+249 123 456 789";
 
@@ -18,14 +18,16 @@ const SUPPORT_PHONE = "+249 123 456 789";
  */
 export default function NewRequestScreen({
   language,
+  banks,
   initialAccounts = [],
   onBack,
   onContinue,
 }: {
   language: Language;
+  banks: BankOption[];
   initialAccounts?: AddedAccount[];
   onBack?: () => void;
-  onContinue?: () => void;
+  onContinue?: (accounts: AddedAccount[]) => void;
 }) {
   const [accounts, setAccounts] = useState<AddedAccount[]>(initialAccounts);
 
@@ -67,11 +69,12 @@ export default function NewRequestScreen({
         <AccountsCard
           t={t}
           language={language}
+          banks={banks}
           accounts={accounts}
           onAdd={handleAdd}
           onRemove={handleRemove}
           onBack={() => onBack?.()}
-          onContinue={() => onContinue?.()}
+          onContinue={() => onContinue?.(accounts)}
         />
 
         <SummaryAside

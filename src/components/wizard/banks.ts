@@ -1,54 +1,25 @@
-import type { BankOption } from "./types";
-
 /**
- * Selectable banks and their branches.
- * Replace with master-data from the backend once that endpoint is wired up.
+ * Branch options per bank.
+ *
+ * The banks themselves come from the backend (`/master-data/banks`), but that
+ * API has no concept of branches -- `BankAccountSelection` is only bank_id +
+ * account_number. So branches are held here, keyed by the bank's BIC, until the
+ * backend gains a branch field. Selected branches are collected in the wizard
+ * but not yet sent.
  */
-export const bankOptions: BankOption[] = [
-  {
-    id: "khartoum",
-    name: "بنك الخرطوم",
-    color: "#f59e0b",
-    branches: [
-      { id: "khartoum-main", name: "فرع الخرطوم الرئيسي" },
-      { id: "khartoum-riyadh", name: "فرع الرياض" },
-      { id: "khartoum-bahri", name: "فرع بحري" },
-    ],
-  },
-  {
-    id: "faisal",
-    name: "بنك فيصل الإسلامي",
-    color: "#15803d",
-    branches: [
-      { id: "faisal-mugran", name: "فرع المقرن" },
-      { id: "faisal-souq", name: "فرع السوق المحلي" },
-    ],
-  },
-  {
-    id: "omdurman",
-    name: "بنك أم درمان الوطني",
-    color: "#1d4ed8",
-    branches: [
-      { id: "omdurman-souq", name: "فرع السوق العربي" },
-      { id: "omdurman-main", name: "فرع أم درمان الرئيسي" },
-    ],
-  },
-  {
-    id: "albalad",
-    name: "بنك البلد",
-    color: "#7c3aed",
-    branches: [{ id: "albalad-main", name: "الفرع الرئيسي" }],
-  },
-  {
-    id: "nile",
-    name: "بنك النيل",
-    color: "#0891b2",
-    branches: [{ id: "nile-main", name: "الفرع الرئيسي" }],
-  },
-  {
-    id: "albaraka",
-    name: "بنك البركة",
-    color: "#be123c",
-    branches: [{ id: "albaraka-main", name: "الفرع الرئيسي" }],
-  },
-];
+const branchesByBic: Record<string, string[]> = {
+  // بنك الخرطوم
+  BOK: ["فرع الخرطوم الرئيسي", "فرع الرياض", "فرع بحري", "فرع أم درمان"],
+  // بنك امدرمان الوطني
+  ONB: ["فرع السوق العربي", "فرع أم درمان الرئيسي", "فرع الخرطوم 2"],
+  // بنك فيصل الاسلامي
+  FBK: ["فرع المقرن", "فرع السوق المحلي", "فرع الخرطوم الرئيسي"],
+};
+
+const defaultBranches = ["الفرع الرئيسي"];
+
+export function branchesForBank(bic: string | null | undefined) {
+  const names = (bic && branchesByBic[bic.toUpperCase()]) || defaultBranches;
+
+  return names.map((name) => ({ id: name, name }));
+}

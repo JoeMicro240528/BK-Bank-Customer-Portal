@@ -12,13 +12,13 @@ import {
   Trash2,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { bankOptions } from "./banks";
 import styles from "./AccountsCard.module.css";
-import type { AddedAccount, Language, WizardCopy } from "./types";
+import type { AddedAccount, BankOption, Language, WizardCopy } from "./types";
 
 export default function AccountsCard({
   t,
   language,
+  banks,
   accounts,
   onAdd,
   onRemove,
@@ -27,6 +27,7 @@ export default function AccountsCard({
 }: {
   t: WizardCopy;
   language: Language;
+  banks: BankOption[];
   accounts: AddedAccount[];
   onAdd: (account: Omit<AddedAccount, "id">) => void;
   onRemove: (id: string) => void;
@@ -38,8 +39,8 @@ export default function AccountsCard({
   const [accountNumber, setAccountNumber] = useState("");
 
   const selectedBank = useMemo(
-    () => bankOptions.find((bank) => bank.id === bankId),
-    [bankId],
+    () => banks.find((bank) => bank.id === bankId),
+    [banks, bankId],
   );
 
   const canAdd = Boolean(bankId && branchId && accountNumber.trim());
@@ -109,7 +110,7 @@ export default function AccountsCard({
                 }}
               >
                 <option value="">{t.selectBank}</option>
-                {bankOptions.map((bank) => (
+                {banks.map((bank) => (
                   <option key={bank.id} value={bank.id}>
                     {bank.name}
                   </option>

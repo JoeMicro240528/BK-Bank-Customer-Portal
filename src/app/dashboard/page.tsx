@@ -7,13 +7,17 @@ import { Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
 import DashboardHome from "@/components/home/DashboardHome";
-import type { DashboardStats, RequestSummary } from "@/components/home/types";
+import type { DashboardStats } from "@/components/home/types";
 import type { Language } from "@/components/dashboard/types";
+import { useRequests } from "@/lib/useRequests";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [language, setLanguage] = useState<Language>("ar");
+
+  // Called before the early return below -- hooks cannot run conditionally.
+  const { requests } = useRequests(session?.user?.national_id, language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -32,8 +36,6 @@ export default function DashboardPage() {
   const t = dashboardCopy[language];
   const user = session?.user;
 
-  // TODO: replace with real requests from the backend once the endpoint exists.
-  const requests: RequestSummary[] = [];
   const stats: DashboardStats = {
     total: requests.length,
     underReview: requests.filter((item) => item.status === "under_review").length,

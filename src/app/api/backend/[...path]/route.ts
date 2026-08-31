@@ -78,6 +78,13 @@ function buildForwardHeaders(request: NextRequest): Headers {
     headers.set("X-Owner-Id", ownerId);
   }
 
+  // Attached here, server-side, so the Odoo key is never sent to the browser.
+  // The client calls this proxy and never sees the credential.
+  const apiKey = process.env.ODOO_API_KEY;
+  if (apiKey) {
+    headers.set("Authorization", `Bearer ${apiKey}`);
+  }
+
   return headers;
 }
 

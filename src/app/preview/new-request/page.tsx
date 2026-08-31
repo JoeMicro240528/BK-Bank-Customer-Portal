@@ -7,7 +7,15 @@ import { dashboardCopy } from "@/components/dashboard/copy";
 import { previewUser } from "@/components/dashboard/fixtures";
 import type { Language, NavKey } from "@/components/dashboard/types";
 import NewRequestScreen from "@/components/wizard/NewRequestScreen";
-import type { AddedAccount } from "@/components/wizard/types";
+import { branchesForBank } from "@/components/wizard/banks";
+import type { AddedAccount, BankOption } from "@/components/wizard/types";
+
+/** Mirrors what /master-data/banks returns, so the preview needs no backend. */
+const previewBanks: BankOption[] = [
+  { id: "3", name: "بنك الخرطوم", color: "#283f76", branches: branchesForBank("BOK") },
+  { id: "2", name: "بنك امدرمان الوطني", color: "#0f7a4d", branches: branchesForBank("ONB") },
+  { id: "4", name: "بنك فيصل الاسلامي", color: "#b45309", branches: branchesForBank("FBK") },
+];
 
 /** Fixture accounts so the added-accounts table is populated in the preview. */
 const previewAccounts: AddedAccount[] = [
@@ -65,6 +73,7 @@ export default function NewRequestPreview() {
     >
       <NewRequestScreen
         language={language}
+        banks={previewBanks}
         initialAccounts={previewAccounts}
         onBack={() => router.push("/preview/profile")}
         onContinue={() => router.push("/preview/requests")}

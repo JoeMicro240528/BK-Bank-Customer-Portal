@@ -98,6 +98,7 @@ export interface AUFRequestCreate {
   identity_lines?: IdentitySchema[];
   income_source_lines?: IncomeSourceSchema[];
   minor_lines?: MinorSchema[];
+  selected_accounts?: BankAccountSelection[];
 }
 
 export interface AUFRequestUpdate extends Partial<AUFRequestCreate> {
@@ -107,6 +108,20 @@ export interface AUFRequestUpdate extends Partial<AUFRequestCreate> {
   residency_expiry_date?: ISODate;
   sponsor_name?: string;
   sponsor_business_sector?: string;
+}
+
+/** One bank account attached to a request. */
+export interface BankAccountSelection {
+  bank_id: number;
+  account_number: string;
+}
+
+/** Per-bank progress on a submitted request. */
+export interface BankUpdateFeedbackStatus {
+  bank_id: number;
+  bank_name: string;
+  state: string;
+  processed_at?: ISODateTime | null;
 }
 
 export interface AUFRequestRead {
@@ -119,6 +134,9 @@ export interface AUFRequestRead {
   name_arabic: string;
   name_english: string;
   cif_number?: string | null;
+  selected_accounts: BankAccountSelection[];
+  feedback: BankUpdateFeedbackStatus[];
+  supporting_documents: unknown[];
   verification_state: string;
   verification_message?: string | null;
   verified_on?: ISODateTime | null;

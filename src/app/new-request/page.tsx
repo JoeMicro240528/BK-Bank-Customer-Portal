@@ -3,16 +3,25 @@
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
+import Banner from "@/components/ui/Banner";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
 import type { Language } from "@/components/dashboard/types";
 import NewRequestScreen from "@/components/wizard/NewRequestScreen";
+import type { AddedAccount } from "@/components/wizard/types";
+import { frontendApi, formatApiError } from "@/lib/api";
+import { useBanks } from "@/lib/useBanks";
 
 export default function NewRequestPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [language, setLanguage] = useState<Language>("ar");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // Hooks must run unconditionally, before the early return below.
+  const { banks, error: banksError } = useBanks(language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -30,6 +39,34 @@ export default function NewRequestPage() {
 
   const t = dashboardCopy[language];
   const user = session?.user;
+  const ownerId = user?.national_id;
+
+  const handleContinue = async (accounts: AddedAccount[]) => {
+    if (!ownerId || submitting) return;
+
+    setSubmitting(true);
+    setError("");
+
+    try {
+      const created = await frontendApi.createRequest(
+        {
+          info_type: "update",
+          name_arabic: user?.name || "",
+          name_english: user?.name || "",
+          selected_accounts: accounts.map((account) => ({
+            bank_id: Number(account.bankId),
+            account_number: account.accountNumber,
+          })),
+        },
+        { language, ownerId },
+      );
+
+      router.push(`/requests/${encodeURIComponent(created.external_ref || created.reference)}`);
+    } catch (caught) {
+      setError(formatApiError(caught));
+      setSubmitting(false);
+    }
+  };
 
   return (
     <DashboardLayout
@@ -40,10 +77,17 @@ export default function NewRequestPage() {
       active="newRequest"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >
+      {(error || banksError) && (
+        <div style={{ marginBottom: 14 }}>
+          <Banner tone="danger" icon={AlertCircle} text={error || banksError} />
+        </div>
+      )}
+
       <NewRequestScreen
         language={language}
+        banks={banks}
         onBack={() => router.push("/profile")}
-        onContinue={() => router.push("/cbos-form")}
+        onContinue={handleContinue}
       />
     </DashboardLayout>
   );
