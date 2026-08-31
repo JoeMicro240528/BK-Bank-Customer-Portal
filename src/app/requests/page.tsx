@@ -7,9 +7,10 @@ import { Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
 import type { Language } from "@/components/dashboard/types";
-import NewRequestScreen from "@/components/wizard/NewRequestScreen";
+import type { RequestSummary } from "@/components/home/types";
+import RequestsList from "@/components/requests/RequestsList";
 
-export default function NewRequestPage() {
+export default function RequestsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [language, setLanguage] = useState<Language>("ar");
@@ -31,19 +32,23 @@ export default function NewRequestPage() {
   const t = dashboardCopy[language];
   const user = session?.user;
 
+  // TODO: load from the backend once a requests endpoint exists.
+  const requests: RequestSummary[] = [];
+
   return (
     <DashboardLayout
       language={language}
       onLanguageChange={setLanguage}
       user={{ name: user?.name || "", role: t.platformTagline, picture: user?.picture }}
-      crumbs={[{ label: t.nav.home }, { label: t.nav.newRequest }]}
-      active="newRequest"
+      crumbs={[{ label: t.nav.home }, { label: t.nav.myRequests }]}
+      active="myRequests"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >
-      <NewRequestScreen
+      <RequestsList
         language={language}
-        onBack={() => router.push("/profile")}
-        onContinue={() => router.push("/cbos-form")}
+        requests={requests}
+        onNewRequest={() => router.push("/new-request")}
+        onViewRequest={(id) => router.push(`/requests/${id}`)}
       />
     </DashboardLayout>
   );

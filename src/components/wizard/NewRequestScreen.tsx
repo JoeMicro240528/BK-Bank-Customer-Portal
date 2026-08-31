@@ -1,33 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import WizardLayout from "./WizardLayout";
 import StepsAside from "./StepsAside";
 import AccountsCard from "./AccountsCard";
 import SummaryAside from "./SummaryAside";
+import WizardStepBar from "./WizardStepBar";
 import { wizardCopy } from "./copy";
+import styles from "./NewRequestScreen.module.css";
 import type { AddedAccount, Language, WizardStep } from "./types";
 
 const SUPPORT_PHONE = "+249 123 456 789";
 
 /**
- * The "new update request" wizard step. Kept free of session/routing concerns
- * so it can be rendered both by the real page and by the design-preview route.
+ * The "new update request" wizard step. Renders content only -- the page
+ * supplies the surrounding chrome -- so the real page and the design-preview
+ * route can share it.
  */
 export default function NewRequestScreen({
+  language,
   initialAccounts = [],
-  notificationCount = 0,
   onBack,
   onContinue,
-  onLogout,
 }: {
+  language: Language;
   initialAccounts?: AddedAccount[];
-  notificationCount?: number;
   onBack?: () => void;
   onContinue?: () => void;
-  onLogout?: () => void;
 }) {
-  const [language, setLanguage] = useState<Language>("ar");
   const [accounts, setAccounts] = useState<AddedAccount[]>(initialAccounts);
 
   const t = wizardCopy[language];
@@ -59,32 +58,29 @@ export default function NewRequestScreen({
   };
 
   return (
-    <WizardLayout
-      t={t}
-      language={language}
-      steps={steps}
-      notificationCount={notificationCount}
-      onLanguageChange={setLanguage}
-      onLogout={onLogout}
-    >
-      <StepsAside t={t} steps={steps} verifiedAt={today} supportPhone={SUPPORT_PHONE} />
+    <>
+      <WizardStepBar steps={steps} />
 
-      <AccountsCard
-        t={t}
-        language={language}
-        accounts={accounts}
-        onAdd={handleAdd}
-        onRemove={handleRemove}
-        onBack={() => onBack?.()}
-        onContinue={() => onContinue?.()}
-      />
+      <div className={styles.grid}>
+        <StepsAside t={t} steps={steps} verifiedAt={today} supportPhone={SUPPORT_PHONE} />
 
-      <SummaryAside
-        t={t}
-        bankCount={bankCount}
-        accountCount={accounts.length}
-        requestDate={today}
-      />
-    </WizardLayout>
+        <AccountsCard
+          t={t}
+          language={language}
+          accounts={accounts}
+          onAdd={handleAdd}
+          onRemove={handleRemove}
+          onBack={() => onBack?.()}
+          onContinue={() => onContinue?.()}
+        />
+
+        <SummaryAside
+          t={t}
+          bankCount={bankCount}
+          accountCount={accounts.length}
+          requestDate={today}
+        />
+      </div>
+    </>
   );
 }
