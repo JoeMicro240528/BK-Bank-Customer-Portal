@@ -53,6 +53,11 @@ export default function NewRequestPage() {
           info_type: "update",
           name_arabic: user?.name || "",
           name_english: user?.name || "",
+          // The API rejects a request without a primary national ID, even
+          // though the same value is already sent as X-Owner-Id.
+          identity_lines: [
+            { id_type: "national_id", id_number: ownerId, is_primary: true },
+          ],
           selected_accounts: accounts.map((account) => ({
             bank_id: Number(account.bankId),
             account_number: account.accountNumber,
