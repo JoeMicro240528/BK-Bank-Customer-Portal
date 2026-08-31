@@ -14,7 +14,10 @@ export default function ProfilePage() {
     if (status === "unauthenticated") {
       router.push("/");
     }
-  }, [status, router]);
+    if (status === "authenticated" && session?.user) {
+      console.log("🟢 Data received from SudaPass session:", session.user);
+    }
+  }, [status, router, session]);
 
   if (status === "loading" || !session?.user) {
     return (
@@ -34,6 +37,9 @@ export default function ProfilePage() {
     email: language === "ar" ? "البريد الإلكتروني" : "Email Address",
     nationalId: language === "ar" ? "الرقم الوطني" : "National ID",
     phone: language === "ar" ? "رقم الهاتف" : "Phone Number",
+    birthDate: language === "ar" ? "تاريخ الميلاد" : "Date of Birth",
+    gender: language === "ar" ? "الجنس" : "Gender",
+    nationality: language === "ar" ? "الجنسية" : "Nationality",
     continue: language === "ar" ? "متابعة" : "Continue",
     logout: language === "ar" ? "تسجيل خروج" : "Sign out",
   };
@@ -61,8 +67,8 @@ export default function ProfilePage() {
       <section className="profile-container">
         <div className="profile-card glass-panel">
           <div className="profile-header">
-            {user.photo ? (
-              <img src={user.photo} alt={user.name || "Profile"} className="profile-avatar" />
+            {user.picture ? (
+              <img src={user.picture} alt={user.name || "Profile"} className="profile-avatar" />
             ) : (
               <div className="profile-avatar-fallback">
                 <UserCircle size={48} />
@@ -80,7 +86,7 @@ export default function ProfilePage() {
           <div className="profile-details-grid">
             <div className="detail-item">
               <span className="detail-label">{t.nationalId}</span>
-              <span className="detail-value">{user.national_id || "N/A"}</span>
+              <span className="detail-value">{user.national_id || user.sub || "N/A"}</span>
             </div>
             <div className="detail-item">
               <span className="detail-label">{t.email}</span>
@@ -89,10 +95,30 @@ export default function ProfilePage() {
                 {user.email || "N/A"}
               </span>
             </div>
-            {user.phone && (
+            {user.phone_number && (
               <div className="detail-item">
                 <span className="detail-label">{t.phone}</span>
-                <span className="detail-value">{user.phone}</span>
+                <span className="detail-value" dir="ltr">{user.phone_number}</span>
+              </div>
+            )}
+            {user.birthDate && (
+              <div className="detail-item">
+                <span className="detail-label">{t.birthDate}</span>
+                <span className="detail-value">{user.birthDate}</span>
+              </div>
+            )}
+            {user.gender && (
+              <div className="detail-item">
+                <span className="detail-label">{t.gender}</span>
+                <span className="detail-value">
+                  {user.gender === "male" ? (language === "ar" ? "ذكر" : "Male") : (user.gender === "female" ? (language === "ar" ? "أنثى" : "Female") : user.gender)}
+                </span>
+              </div>
+            )}
+            {user.nationality && (
+              <div className="detail-item">
+                <span className="detail-label">{t.nationality}</span>
+                <span className="detail-value">{user.nationality}</span>
               </div>
             )}
             {/* You can add more fields from SudaPass if needed here */}
