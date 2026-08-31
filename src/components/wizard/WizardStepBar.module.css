@@ -1,0 +1,91 @@
+.stepBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin: 0 0 16px;
+  padding: 14px 18px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 14px;
+  background: var(--surface, #fff);
+  list-style: none;
+}
+
+.stepBarItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted, #64748b);
+}
+
+.stepBarNode {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface, #fff);
+  border: 1.5px solid var(--line, #d8dee8);
+  color: var(--muted, #64748b);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.stepBarNode svg {
+  stroke: currentColor;
+}
+
+.stepBarDone .stepBarNode,
+.stepBarCurrent .stepBarNode {
+  background: var(--brand, #283f76);
+  border-color: var(--brand, #283f76);
+  color: #fff;
+}
+
+.stepBarDone,
+.stepBarCurrent {
+  color: var(--ink, #172033);
+  font-weight: 700;
+}
+
+.stepBarLine {
+  width: 44px;
+  height: 1.5px;
+  margin: 0 10px;
+  background: var(--line, #d8dee8);
+}
+
+.stepBarLineDone {
+  background: var(--brand, #283f76);
+}
+
+@media (max-width: 900px) {
+  .stepBarLine {
+    width: 20px;
+    margin: 0 5px;
+  }
+}
+
+@media (max-width: 720px) {
+  .stepBar {
+    padding: 12px 14px;
+    gap: 6px;
+  }
+
+  /* Keep the label on the current step only, so the bar stays one line. */
+  .stepBarItem {
+    font-size: 0;
+  }
+
+  .stepBarCurrent {
+    font-size: 12.5px;
+  }
+
+  .stepBarLine {
+    width: 14px;
+    margin: 0 2px;
+  }
+}

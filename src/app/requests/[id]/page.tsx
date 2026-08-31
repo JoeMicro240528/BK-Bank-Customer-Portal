@@ -7,9 +7,10 @@ import { Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
 import type { Language } from "@/components/dashboard/types";
-import NewRequestScreen from "@/components/wizard/NewRequestScreen";
+import RequestDetails from "@/components/request/RequestDetails";
+import type { RequestDetailsData } from "@/components/request/types";
 
-export default function NewRequestPage() {
+export default function RequestDetailsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [language, setLanguage] = useState<Language>("ar");
@@ -31,20 +32,31 @@ export default function NewRequestPage() {
   const t = dashboardCopy[language];
   const user = session?.user;
 
+  // TODO: fetch the request by id once the backend endpoint exists.
+  const request: RequestDetailsData | null = null;
+
   return (
     <DashboardLayout
       language={language}
       onLanguageChange={setLanguage}
       user={{ name: user?.name || "", role: t.platformTagline, picture: user?.picture }}
-      crumbs={[{ label: t.nav.home }, { label: t.nav.newRequest }]}
-      active="newRequest"
+      crumbs={[
+        { label: t.nav.home },
+        { label: t.nav.myRequests, href: "/requests" },
+        { label: language === "ar" ? "تفاصيل الطلب" : "Request details" },
+      ]}
+      active="myRequests"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >
-      <NewRequestScreen
-        language={language}
-        onBack={() => router.push("/profile")}
-        onContinue={() => router.push("/cbos-form")}
-      />
+      {request ? (
+        <RequestDetails request={request} language={language} />
+      ) : (
+        <p style={{ color: "var(--muted)", fontSize: 14 }}>
+          {language === "ar"
+            ? "تعذر العثور على هذا الطلب."
+            : "This request could not be found."}
+        </p>
+      )}
     </DashboardLayout>
   );
 }
