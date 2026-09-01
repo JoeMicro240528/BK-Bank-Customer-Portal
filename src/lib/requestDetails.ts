@@ -140,12 +140,15 @@ export function toRequestDetails(
       {
         key: "review",
         label: t.bankReview,
-        state: banks.length > 0 && !allApproved ? "current" : "done",
+        // An empty feedback list used to fall through to "done", so a draft --
+        // which has no feedback at all -- claimed the banks had finished
+        // reviewing a request it had never been sent.
+        state: status === "draft" ? "pending" : allApproved ? "done" : "current",
       },
       {
         key: "partial",
         label: t.partial,
-        state: approved > 0 ? (allApproved ? "done" : "current") : "pending",
+        state: allApproved ? "done" : approved > 0 ? "current" : "pending",
       },
       { key: "complete", label: t.complete, state: allApproved ? "done" : "pending" },
     ],
