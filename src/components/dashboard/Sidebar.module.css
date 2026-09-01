@@ -37,14 +37,14 @@
 
 .brandText strong {
   display: block;
-  font-size: 14.5px;
+  font-size: 16.5px;
   color: var(--ink, #172033);
 }
 
 .brandText span {
   display: block;
   margin-top: 2px;
-  font-size: 11.5px;
+  font-size: 13.5px;
   color: var(--muted, #64748b);
 }
 

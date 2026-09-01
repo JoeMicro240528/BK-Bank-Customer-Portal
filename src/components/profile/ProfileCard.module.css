@@ -55,7 +55,7 @@
   padding: 5px 11px;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.2);
-  font-size: 12.5px;
+  font-size: 14.5px;
   font-weight: 600;
 }
 
@@ -127,13 +127,13 @@
 }
 
 .itemText dt {
-  font-size: 11.5px;
+  font-size: 13.5px;
   color: var(--muted, #64748b);
 }
 
 .itemText dd {
   margin: 3px 0 0;
-  font-size: 13.5px;
+  font-size: 15.5px;
   font-weight: 700;
   color: var(--ink, #172033);
   overflow-wrap: anywhere;
@@ -148,7 +148,7 @@
   border-radius: 10px;
   background: #eff6ff;
   color: #1d4ed8;
-  font-size: 12.5px;
+  font-size: 14.5px;
   line-height: 1.6;
 }
 
@@ -173,7 +173,7 @@
   border-radius: 10px;
   background: var(--brand, #283f76);
   color: #fff;
-  font-size: 13.5px;
+  font-size: 15.5px;
   font-weight: 700;
   cursor: pointer;
 }

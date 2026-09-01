@@ -130,12 +130,22 @@ export default function NotificationsList({
                   <span className={styles.body}>
                     <span className={styles.titleRow}>
                       {!item.read && <span className={styles.dot} aria-hidden="true" />}
-                      <strong>{t.onRequest(item.requestReference)}</strong>
+                      {/* A decision is already a full sentence naming the bank;
+                          a chatter message needs the request as its heading. */}
+                      <strong>
+                        {item.kind === "decision"
+                          ? item.body
+                          : t.onRequest(item.requestReference)}
+                      </strong>
                     </span>
-                    <p>{toPlainText(item.body)}</p>
-                    <span className={styles.time}>
-                      {item.author ? `${item.author} · ` : ""}
-                      {formatDate(item.date, language)}
+
+                    {item.kind === "message" && <p>{toPlainText(item.body)}</p>}
+
+                    <span className={styles.meta}>
+                      <span className={styles.ref} dir="ltr">
+                        {item.requestReference}
+                      </span>
+                      <span className={styles.time}>{formatDate(item.date, language)}</span>
                     </span>
                   </span>
                 </button>

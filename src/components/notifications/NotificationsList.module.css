@@ -1,4 +1,5 @@
 .page {
+  max-width: 880px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -139,7 +140,7 @@
 }
 
 .titleRow strong {
-  font-size: 13.5px;
+  font-size: 15.5px;
   color: var(--ink, #172033);
 }
 
@@ -153,15 +154,32 @@
 
 .body p {
   margin: 4px 0 0;
-  font-size: 12.5px;
+  font-size: 14.5px;
   line-height: 1.6;
   color: var(--muted, #64748b);
 }
 
-.time {
-  display: inline-block;
+/* Request and time on one muted line, so each row is a heading and a footnote. */
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 6px;
-  font-size: 11.5px;
+}
+
+.ref {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--surface-muted, #f1f5f9);
+  color: var(--brand-strong, #1c2d55);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.time {
+  font-size: 14.5px;
   color: var(--muted, #64748b);
 }
 
