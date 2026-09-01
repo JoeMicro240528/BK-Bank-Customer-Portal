@@ -13,6 +13,7 @@ import type { AddedAccount } from "@/components/wizard/types";
 import AufForm from "@/components/form/AufForm";
 import { initialForm, type FormState } from "@/lib/auf/form";
 import { useBanks } from "@/lib/useBanks";
+import { useDraft } from "@/lib/auf/useDraft";
 
 export default function NewRequestPage() {
   const { data: session, status } = useSession();
@@ -25,6 +26,7 @@ export default function NewRequestPage() {
 
   // Hooks must run unconditionally, before the early return below.
   const { banks, error: banksError } = useBanks(language);
+  const { draft, loading: draftLoading } = useDraft(session?.user?.national_id, language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -32,7 +34,9 @@ export default function NewRequestPage() {
     }
   }, [status, router]);
 
-  if (status === "loading" || status === "unauthenticated") {
+  // Wait for the draft lookup too, so a returning user is not shown the bank
+  // picker for a moment before being moved into their saved request.
+  if (status === "loading" || status === "unauthenticated" || draftLoading) {
     return (
       <div className="page-loading">
         <Loader2 className="page-loading-spinner" aria-hidden="true" />
@@ -92,11 +96,12 @@ export default function NewRequestPage() {
         </div>
       )}
 
-      {formState && ownerId ? (
+      {(formState || draft) && ownerId ? (
         <AufForm
           language={language}
           ownerId={ownerId}
-          initialState={formState}
+          externalRef={formState ? undefined : draft?.externalRef}
+          initialState={formState ?? draft?.state}
           bankNames={Object.fromEntries(banks.map((b) => [b.id, b.name]))}
           locked={{
             name: user?.name,

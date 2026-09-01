@@ -29,6 +29,20 @@ import type { Option } from "./Fields";
 type Language = "en" | "ar";
 type SaveState = "idle" | "saving" | "saved" | "error";
 
+const STEP_KEY = "auf_step_";
+
+function readStep(externalRef?: string): number {
+  if (!externalRef || typeof window === "undefined") return 0;
+
+  try {
+    const stored = window.localStorage.getItem(`${STEP_KEY}${externalRef}`);
+    const parsed = stored ? Number.parseInt(stored, 10) : 0;
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+  } catch {
+    return 0;
+  }
+}
+
 const stepLabelKey: Record<StepId, string> = {
   applicant: "step_applicant",
   identity: "step_identity",
@@ -67,7 +81,9 @@ export default function AufForm({
 }) {
   const t = copy[language];
   const [form, setForm] = useState<FormState>(initialState ?? initialForm());
-  const [stepIndex, setStepIndex] = useState(0);
+  // Which step the user reached. The API has no field for it, so it is kept
+  // per draft in the browser -- the answers themselves live on the server.
+  const [stepIndex, setStepIndex] = useState(() => readStep(externalRef));
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -79,6 +95,18 @@ export default function AufForm({
   useEffect(() => {
     if (externalRef) refRef.current = externalRef;
   }, [externalRef]);
+
+  // Remember progress so returning to a draft reopens the step it stopped on.
+  useEffect(() => {
+    const ref = refRef.current;
+    if (!ref || ref === "preview") return;
+
+    try {
+      window.localStorage.setItem(`${STEP_KEY}${ref}`, String(stepIndex));
+    } catch {
+      // Storage can be unavailable (private mode); progress is not critical.
+    }
+  }, [stepIndex]);
 
   const isReview = stepIndex === stepOrder.length;
   const step = stepOrder[stepIndex];
@@ -153,6 +181,13 @@ export default function AufForm({
 
     try {
       await frontendApi.submitRequest(ref, { language, ownerId });
+
+      try {
+        window.localStorage.removeItem(`${STEP_KEY}${ref}`);
+      } catch {
+        // Nothing to clean up if storage is unavailable.
+      }
+
       onSubmitted?.(ref);
     } catch (caught) {
       setError(errorMessage(caught));
