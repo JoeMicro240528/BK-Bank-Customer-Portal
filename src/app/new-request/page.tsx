@@ -10,7 +10,8 @@ import { dashboardCopy } from "@/components/dashboard/copy";
 import type { Language } from "@/components/dashboard/types";
 import NewRequestScreen from "@/components/wizard/NewRequestScreen";
 import type { AddedAccount } from "@/components/wizard/types";
-import { frontendApi, formatApiError } from "@/lib/api";
+import AufForm from "@/components/form/AufForm";
+import { initialForm, type FormState } from "@/lib/auf/form";
 import { useBanks } from "@/lib/useBanks";
 
 export default function NewRequestPage() {
@@ -18,7 +19,9 @@ export default function NewRequestPage() {
   const router = useRouter();
   const [language, setLanguage] = useState<Language>("ar");
   const [error, setError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+
+  /** Once banks are chosen the flow moves on to the detail form. */
+  const [formState, setFormState] = useState<FormState | null>(null);
 
   // Hooks must run unconditionally, before the early return below.
   const { banks, error: banksError } = useBanks(language);
@@ -41,41 +44,37 @@ export default function NewRequestPage() {
   const user = session?.user;
   const ownerId = user?.national_id;
 
-  const handleContinue = async (accounts: AddedAccount[]) => {
-    if (!ownerId || submitting) return;
-
-    setSubmitting(true);
-    setError("");
-
-    try {
-      // The API keys its detail endpoint on external_ref but never assigns one,
-      // so the request would be unreachable unless we supply it here.
-      const externalRef = `auf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-
-      const created = await frontendApi.createRequest(
-        {
-          external_ref: externalRef,
-          info_type: "update",
-          name_arabic: user?.name || "",
-          name_english: user?.name || "",
-          // The API rejects a request without a primary national ID, even
-          // though the same value is already sent as X-Owner-Id.
-          identity_lines: [
-            { id_type: "national_id", id_number: ownerId, is_primary: true },
-          ],
-          selected_accounts: accounts.map((account) => ({
-            bank_id: Number(account.bankId),
-            account_number: account.accountNumber,
-          })),
-        },
-        { language, ownerId },
-      );
-
-      router.push(`/requests/${encodeURIComponent(created.external_ref || created.reference)}`);
-    } catch (caught) {
-      setError(formatApiError(caught));
-      setSubmitting(false);
+  /** Seeds the form from the session and the chosen accounts, then hands over. */
+  const startForm = (accounts: AddedAccount[]) => {
+    if (!ownerId) {
+      setError("Missing national ID on the session.");
+      return;
     }
+
+    setFormState({
+      ...initialForm(),
+      name_arabic: user?.name || "",
+      name_english: user?.name || "",
+      email: user?.email || "",
+      gender: user?.gender || "",
+      date_of_birth: user?.birthDate || "",
+      mobile_personal: user?.phone_number || "",
+      identity_lines: [
+        {
+          id_type: "national_id",
+          id_number: ownerId,
+          id_type_other: "",
+          issuance_date: "",
+          expiry_date: "",
+          nationality_id: "",
+          is_primary: true,
+        },
+      ],
+      selected_accounts: accounts.map((account) => ({
+        bank_id: Number(account.bankId),
+        account_number: account.accountNumber,
+      })),
+    } as FormState);
   };
 
   return (
@@ -93,12 +92,21 @@ export default function NewRequestPage() {
         </div>
       )}
 
-      <NewRequestScreen
-        language={language}
-        banks={banks}
-        onBack={() => router.push("/profile")}
-        onContinue={handleContinue}
-      />
+      {formState && ownerId ? (
+        <AufForm
+          language={language}
+          ownerId={ownerId}
+          initialState={formState}
+          onSubmitted={(ref) => router.push(`/requests/${encodeURIComponent(ref)}`)}
+        />
+      ) : (
+        <NewRequestScreen
+          language={language}
+          banks={banks}
+          onBack={() => router.push("/profile")}
+          onContinue={startForm}
+        />
+      )}
     </DashboardLayout>
   );
 }
