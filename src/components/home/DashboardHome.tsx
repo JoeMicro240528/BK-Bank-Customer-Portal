@@ -127,7 +127,9 @@ export default function DashboardHome({
                       </td>
                       <td>{request.date}</td>
                       <td>
-                        {request.bankCount} {t.banksUnit}
+                        {/* The list endpoint omits selected_accounts, so a count of 0
+                            means unknown rather than none. */}
+                        {request.bankCount > 0 ? `${request.bankCount} ${t.banksUnit}` : "—"}
                       </td>
                       <td>
                         <StatusPill status={request.status} label={t.status[request.status]} />

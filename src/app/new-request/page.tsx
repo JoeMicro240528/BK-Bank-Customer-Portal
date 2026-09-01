@@ -48,8 +48,13 @@ export default function NewRequestPage() {
     setError("");
 
     try {
+      // The API keys its detail endpoint on external_ref but never assigns one,
+      // so the request would be unreachable unless we supply it here.
+      const externalRef = `auf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
       const created = await frontendApi.createRequest(
         {
+          external_ref: externalRef,
           info_type: "update",
           name_arabic: user?.name || "",
           name_english: user?.name || "",

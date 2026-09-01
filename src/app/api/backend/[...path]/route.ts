@@ -14,10 +14,10 @@ type RouteContext = {
 async function proxy(request: NextRequest, context: RouteContext) {
   const { path } = await context.params;
 
-  // The upstream API authorises by X-Owner-Id alone, so that value decides
-  // whose records are returned. It is taken from the server-side session and
-  // never from the request, otherwise a caller could read another person's
-  // data simply by changing the header.
+  // The upstream API decides whose records to return purely from the national
+  // number it is given, so that value comes from the server-side session and
+  // never from the request -- otherwise a caller could read another person's
+  // data just by changing it.
   const session = await auth();
   const ownerId = session?.user?.national_id;
 
@@ -25,7 +25,7 @@ async function proxy(request: NextRequest, context: RouteContext) {
     return Response.json({ detail: "Not authenticated." }, { status: 401 });
   }
 
-  const backendUrl = buildBackendUrl(path, request.nextUrl.search);
+  const backendUrl = buildBackendUrl(path, buildIdentityQuery(request, ownerId));
   const headers = buildForwardHeaders(request, ownerId);
 
   try {
@@ -69,6 +69,21 @@ function backendBase(): string {
 function buildBackendUrl(path: string[], search: string): string {
   const normalizedPath = path.map((segment) => encodeURIComponent(segment)).join("/");
   return `${backendBase()}/${normalizedPath}${search}`;
+}
+
+/**
+ * Rebuilds the query string with the caller's identity forced to the session's
+ * national ID. The API takes it as `national_number` on the request endpoints
+ * and `national_id` on customer-bank-accounts; both are overwritten here so a
+ * client-supplied value can never be used.
+ */
+function buildIdentityQuery(request: NextRequest, ownerId: string): string {
+  const params = new URLSearchParams(request.nextUrl.search);
+
+  params.set("national_number", ownerId);
+  params.set("national_id", ownerId);
+
+  return `?${params.toString()}`;
 }
 
 function buildForwardHeaders(request: NextRequest, ownerId: string): Headers {
