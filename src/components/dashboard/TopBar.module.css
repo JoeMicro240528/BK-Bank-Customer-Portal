@@ -120,6 +120,7 @@
 }
 
 .user {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -198,4 +199,60 @@
   .langControl select {
     max-width: 78px;
   }
+}
+
+/* --- user menu --- */
+.userButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+.userButton:hover {
+  background: var(--surface-muted, #f8fafc);
+}
+
+.userMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  /* Logical property so the menu hangs under the avatar in both directions. */
+  inset-inline-end: 0;
+  z-index: 40;
+  min-width: 210px;
+  padding: 6px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 12px;
+  background: var(--surface, #fff);
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+.userMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink, #172033);
+  font: inherit;
+  font-size: 15px;
+  text-align: start;
+  cursor: pointer;
+}
+
+.userMenuItem:hover {
+  background: var(--surface-muted, #f8fafc);
+}
+
+.userMenuDanger {
+  color: #be123c;
 }

@@ -4,7 +4,6 @@ import {
   Headphones,
   HelpCircle,
   Home,
-  LogOut,
   PlusCircle,
   ShieldCheck,
   UserRound,
@@ -25,14 +24,7 @@ const navIcons: Record<NavKey, LucideIcon> = {
 
 // "newRequest" is deliberately absent: it is an action taken from the requests
 // screen, not a place, and listing both made the two entries look like rivals.
-const navOrder: NavKey[] = [
-  "home",
-  "myRequests",
-  "myData",
-  "notifications",
-  "faq",
-  "contact",
-];
+const navOrder: NavKey[] = ["home", "myRequests", "myData", "faq", "contact"];
 
 export default function Sidebar({
   t,
@@ -40,14 +32,12 @@ export default function Sidebar({
   badges = {},
   open = false,
   onNavigate,
-  onLogout,
 }: {
   t: DashboardCopy;
   active?: NavKey;
   badges?: Partial<Record<NavKey, number>>;
   open?: boolean;
   onNavigate?: (key: NavKey) => void;
-  onLogout?: () => void;
 }) {
   return (
     <aside className={`${styles.sidebar} ${open ? styles.sidebarOpen : ""}`}>
@@ -87,11 +77,6 @@ export default function Sidebar({
       </nav>
 
       <div className={styles.spacer} />
-
-      <button type="button" className={styles.logout} onClick={onLogout}>
-        <LogOut aria-hidden="true" size={19} />
-        <span className={styles.navLabel}>{t.logout}</span>
-      </button>
     </aside>
   );
 }

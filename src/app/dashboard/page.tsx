@@ -55,11 +55,9 @@ export default function DashboardPage() {
     >
       <DashboardHome
         language={language}
-        userName={user?.name?.split(" ")[0] || ""}
         stats={stats}
         requests={requests}
         onNewRequest={() => router.push("/new-request")}
-        onMyData={() => router.push("/profile")}
       />
     </DashboardLayout>
   );

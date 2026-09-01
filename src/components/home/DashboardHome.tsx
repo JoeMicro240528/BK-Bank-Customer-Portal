@@ -8,13 +8,9 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  ClipboardList,
   Clock,
   FileText,
-  Headphones,
-  MessageSquare,
   Plus,
-  UserRound,
 } from "lucide-react";
 import StatusPill from "@/components/request/StatusPill";
 import { homeCopy } from "./copy";
@@ -24,24 +20,18 @@ import type { DashboardStats, Language, RequestSummary } from "./types";
 
 export default function DashboardHome({
   language,
-  userName,
   stats,
   requests,
   onNewRequest,
   onViewRequest,
   onViewAll,
-  onMyData,
-  onContactSupport,
 }: {
   language: Language;
-  userName: string;
   stats: DashboardStats;
   requests: RequestSummary[];
   onNewRequest?: () => void;
   onViewRequest?: (id: string) => void;
   onViewAll?: () => void;
-  onMyData?: () => void;
-  onContactSupport?: () => void;
 }) {
   const t = homeCopy[language];
   const Arrow = language === "ar" ? ArrowLeft : ArrowRight;
@@ -55,26 +45,15 @@ export default function DashboardHome({
     { key: "action", icon: AlertCircle, value: stats.actionRequired, label: t.statActionRequired, cls: styles.tileAction },
   ];
 
-  const quickActions = [
-    { key: "new", icon: Plus, label: t.actionUpdateData, onClick: onNewRequest },
-    { key: "track", icon: ClipboardList, label: t.actionTrackRequests, onClick: onViewAll },
-    { key: "data", icon: UserRound, label: t.actionMyData, onClick: onMyData },
-  ];
 
   return (
     <div className={styles.page}>
-      <section className={styles.welcome}>
-        <div>
-          <h1>
-            {t.greeting}، {userName} 👋
-          </h1>
-          <p>{t.welcomeSubtitle}</p>
-        </div>
+      <div className={styles.topBar}>
         <button type="button" className={styles.newRequestButton} onClick={onNewRequest}>
           <Plus aria-hidden="true" size={17} />
           {t.newRequest}
         </button>
-      </section>
+      </div>
 
       <section className={styles.stats}>
         {tiles.map((tile) => (
@@ -153,39 +132,6 @@ export default function DashboardHome({
           )}
         </section>
 
-        <aside className={styles.aside}>
-          <section className={styles.card}>
-            <div className={styles.cardHead}>
-              <h2>{t.quickActionsTitle}</h2>
-            </div>
-            <div className={styles.actionList}>
-              {quickActions.map((action) => (
-                <button
-                  type="button"
-                  className={styles.actionItem}
-                  key={action.key}
-                  onClick={action.onClick}
-                >
-                  <action.icon aria-hidden="true" size={18} />
-                  {action.label}
-                  <Chevron aria-hidden="true" size={15} className={styles.actionArrow} />
-                </button>
-              ))}
-            </div>
-          </section>
-
-          <section className={styles.help}>
-            <span className={styles.helpHead}>
-              <Headphones aria-hidden="true" size={18} />
-              {t.helpTitle}
-            </span>
-            <p>{t.helpBody}</p>
-            <button type="button" className={styles.helpButton} onClick={onContactSupport}>
-              <MessageSquare aria-hidden="true" size={16} />
-              {t.contactSupport}
-            </button>
-          </section>
-        </aside>
       </div>
     </div>
   );

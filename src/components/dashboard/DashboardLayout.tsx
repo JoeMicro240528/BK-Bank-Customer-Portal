@@ -73,7 +73,6 @@ export default function DashboardLayout({
         badges={badges}
         open={menuOpen}
         onNavigate={handleNavigate}
-        onLogout={onLogout}
       />
 
       {menuOpen && (
@@ -94,6 +93,9 @@ export default function DashboardLayout({
           notificationCount={notificationCount}
           onLanguageChange={onLanguageChange}
           onMenuClick={() => setMenuOpen((open) => !open)}
+          onNotificationsClick={() => handleNavigate("notifications")}
+          onProfileClick={() => handleNavigate("myData")}
+          onLogout={onLogout}
         />
         <main className={styles.content}>{children}</main>
       </div>

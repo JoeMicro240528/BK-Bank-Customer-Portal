@@ -127,9 +127,15 @@
 /* --- lower grid --- */
 .lower {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   align-items: start;
+}
+
+/* Carries the new-request button now that the welcome banner is gone. */
+.topBar {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .card {

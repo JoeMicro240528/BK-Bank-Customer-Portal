@@ -37,7 +37,6 @@ export default function DashboardPreview() {
     >
       <DashboardHome
         language={language}
-        userName="محمد"
         stats={previewStats}
         requests={previewRequests}
         onNewRequest={() => router.push("/preview/new-request")}
