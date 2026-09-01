@@ -129,6 +129,20 @@ export interface BankUpdateFeedbackStatus {
  * Notably it carries no selected_accounts, so bank names for a request that
  * has no feedback yet (a draft) must come from the detail endpoint.
  */
+export interface MessageAuthor {
+  id: number;
+  name: string;
+}
+
+/** One chatter message on a request -- the bank's side of the conversation. */
+export interface MessageRead {
+  id: number;
+  body: string;
+  author: MessageAuthor;
+  date: string;
+  message_type: string;
+}
+
 export interface AUFRequestSummary {
   reference: string;
   external_ref?: string | null;

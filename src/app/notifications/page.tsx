@@ -40,7 +40,11 @@ export default function Page() {
       active="notifications"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >
-      <NotificationsList language={language} onOpenRequest={(id) => router.push(`/requests/${id}`)} />
+      <NotificationsList
+        language={language}
+        ownerId={session?.user?.national_id}
+        onOpenRequest={(id) => router.push(`/requests/${encodeURIComponent(id)}`)}
+      />
     </DashboardLayout>
   );
 }

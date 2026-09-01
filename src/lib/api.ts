@@ -4,6 +4,7 @@ import type {
   AUFRequestUpdate,
   AUFRequestSummary,
   MasterDataBank,
+  MessageRead,
   MasterDataCity,
   MasterDataCountry,
   MasterDataState,
@@ -89,6 +90,14 @@ export const frontendApi = {
     requestJson<AUFRequestRead>(
       "/auf-requests",
       { method: "POST", body: JSON.stringify(payload) },
+      options,
+    ),
+
+  /** Chatter on a request. Keyed on the human reference, not external_ref. */
+  listMessages: (reference: string, options: RequestOptions) =>
+    requestJson<MessageRead[]>(
+      `/auf-requests/${encodeURIComponent(reference)}/messages`,
+      { method: "GET" },
       options,
     ),
 

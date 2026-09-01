@@ -1,26 +1,11 @@
 "use client";
 
-import { AlertCircle, Bell, CheckCheck, CheckCircle2, Clock, Info } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { useState } from "react";
-import { notifications as seed, type NotificationTone } from "./data";
+import { AlertCircle, Bell, CheckCheck, Loader2, MessageSquare } from "lucide-react";
+import Banner from "@/components/ui/Banner";
+import { useNotifications } from "@/lib/useNotifications";
 import styles from "./NotificationsList.module.css";
 
 type Language = "en" | "ar";
-
-const toneIcon: Record<NotificationTone, LucideIcon> = {
-  info: Info,
-  success: CheckCircle2,
-  warning: Clock,
-  danger: AlertCircle,
-};
-
-const toneClass: Record<NotificationTone, string> = {
-  info: styles.iconInfo,
-  success: styles.iconSuccess,
-  warning: styles.iconWarning,
-  danger: styles.iconDanger,
-};
 
 const copy = {
   ar: {
@@ -28,35 +13,61 @@ const copy = {
     subtitle: (n: number) => (n > 0 ? `لديك ${n} إشعارات غير مقروءة` : "لا توجد إشعارات غير مقروءة"),
     markAll: "تعليم الكل كمقروء",
     emptyTitle: "لا توجد إشعارات",
-    emptyBody: "ستظهر هنا التحديثات المتعلقة بطلباتك.",
+    emptyBody: "ستظهر هنا رسائل البنوك المتعلقة بطلباتك.",
+    onRequest: (reference: string) => `بخصوص الطلب ${reference}`,
   },
   en: {
     title: "Notifications",
-    subtitle: (n: number) => (n > 0 ? `You have ${n} unread notifications` : "No unread notifications"),
+    subtitle: (n: number) =>
+      n > 0 ? `You have ${n} unread notifications` : "No unread notifications",
     markAll: "Mark all as read",
     emptyTitle: "No notifications",
-    emptyBody: "Updates about your requests will appear here.",
+    emptyBody: "Messages from the banks about your requests will appear here.",
+    onRequest: (reference: string) => `About request ${reference}`,
   },
 } as const;
 
+/** Odoo chatter bodies are HTML fragments; render them as plain text. */
+function toPlainText(body: string): string {
+  return body
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(p|div|li)>/gi, "\n")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function formatDate(value: string, language: Language): string {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return value;
+
+  return parsed.toLocaleString(language === "ar" ? "ar-EG" : "en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
 export default function NotificationsList({
   language,
+  ownerId,
   onOpenRequest,
 }: {
   language: Language;
+  ownerId?: string;
   onOpenRequest?: (requestId: string) => void;
 }) {
-  const [items, setItems] = useState(seed);
+  const { items, loading, error, markRead, markAllRead } = useNotifications(ownerId, language);
   const t = copy[language];
   const unread = items.filter((item) => !item.read).length;
-
-  const markRead = (id: string) =>
-    setItems((previous) =>
-      previous.map((item) => (item.id === id ? { ...item, read: true } : item)),
-    );
-
-  const markAllRead = () =>
-    setItems((previous) => previous.map((item) => ({ ...item, read: true })));
 
   return (
     <div className={styles.page}>
@@ -76,8 +87,18 @@ export default function NotificationsList({
         </button>
       </div>
 
+      {error && (
+        <div style={{ marginBottom: 14 }}>
+          <Banner tone="danger" icon={AlertCircle} text={error} />
+        </div>
+      )}
+
       <section className={styles.card}>
-        {items.length === 0 ? (
+        {loading ? (
+          <div className="page-loading" style={{ height: 200 }}>
+            <Loader2 className="page-loading-spinner" aria-hidden="true" />
+          </div>
+        ) : items.length === 0 ? (
           <div className={styles.empty}>
             <span className={styles.emptyIcon}>
               <Bell aria-hidden="true" size={26} />
@@ -87,34 +108,33 @@ export default function NotificationsList({
           </div>
         ) : (
           <ul className={styles.list}>
-            {items.map((item) => {
-              const Icon = toneIcon[item.tone];
-
-              return (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    className={`${styles.item} ${item.read ? "" : styles.unread}`}
-                    onClick={() => {
-                      markRead(item.id);
-                      if (item.requestId) onOpenRequest?.(item.requestId);
-                    }}
-                  >
-                    <span className={`${styles.icon} ${toneClass[item.tone]}`}>
-                      <Icon aria-hidden="true" size={19} />
+            {items.map((item) => (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  className={`${styles.item} ${item.read ? "" : styles.unread}`}
+                  onClick={() => {
+                    markRead(item.id);
+                    onOpenRequest?.(item.requestId);
+                  }}
+                >
+                  <span className={`${styles.icon} ${styles.iconInfo}`}>
+                    <MessageSquare aria-hidden="true" size={19} />
+                  </span>
+                  <span className={styles.body}>
+                    <span className={styles.titleRow}>
+                      {!item.read && <span className={styles.dot} aria-hidden="true" />}
+                      <strong>{t.onRequest(item.requestReference)}</strong>
                     </span>
-                    <span className={styles.body}>
-                      <span className={styles.titleRow}>
-                        {!item.read && <span className={styles.dot} aria-hidden="true" />}
-                        <strong>{item.title[language]}</strong>
-                      </span>
-                      <p>{item.body[language]}</p>
-                      <span className={styles.time}>{item.time[language]}</span>
+                    <p>{toPlainText(item.body)}</p>
+                    <span className={styles.time}>
+                      {item.author ? `${item.author} · ` : ""}
+                      {formatDate(item.date, language)}
                     </span>
-                  </button>
-                </li>
-              );
-            })}
+                  </span>
+                </button>
+              </li>
+            ))}
           </ul>
         )}
       </section>
