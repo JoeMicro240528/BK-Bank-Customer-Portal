@@ -17,7 +17,7 @@ export type DashboardStats = {
   drafts: number;
   underReview: number;
   approved: number;
-  actionRequired: number;
+  rejected: number;
 };
 
 export type HomeCopy = {
@@ -29,7 +29,7 @@ export type HomeCopy = {
   statDrafts: string;
   statUnderReview: string;
   statApproved: string;
-  statActionRequired: string;
+  statRejected: string;
 
   recentTitle: string;
   viewAll: string;

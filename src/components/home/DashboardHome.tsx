@@ -39,7 +39,7 @@ export default function DashboardHome({
     { key: "drafts", icon: FileEdit, value: stats.drafts, label: t.statDrafts, cls: styles.tileDraft },
     { key: "review", icon: Clock, value: stats.underReview, label: t.statUnderReview, cls: styles.tileReview },
     { key: "approved", icon: CheckCircle2, value: stats.approved, label: t.statApproved, cls: styles.tileApproved },
-    { key: "action", icon: AlertCircle, value: stats.actionRequired, label: t.statActionRequired, cls: styles.tileAction },
+    { key: "action", icon: AlertCircle, value: stats.rejected, label: t.statRejected, cls: styles.tileAction },
   ];
 
 

@@ -10,7 +10,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
     statDrafts: "مسودات",
     statUnderReview: "قيد المراجعة",
     statApproved: "معتمدة",
-    statActionRequired: "تحتاج إجراء",
+    statRejected: "مرفوضة",
 
     recentTitle: "أحدث الطلبات",
     viewAll: "عرض الكل",
@@ -38,7 +38,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
       draft: "مسودة",
       approved: "معتمد",
       under_review: "قيد المراجعة",
-      action_required: "يحتاج إجراء",
+      rejected: "مرفوض",
     },
   },
 
@@ -51,7 +51,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
     statDrafts: "Drafts",
     statUnderReview: "Under review",
     statApproved: "Approved",
-    statActionRequired: "Action required",
+    statRejected: "Rejected",
 
     recentTitle: "Recent requests",
     viewAll: "View all",
@@ -79,7 +79,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
       draft: "Draft",
       approved: "Approved",
       under_review: "Under review",
-      action_required: "Action required",
+      rejected: "Rejected",
     },
   },
 };

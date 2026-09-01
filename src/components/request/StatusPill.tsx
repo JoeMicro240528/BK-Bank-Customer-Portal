@@ -7,7 +7,7 @@ const icons: Record<BankStatus, LucideIcon> = {
   draft: FileEdit,
   approved: CheckCircle2,
   under_review: Clock,
-  action_required: AlertCircle,
+  rejected: AlertCircle,
 };
 
 export default function StatusPill({ status, label }: { status: BankStatus; label: string }) {

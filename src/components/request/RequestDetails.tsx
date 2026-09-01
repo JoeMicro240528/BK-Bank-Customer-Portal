@@ -19,7 +19,7 @@ export default function RequestDetails({
   onContinue?: () => void;
 }) {
   const t = requestCopy[language];
-  const needsAction = request.banks.some((bank) => bank.status === "action_required");
+  const needsAction = request.banks.some((bank) => bank.status === "rejected");
   const isDraft = request.status === "draft";
 
   const copyReference = () => {

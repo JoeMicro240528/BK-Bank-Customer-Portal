@@ -35,6 +35,10 @@
   background: #c3d0ea;
 }
 
+.stepBlocked:not(:first-child)::before {
+  background: #fca5b5;
+}
+
 .node {
   position: relative;
   z-index: 1;
@@ -66,6 +70,18 @@
   border-color: #1d4ed8;
   border-style: dashed;
   color: #1d4ed8;
+}
+
+/* A rejected request stops here -- it reads as a halt, not as progress. */
+.stepBlocked .node {
+  background: #fee2e2;
+  border-color: #e11d48;
+  color: #e11d48;
+}
+
+.stepBlocked .label {
+  color: #be123c;
+  font-weight: 600;
 }
 
 .label {

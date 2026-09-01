@@ -5,7 +5,7 @@ export const previewStats: DashboardStats = {
   drafts: 1,
   underReview: 1,
   approved: 1,
-  actionRequired: 1,
+  rejected: 1,
 };
 
 export const previewRequests: RequestSummary[] = [
@@ -23,7 +23,7 @@ export const previewRequests: RequestSummary[] = [
     date: "12 أغسطس 2026",
     bankCount: 2,
     bankNames: ["بنك أم درمان الوطني", "بنك فيصل الإسلامي"],
-    status: "action_required",
+    status: "rejected",
   },
   {
     id: "3",

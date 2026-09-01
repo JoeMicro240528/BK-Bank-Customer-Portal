@@ -22,7 +22,7 @@ const copy = {
       draft: "مسودة",
       under_review: "قيد المراجعة",
       approved: "معتمدة",
-      action_required: "تحتاج إجراء",
+      rejected: "تحتاج إجراء",
     },
     colReference: "رقم الطلب",
     colDate: "التاريخ",
@@ -40,7 +40,7 @@ const copy = {
       draft: "مسودة",
       approved: "معتمد",
       under_review: "قيد المراجعة",
-      action_required: "يحتاج إجراء",
+      rejected: "مرفوض",
     },
   },
   en: {
@@ -52,7 +52,7 @@ const copy = {
       draft: "Draft",
       under_review: "Under review",
       approved: "Approved",
-      action_required: "Action required",
+      rejected: "Rejected",
     },
     colReference: "Request no.",
     colDate: "Date",
@@ -70,12 +70,12 @@ const copy = {
       draft: "Draft",
       approved: "Approved",
       under_review: "Under review",
-      action_required: "Action required",
+      rejected: "Rejected",
     },
   },
 } as const;
 
-const filterOrder: Filter[] = ["all", "draft", "under_review", "approved", "action_required"];
+const filterOrder: Filter[] = ["all", "draft", "under_review", "approved", "rejected"];
 
 export default function RequestsList({
   language,

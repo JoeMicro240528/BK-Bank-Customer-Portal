@@ -2,10 +2,14 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { frontendApi, errorMessage } from "@/lib/api";
+import { mapBankState } from "@/lib/requests";
 
 type Language = "en" | "ar";
 
+type Kind = "message" | "decision";
+
 export type Notification = {
+  kind: Kind;
   /** Stable across reloads: the message id the backend assigned. */
   id: string;
   /** Shown to the user. */
@@ -14,6 +18,8 @@ export type Notification = {
   requestId: string;
   body: string;
   author: string;
+  /** Set on a decision, so the UI can colour it. */
+  rejected?: boolean;
   date: string;
   read: boolean;
 };
@@ -64,24 +70,66 @@ export function useNotifications(ownerId: string | undefined, language: Language
         const requests = await frontendApi.listRequests({ language, ownerId });
         const read = loadRead();
 
+        const decisionText = {
+          ar: {
+            rejected: (bank: string) => `${bank} رفض طلبك.`,
+            approved: (bank: string) => `${bank} اعتمد طلبك.`,
+          },
+          en: {
+            rejected: (bank: string) => `${bank} rejected your request.`,
+            approved: (bank: string) => `${bank} approved your request.`,
+          },
+        }[language];
+
         const perRequest = await Promise.all(
           requests.map(async (request) => {
+            const requestId = request.external_ref || request.reference;
+
+            // A bank's decision is an event the user needs to hear about, and
+            // it arrives on the request itself -- not as chatter. Without this
+            // a rejection never reached the notifications page at all.
+            const decisions: Notification[] = (request.feedback || [])
+              .filter((entry) => entry.processed_at)
+              .map((entry): Notification | null => {
+                const status = mapBankState(entry.state);
+                if (status !== "rejected" && status !== "approved") return null;
+
+                const id = `decision-${request.reference}-${entry.bank_id}-${entry.state}`;
+                return {
+                  kind: "decision" as const,
+                  id,
+                  requestReference: request.reference,
+                  requestId,
+                  body: decisionText[status](entry.bank_name),
+                  author: entry.bank_name,
+                  rejected: status === "rejected",
+                  date: entry.processed_at as string,
+                  read: read.has(id),
+                };
+              })
+              .filter((item): item is Notification => item !== null);
+
             try {
               const messages = await frontendApi.listMessages(request.reference, {
                 language,
                 ownerId,
               });
-              return messages.map((message) => ({
-                id: String(message.id),
-                requestReference: request.reference,
-                requestId: request.external_ref || request.reference,
-                body: message.body,
-                author: message.author?.name || "",
-                date: message.date,
-                read: read.has(String(message.id)),
-              }));
+              return [
+                ...decisions,
+                ...messages.map((message) => ({
+                  kind: "message" as const,
+                  id: String(message.id),
+                  requestReference: request.reference,
+                  requestId,
+                  body: message.body,
+                  author: message.author?.name || "",
+                  date: message.date,
+                  read: read.has(String(message.id)),
+                })),
+              ];
             } catch {
-              return [];
+              // Chatter may be unreadable; the decisions still stand on their own.
+              return decisions;
             }
           }),
         );

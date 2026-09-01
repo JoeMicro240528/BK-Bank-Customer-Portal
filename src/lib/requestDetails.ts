@@ -33,7 +33,7 @@ const labels = {
     received: "تم الاستلام",
     review: "قيد المراجعة",
     approved: "تم الاعتماد",
-    action: "يحتاج إجراء من العميل",
+    action: "مرفوض من البنك",
     created: "تم إنشاء الطلب",
     bankReview: "قيد المراجعة لدى البنوك",
     partial: "بعض البنوك معتمد",
@@ -45,7 +45,7 @@ const labels = {
     received: "Received",
     review: "Under review",
     approved: "Approved",
-    action: "Action required",
+    action: "Rejected by the bank",
     created: "Request created",
     bankReview: "Under review by banks",
     partial: "Some banks approved",
@@ -69,7 +69,7 @@ function timelineFor(state: string, processedAt: string | null | undefined, lang
     ];
   }
 
-  if (status === "action_required") {
+  if (status === "rejected") {
     return [
       { key: "received", label: t.received, date: when, state: "done" },
       { key: "action", label: t.action, date: when, state: "blocked" },
@@ -142,8 +142,16 @@ export function toRequestDetails(
         label: t.bankReview,
         // An empty feedback list used to fall through to "done", so a draft --
         // which has no feedback at all -- claimed the banks had finished
-        // reviewing a request it had never been sent.
-        state: status === "draft" ? "pending" : allApproved ? "done" : "current",
+        // reviewing a request it had never been sent. A rejected request is
+        // blocked here rather than "current": nothing is still being reviewed.
+        state:
+          status === "draft"
+            ? "pending"
+            : status === "rejected"
+              ? "blocked"
+              : allApproved
+                ? "done"
+                : "current",
       },
       {
         key: "partial",

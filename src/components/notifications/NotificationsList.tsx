@@ -118,8 +118,14 @@ export default function NotificationsList({
                     onOpenRequest?.(item.requestId);
                   }}
                 >
-                  <span className={`${styles.icon} ${styles.iconInfo}`}>
-                    <MessageSquare aria-hidden="true" size={19} />
+                  <span
+                    className={`${styles.icon} ${item.rejected ? styles.iconDanger : styles.iconInfo}`}
+                  >
+                    {item.rejected ? (
+                      <AlertCircle aria-hidden="true" size={19} />
+                    ) : (
+                      <MessageSquare aria-hidden="true" size={19} />
+                    )}
                   </span>
                   <span className={styles.body}>
                     <span className={styles.titleRow}>

@@ -20,7 +20,7 @@ export const requestCopy: Record<Language, RequestCopy> = {
     colLastUpdate: "آخر تحديث",
     colAction: "الإجراء",
     viewDetails: "عرض التفاصيل",
-    actionNotice: "يرجى مراجعة الإجراء المطلوب من قبل البنك لتجنب تأخير اعتماد الطلب.",
+    actionNotice: "تم رفض هذا الطلب من قبل البنك. يرجى التواصل مع البنك لمعرفة السبب والخطوات المطلوبة.",
     summaryTitle: "ملخص الطلب",
     bankCountLabel: "عدد البنوك",
     accountCountLabel: "عدد الحسابات",
@@ -36,7 +36,7 @@ export const requestCopy: Record<Language, RequestCopy> = {
       draft: "مسودة",
       approved: "معتمد",
       under_review: "قيد المراجعة",
-      action_required: "يحتاج إجراء",
+      rejected: "مرفوض",
     },
   },
   en: {
@@ -60,7 +60,8 @@ export const requestCopy: Record<Language, RequestCopy> = {
     colLastUpdate: "Last update",
     colAction: "Action",
     viewDetails: "View details",
-    actionNotice: "Please review the action requested by the bank to avoid delaying approval.",
+    actionNotice:
+      "This request was rejected by the bank. Please contact the bank for the reason and next steps.",
     summaryTitle: "Request summary",
     bankCountLabel: "Banks",
     accountCountLabel: "Accounts",
@@ -76,7 +77,7 @@ export const requestCopy: Record<Language, RequestCopy> = {
       draft: "Draft",
       approved: "Approved",
       under_review: "Under review",
-      action_required: "Action required",
+      rejected: "Rejected",
     },
   },
 };

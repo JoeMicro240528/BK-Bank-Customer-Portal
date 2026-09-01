@@ -1,4 +1,4 @@
-import { Check, Search } from "lucide-react";
+import { AlertCircle, Check, Search } from "lucide-react";
 import styles from "./RequestStepper.module.css";
 import type { StepState, TimelineStep } from "./types";
 
@@ -6,7 +6,7 @@ const stateClass: Record<StepState, string> = {
   done: styles.stepDone,
   current: styles.stepCurrent,
   pending: styles.stepPending,
-  blocked: styles.stepPending,
+  blocked: styles.stepBlocked,
 };
 
 export default function RequestStepper({ steps }: { steps: TimelineStep[] }) {
@@ -19,6 +19,8 @@ export default function RequestStepper({ steps }: { steps: TimelineStep[] }) {
               <Check aria-hidden="true" size={17} />
             ) : step.state === "current" ? (
               <Search aria-hidden="true" size={15} />
+            ) : step.state === "blocked" ? (
+              <AlertCircle aria-hidden="true" size={16} />
             ) : (
               index + 1
             )}

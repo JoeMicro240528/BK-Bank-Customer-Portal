@@ -41,7 +41,7 @@ export default function DashboardPage() {
     drafts: requests.filter((item) => item.status === "draft").length,
     underReview: requests.filter((item) => item.status === "under_review").length,
     approved: requests.filter((item) => item.status === "approved").length,
-    actionRequired: requests.filter((item) => item.status === "action_required").length,
+    rejected: requests.filter((item) => item.status === "rejected").length,
   };
 
   return (

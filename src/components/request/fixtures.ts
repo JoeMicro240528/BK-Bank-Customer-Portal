@@ -57,7 +57,7 @@ export const previewRequest: RequestDetailsData = {
       bankColor: "#1d4ed8",
       branch: "فرع السوق العربي",
       accountNumber: "**** 3445",
-      status: "action_required",
+      status: "rejected",
       lastUpdate: "30 أغسطس 2026",
       lastUpdateTime: "09:15 ص",
       timeline: [

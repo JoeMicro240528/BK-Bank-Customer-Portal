@@ -21,7 +21,7 @@ export function mapRequestState(state: string | undefined): BankStatus {
     case "rejected":
     case "cancelled":
     case "canceled":
-      return "action_required";
+      return "rejected";
     default:
       return "under_review";
   }
@@ -46,7 +46,7 @@ export function mapBankState(state: string | undefined): BankStatus {
     case "rejected":
     case "cancelled":
     case "canceled":
-      return "action_required";
+      return "rejected";
     // "draft" included: queued at the bank is still awaiting review.
     case "draft":
     case "":
@@ -75,7 +75,7 @@ export function overallStatus(state: string | undefined, bankStates: string[]): 
   if (base === "draft") return "draft";
 
   const banks = bankStates.map(mapBankState);
-  if (banks.some((status) => status === "action_required")) return "action_required";
+  if (banks.some((status) => status === "rejected")) return "rejected";
   if (banks.length > 0 && banks.every((status) => status === "approved")) return "approved";
   return base;
 }
