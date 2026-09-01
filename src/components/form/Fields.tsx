@@ -53,6 +53,7 @@ export function TextInput({
   required = false,
   type = "text",
   hint,
+  digitsOnly = false,
   ...rest
 }: {
   label: string;
@@ -61,8 +62,15 @@ export function TextInput({
   required?: boolean;
   type?: string;
   hint?: string;
+  /** Keep only digits (and a leading +), for phone and account numbers. */
+  digitsOnly?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "type">) {
   const id = useId();
+
+  // Held as text rather than a number input: leading zeros matter, and the API
+  // takes these as strings.
+  const clean = (raw: string) =>
+    digitsOnly ? raw.replace(/(?!^\+)\D/g, "").replace(/^\+?/, raw.startsWith("+") ? "+" : "") : raw;
 
   return (
     <div className={styles.field}>
@@ -76,7 +84,7 @@ export function TextInput({
           className={styles.input}
           value={value}
           type={type}
-          onChange={(event) => onChange(event.target.value)}
+          onChange={(event) => onChange(clean(event.target.value))}
           {...rest}
         />
       </div>

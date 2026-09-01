@@ -139,8 +139,8 @@ function ApplicantStep({ t, language, locked, form, setField, countryOptions }: 
       <SelectInput label={t.nationality_id} value={form.nationality_id} onChange={(v) => setField("nationality_id", v)} options={countryOptions} placeholder={t.selectPlaceholder} />
       <SelectInput label={t.marital_status} value={form.marital_status} onChange={(v) => setField("marital_status", v)} options={localise(optionSets.maritalStatus, language)} placeholder={t.selectPlaceholder} />
       <TextInput label={t.spouse_name} value={form.spouse_name} onChange={(v) => setField("spouse_name", v)} />
-      <TextInput label={t.mobile_personal} value={form.mobile_personal} onChange={(v) => setField("mobile_personal", v)} inputMode="tel" />
-      <TextInput label={t.mobile_additional} value={form.mobile_additional} onChange={(v) => setField("mobile_additional", v)} inputMode="tel" />
+      <TextInput label={t.mobile_personal} value={form.mobile_personal} onChange={(v) => setField("mobile_personal", v)} inputMode="tel" digitsOnly />
+      <TextInput label={t.mobile_additional} value={form.mobile_additional} onChange={(v) => setField("mobile_additional", v)} inputMode="tel" digitsOnly />
       <TextInput label={t.email} type="email" value={form.email} onChange={(v) => setField("email", v)} />
       <SelectInput label={t.education_level} value={form.education_level} onChange={(v) => setField("education_level", v)} options={localise(optionSets.educationLevel, language)} placeholder={t.selectPlaceholder} />
       <TextInput label={t.education_other} value={form.education_other} onChange={(v) => setField("education_other", v)} />

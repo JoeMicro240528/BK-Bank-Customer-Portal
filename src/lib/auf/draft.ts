@@ -22,6 +22,12 @@ export function toFormState(request: AUFRequestRead): FormState {
     return typeof value === "number" ? String(value) : "";
   };
 
+  const lines = (value: unknown): Record<string, unknown>[] =>
+    Array.isArray(value) ? (value as Record<string, unknown>[]) : [];
+
+  const str = (value: unknown) => (typeof value === "string" ? value : "");
+  const num = (value: unknown) => (typeof value === "number" ? String(value) : "");
+
   return {
     ...base,
     external_ref: request.external_ref || "",
@@ -99,6 +105,35 @@ export function toFormState(request: AUFRequestRead): FormState {
     fatca_stay_reason_specify: text("fatca_stay_reason_specify"),
 
     declaration_accepted: flag("declaration_accepted"),
+
+    // Restored from the saved request. Without these the primary national ID
+    // is lost on resume and the API rejects the next save.
+    identity_lines: lines(source.identity_lines).map((line) => ({
+      id_type: str(line.id_type) || "national_id",
+      id_number: str(line.id_number),
+      id_type_other: str(line.id_type_other),
+      issuance_date: str(line.issuance_date),
+      expiry_date: str(line.expiry_date),
+      nationality_id: num(line.nationality_id),
+      is_primary: line.is_primary === true,
+    })),
+
+    income_source_lines: lines(source.income_source_lines).map((line) => ({
+      source_type: str(line.source_type),
+      source_type_other: str(line.source_type_other),
+      description: str(line.description),
+      amount: num(line.amount),
+    })),
+
+    minor_lines: lines(source.minor_lines).map((line) => ({
+      minor_name: str(line.minor_name),
+      minor_dob: str(line.minor_dob),
+      minor_id_type: str(line.minor_id_type),
+      minor_id_number: str(line.minor_id_number),
+      guardian_cif: str(line.guardian_cif),
+      guardian_account_no: str(line.guardian_account_no),
+      annual_income_amount: num(line.annual_income_amount),
+    })),
     selected_accounts: (request.selected_accounts || []).map((account) => ({
       bank_id: account.bank_id,
       account_number: account.account_number,

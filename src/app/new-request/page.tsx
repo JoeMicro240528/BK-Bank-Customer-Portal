@@ -50,6 +50,27 @@ export default function NewRequestPage() {
   const user = session?.user;
   const ownerId = user?.national_id;
 
+  // The API rejects any save without a primary national ID, so guarantee one
+  // even if a restored draft came back without its identity lines.
+  const withIdentity = (state: FormState): FormState =>
+    state.identity_lines.some((line) => line.is_primary && line.id_number.trim())
+      ? state
+      : {
+          ...state,
+          identity_lines: [
+            {
+              id_type: "national_id",
+              id_number: ownerId || "",
+              id_type_other: "",
+              issuance_date: "",
+              expiry_date: "",
+              nationality_id: "",
+              is_primary: true,
+            },
+            ...state.identity_lines.filter((line) => line.id_number.trim()),
+          ],
+        };
+
   /** Seeds the form from the session and the chosen accounts, then hands over. */
   const startForm = (accounts: AddedAccount[]) => {
     if (!ownerId) {
@@ -103,7 +124,7 @@ export default function NewRequestPage() {
           language={language}
           ownerId={ownerId}
           externalRef={formState ? undefined : draft?.externalRef}
-          initialState={formState ?? draft?.state}
+          initialState={withIdentity(formState ?? draft!.state)}
           bankNames={Object.fromEntries(banks.map((b) => [b.id, b.name]))}
           countryOptions={countries}
           locked={{
