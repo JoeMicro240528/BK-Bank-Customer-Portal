@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { frontendApi, formatApiError } from "@/lib/api";
+import { frontendApi, errorMessage } from "@/lib/api";
 import { branchesForBank } from "@/components/wizard/banks";
 import type { BankOption } from "@/components/wizard/types";
 
@@ -36,7 +36,7 @@ export function useBanks(language: Language) {
       })
       .catch((caught) => {
         if (cancelled) return;
-        setError(formatApiError(caught));
+        setError(errorMessage(caught));
         setBanks([]);
       })
       .finally(() => {

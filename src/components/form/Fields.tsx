@@ -1,10 +1,46 @@
 "use client";
 
-import { ChevronDown, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Lock, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 import styles from "./Fields.module.css";
 
 export type Option = { value: string; label: string };
+
+/**
+ * A value that came from SudaPass. Shown but not editable -- identity data is
+ * owned by SudaPass, so it is corrected there rather than here.
+ */
+export function ReadOnlyField({
+  label,
+  value,
+  emptyText,
+  sourceNote,
+}: {
+  label: string;
+  value: string;
+  emptyText: string;
+  sourceNote?: string;
+}) {
+  return (
+    <div className={styles.field}>
+      <label className={styles.label}>{label}</label>
+      <div className={styles.readOnly}>
+        <span className={`${styles.readOnlyValue} ${value ? "" : styles.readOnlyEmpty}`}>
+          {value || emptyText}
+        </span>
+        <span className={styles.lock} title={sourceNote}>
+          <Lock aria-hidden="true" size={14} />
+        </span>
+      </div>
+      {sourceNote && (
+        <span className={styles.sourceNote}>
+          <ShieldCheck aria-hidden="true" size={12} />
+          {sourceNote}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export function FieldGrid({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return <div className={`${styles.grid} ${wide ? styles.gridWide : ""}`}>{children}</div>;

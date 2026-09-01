@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { frontendApi, formatApiError } from "@/lib/api";
+import { frontendApi, errorMessage } from "@/lib/api";
 import { toRequestSummary } from "@/lib/requests";
 import type { RequestSummary } from "@/components/home/types";
 
@@ -35,7 +35,7 @@ export function useRequests(ownerId: string | undefined, language: Language) {
       })
       .catch((caught) => {
         if (cancelled) return;
-        setError(formatApiError(caught));
+        setError(errorMessage(caught));
         setRequests([]);
       })
       .finally(() => {

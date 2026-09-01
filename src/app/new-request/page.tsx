@@ -74,7 +74,7 @@ export default function NewRequestPage() {
         bank_id: Number(account.bankId),
         account_number: account.accountNumber,
       })),
-    } as FormState);
+    });
   };
 
   return (
@@ -97,6 +97,16 @@ export default function NewRequestPage() {
           language={language}
           ownerId={ownerId}
           initialState={formState}
+          bankNames={Object.fromEntries(banks.map((b) => [b.id, b.name]))}
+          locked={{
+            name: user?.name,
+            nationalId: ownerId,
+            birthDate: user?.birthDate,
+            gender: user?.gender,
+            nationality: user?.nationality,
+            email: user?.email,
+            phone: user?.phone_number,
+          }}
           onSubmitted={(ref) => router.push(`/requests/${encodeURIComponent(ref)}`)}
         />
       ) : (

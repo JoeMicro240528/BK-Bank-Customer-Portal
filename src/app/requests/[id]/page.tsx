@@ -10,7 +10,7 @@ import { dashboardCopy } from "@/components/dashboard/copy";
 import type { Language } from "@/components/dashboard/types";
 import RequestDetails from "@/components/request/RequestDetails";
 import type { RequestDetailsData } from "@/components/request/types";
-import { frontendApi, formatApiError } from "@/lib/api";
+import { frontendApi, errorMessage } from "@/lib/api";
 import { toRequestDetails } from "@/lib/requestDetails";
 
 const SUPPORT_PHONE = "+249 123 456 789";
@@ -47,7 +47,7 @@ export default function RequestDetailsPage() {
       })
       .catch((caught) => {
         if (!cancelled) {
-          setError(formatApiError(caught));
+          setError(errorMessage(caught));
           setRequest(null);
         }
       })

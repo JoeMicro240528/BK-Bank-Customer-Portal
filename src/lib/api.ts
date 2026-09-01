@@ -150,6 +150,23 @@ export function formatApiError(detail: unknown): string {
   return "The request failed. Please review the form and try again.";
 }
 
+/**
+ * Message for a caught error. ApiClientError has already formatted the API's
+ * own detail into `message`; passing the error object back through
+ * formatApiError loses it, since that expects the raw detail payload.
+ */
+export function errorMessage(caught: unknown): string {
+  if (caught instanceof ApiClientError) {
+    return caught.message;
+  }
+
+  if (caught instanceof Error) {
+    return caught.message;
+  }
+
+  return formatApiError(caught);
+}
+
 function parseJson(text: string): unknown {
   try {
     return JSON.parse(text);

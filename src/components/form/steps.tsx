@@ -6,6 +6,7 @@ import {
   CheckboxInput,
   FieldGrid,
   RepeatedGroup,
+  ReadOnlyField,
   SelectInput,
   TextInput,
   type Option,
@@ -18,6 +19,17 @@ import {
   type FormState,
 } from "@/lib/auf/form";
 import type { AufCopy } from "@/lib/auf/copy";
+
+/** Identity values that come from SudaPass and cannot be edited here. */
+export type LockedValues = {
+  name?: string;
+  nationalId?: string;
+  birthDate?: string;
+  gender?: string;
+  nationality?: string;
+  email?: string;
+  phone?: string;
+};
 
 export type StepId =
   | "applicant"
@@ -40,17 +52,40 @@ export const stepOrder: StepId[] = [
 
 type Props = {
   t: AufCopy;
+  language: "en" | "ar";
+  /** Values SudaPass owns, shown read-only. */
+  locked: LockedValues;
   form: FormState;
   setField: <K extends keyof FormState>(key: K, value: FormState[K]) => void;
   setForm: (updater: (previous: FormState) => FormState) => void;
   countryOptions: Option[];
 };
 
-/** Option lists carry English labels from the API contract; translate for display. */
-function localise(options: { value: string; label: string }[], t: AufCopy): Option[] {
+/**
+ * Option lists carry English labels from the API contract. Arabic wording lives
+ * here because the shared copy file only covers field labels, not option values.
+ */
+const optionLabelsAr: Record<string, string> = {
+  male: "ذكر", female: "أنثى",
+  single: "أعزب", married: "متزوج", divorced: "مطلق", widowed: "أرمل", other: "أخرى",
+  elementary: "ابتدائي", secondary: "ثانوي", diploma: "دبلوم", graduate: "جامعي",
+  post_graduate: "دراسات عليا",
+  national_id: "الرقم الوطني", passport: "جواز سفر", birth_cert: "شهادة ميلاد",
+  government: "حكومي", private: "خاص",
+  self_employed: "أعمال حرة", salaried: "موظف", student: "طالب", retired: "متقاعد",
+  housewife: "ربة منزل",
+  salary: "راتب", business: "أعمال", pension: "معاش", rental: "إيجارات",
+  investment: "استثمارات",
+  athlete: "رياضي", teacher: "معلم", diplomat: "دبلوماسي",
+};
+
+function localise(
+  options: { value: string; label: string }[],
+  language: "en" | "ar",
+): Option[] {
   return options.map((option) => ({
     value: option.value,
-    label: (t as unknown as Record<string, string>)[option.value] || option.label,
+    label: language === "ar" ? optionLabelsAr[option.value] || option.label : option.label,
   }));
 }
 
@@ -73,28 +108,47 @@ export function StepContent({ step, ...props }: Props & { step: StepId }) {
   }
 }
 
-function ApplicantStep({ t, form, setField, countryOptions }: Props) {
+function ApplicantStep({ t, language, locked, form, setField, countryOptions }: Props) {
+  const note = language === "ar" ? "من سوداباس" : "From SudaPass";
+  const empty = language === "ar" ? "غير متوفر" : "Not provided";
+
   return (
     <FieldGrid>
-      <TextInput label={t.name_arabic} value={form.name_arabic} onChange={(v) => setField("name_arabic", v)} required />
-      <TextInput label={t.name_english} value={form.name_english} onChange={(v) => setField("name_english", v)} required />
+      <ReadOnlyField label={t.name_arabic} value={form.name_arabic} emptyText={empty} sourceNote={note} />
+      <ReadOnlyField label={t.name_english} value={form.name_english} emptyText={empty} sourceNote={note} />
+      <ReadOnlyField
+        label={t.date_of_birth}
+        value={locked.birthDate || form.date_of_birth}
+        emptyText={empty}
+        sourceNote={note}
+      />
+      <ReadOnlyField
+        label={t.gender}
+        value={
+          form.gender
+            ? localise(optionSets.gender, language).find((o) => o.value === form.gender)?.label ||
+              form.gender
+            : ""
+        }
+        emptyText={empty}
+        sourceNote={note}
+      />
+
       <TextInput label={t.mother_maiden_name} value={form.mother_maiden_name} onChange={(v) => setField("mother_maiden_name", v)} />
-      <SelectInput label={t.gender} value={form.gender} onChange={(v) => setField("gender", v)} options={localise(optionSets.gender, t)} placeholder={t.selectPlaceholder} />
-      <TextInput label={t.date_of_birth} type="date" value={form.date_of_birth} onChange={(v) => setField("date_of_birth", v)} />
       <SelectInput label={t.birth_country_id} value={form.birth_country_id} onChange={(v) => setField("birth_country_id", v)} options={countryOptions} placeholder={t.selectPlaceholder} />
       <SelectInput label={t.nationality_id} value={form.nationality_id} onChange={(v) => setField("nationality_id", v)} options={countryOptions} placeholder={t.selectPlaceholder} />
-      <SelectInput label={t.marital_status} value={form.marital_status} onChange={(v) => setField("marital_status", v)} options={localise(optionSets.maritalStatus, t)} placeholder={t.selectPlaceholder} />
+      <SelectInput label={t.marital_status} value={form.marital_status} onChange={(v) => setField("marital_status", v)} options={localise(optionSets.maritalStatus, language)} placeholder={t.selectPlaceholder} />
       <TextInput label={t.spouse_name} value={form.spouse_name} onChange={(v) => setField("spouse_name", v)} />
       <TextInput label={t.mobile_personal} value={form.mobile_personal} onChange={(v) => setField("mobile_personal", v)} inputMode="tel" />
       <TextInput label={t.mobile_additional} value={form.mobile_additional} onChange={(v) => setField("mobile_additional", v)} inputMode="tel" />
       <TextInput label={t.email} type="email" value={form.email} onChange={(v) => setField("email", v)} />
-      <SelectInput label={t.education_level} value={form.education_level} onChange={(v) => setField("education_level", v)} options={localise(optionSets.educationLevel, t)} placeholder={t.selectPlaceholder} />
+      <SelectInput label={t.education_level} value={form.education_level} onChange={(v) => setField("education_level", v)} options={localise(optionSets.educationLevel, language)} placeholder={t.selectPlaceholder} />
       <TextInput label={t.education_other} value={form.education_other} onChange={(v) => setField("education_other", v)} />
     </FieldGrid>
   );
 }
 
-function IdentityStep({ t, form, setForm, countryOptions }: Props) {
+function IdentityStep({ t, language, locked, form, setForm, countryOptions }: Props) {
   const update = (index: number, patch: Partial<FormState["identity_lines"][number]>) =>
     setForm((previous) => ({
       ...previous,
@@ -114,8 +168,27 @@ function IdentityStep({ t, form, setForm, countryOptions }: Props) {
           }
         >
           <FieldGrid>
-            <SelectInput label={t.id_type} value={line.id_type} onChange={(v) => update(index, { id_type: v })} options={localise(optionSets.identityType, t)} placeholder={t.selectPlaceholder} required />
-            <TextInput label={t.id_number} value={line.id_number} onChange={(v) => update(index, { id_number: v })} required />
+            {line.is_primary && locked.nationalId ? (
+              <>
+                <ReadOnlyField
+                  label={t.id_type}
+                  value={localise(optionSets.identityType, language).find((o) => o.value === line.id_type)?.label || line.id_type}
+                  emptyText={language === "ar" ? "غير متوفر" : "Not provided"}
+                  sourceNote={language === "ar" ? "من سوداباس" : "From SudaPass"}
+                />
+                <ReadOnlyField
+                  label={t.id_number}
+                  value={line.id_number}
+                  emptyText={language === "ar" ? "غير متوفر" : "Not provided"}
+                  sourceNote={language === "ar" ? "من سوداباس" : "From SudaPass"}
+                />
+              </>
+            ) : (
+              <>
+                <SelectInput label={t.id_type} value={line.id_type} onChange={(v) => update(index, { id_type: v })} options={localise(optionSets.identityType, language)} placeholder={t.selectPlaceholder} required />
+                <TextInput label={t.id_number} value={line.id_number} onChange={(v) => update(index, { id_number: v })} required />
+              </>
+            )}
             <TextInput label={t.id_type_other} value={line.id_type_other} onChange={(v) => update(index, { id_type_other: v })} />
             <TextInput label={t.issuance_date} type="date" value={line.issuance_date} onChange={(v) => update(index, { issuance_date: v })} />
             <TextInput label={t.expiry_date} type="date" value={line.expiry_date} onChange={(v) => update(index, { expiry_date: v })} />
@@ -148,12 +221,12 @@ function ResidenceStep({ t, form, setField }: Props) {
   );
 }
 
-function WorkStep({ t, form, setField }: Props) {
+function WorkStep({ t, language, form, setField }: Props) {
   return (
     <FieldGrid>
-      <SelectInput label={t.business_sector} value={form.business_sector} onChange={(v) => setField("business_sector", v)} options={localise(optionSets.businessSector, t)} placeholder={t.selectPlaceholder} />
+      <SelectInput label={t.business_sector} value={form.business_sector} onChange={(v) => setField("business_sector", v)} options={localise(optionSets.businessSector, language)} placeholder={t.selectPlaceholder} />
       <TextInput label={t.business_sector_other} value={form.business_sector_other} onChange={(v) => setField("business_sector_other", v)} />
-      <SelectInput label={t.employment_status} value={form.employment_status} onChange={(v) => setField("employment_status", v)} options={localise(optionSets.employmentStatus, t)} placeholder={t.selectPlaceholder} />
+      <SelectInput label={t.employment_status} value={form.employment_status} onChange={(v) => setField("employment_status", v)} options={localise(optionSets.employmentStatus, language)} placeholder={t.selectPlaceholder} />
       <TextInput label={t.employment_type_specify} value={form.employment_type_specify} onChange={(v) => setField("employment_type_specify", v)} />
       <TextInput label={t.employer_name} value={form.employer_name} onChange={(v) => setField("employer_name", v)} />
       <TextInput label={t.employer_activity} value={form.employer_activity} onChange={(v) => setField("employer_activity", v)} />
@@ -164,7 +237,7 @@ function WorkStep({ t, form, setField }: Props) {
   );
 }
 
-function IncomeStep({ t, form, setField, setForm }: Props) {
+function IncomeStep({ t, language, form, setField, setForm }: Props) {
   const update = (index: number, patch: Partial<FormState["income_source_lines"][number]>) =>
     setForm((previous) => ({
       ...previous,
@@ -176,7 +249,7 @@ function IncomeStep({ t, form, setField, setForm }: Props) {
   return (
     <>
       <FieldGrid>
-        <SelectInput label={t.primary_income_source} value={form.primary_income_source} onChange={(v) => setField("primary_income_source", v)} options={localise(optionSets.primaryIncomeSource, t)} placeholder={t.selectPlaceholder} />
+        <SelectInput label={t.primary_income_source} value={form.primary_income_source} onChange={(v) => setField("primary_income_source", v)} options={localise(optionSets.primaryIncomeSource, language)} placeholder={t.selectPlaceholder} />
         <TextInput label={t.primary_income_other} value={form.primary_income_other} onChange={(v) => setField("primary_income_other", v)} />
         <TextInput label={t.income_other_sources} value={form.income_other_sources} onChange={(v) => setField("income_other_sources", v)} />
         <SelectInput label={t.monthly_income_range} value={form.monthly_income_range} onChange={(v) => setField("monthly_income_range", v)} options={optionSets.monthlyIncomeRange} placeholder={t.selectPlaceholder} />
@@ -204,7 +277,7 @@ function IncomeStep({ t, form, setField, setForm }: Props) {
           onRemove={() => setForm((p) => ({ ...p, income_source_lines: p.income_source_lines.filter((_, i) => i !== index) }))}
         >
           <FieldGrid>
-            <SelectInput label={t.source_type} value={line.source_type} onChange={(v) => update(index, { source_type: v })} options={localise(optionSets.incomeSourceType, t)} placeholder={t.selectPlaceholder} required />
+            <SelectInput label={t.source_type} value={line.source_type} onChange={(v) => update(index, { source_type: v })} options={localise(optionSets.incomeSourceType, language)} placeholder={t.selectPlaceholder} required />
             <TextInput label={t.source_type_other} value={line.source_type_other} onChange={(v) => update(index, { source_type_other: v })} />
             <TextInput label={t.description} value={line.description} onChange={(v) => update(index, { description: v })} />
             <TextInput label={t.amount} value={line.amount} onChange={(v) => update(index, { amount: v })} inputMode="decimal" />
@@ -216,7 +289,7 @@ function IncomeStep({ t, form, setField, setForm }: Props) {
   );
 }
 
-function ComplianceStep({ t, form, setField }: Props) {
+function ComplianceStep({ t, language, form, setField }: Props) {
   return (
     <>
       <h4 style={{ margin: "0 0 10px", fontSize: 14 }}>PEP</h4>
@@ -248,7 +321,7 @@ function ComplianceStep({ t, form, setField }: Props) {
       <div style={{ marginTop: 12 }}>
         <FieldGrid>
           <TextInput label={t.fatca_other_citizenship_specify} value={form.fatca_other_citizenship_specify} onChange={(v) => setField("fatca_other_citizenship_specify", v)} />
-          <SelectInput label={t.fatca_stay_reason} value={form.fatca_stay_reason} onChange={(v) => setField("fatca_stay_reason", v)} options={localise(optionSets.fatcaStayReason, t)} placeholder={t.selectPlaceholder} />
+          <SelectInput label={t.fatca_stay_reason} value={form.fatca_stay_reason} onChange={(v) => setField("fatca_stay_reason", v)} options={localise(optionSets.fatcaStayReason, language)} placeholder={t.selectPlaceholder} />
           <TextInput label={t.fatca_stay_reason_specify} value={form.fatca_stay_reason_specify} onChange={(v) => setField("fatca_stay_reason_specify", v)} />
         </FieldGrid>
       </div>
@@ -256,7 +329,7 @@ function ComplianceStep({ t, form, setField }: Props) {
   );
 }
 
-function MinorsStep({ t, form, setForm }: Props) {
+function MinorsStep({ t, language, form, setForm }: Props) {
   const update = (index: number, patch: Partial<FormState["minor_lines"][number]>) =>
     setForm((previous) => ({
       ...previous,
@@ -276,7 +349,7 @@ function MinorsStep({ t, form, setForm }: Props) {
           <FieldGrid>
             <TextInput label={t.minor_name} value={line.minor_name} onChange={(v) => update(index, { minor_name: v })} required />
             <TextInput label={t.minor_dob} type="date" value={line.minor_dob} onChange={(v) => update(index, { minor_dob: v })} />
-            <SelectInput label={t.minor_id_type} value={line.minor_id_type} onChange={(v) => update(index, { minor_id_type: v })} options={localise(optionSets.minorIdType, t)} placeholder={t.selectPlaceholder} />
+            <SelectInput label={t.minor_id_type} value={line.minor_id_type} onChange={(v) => update(index, { minor_id_type: v })} options={localise(optionSets.minorIdType, language)} placeholder={t.selectPlaceholder} />
             <TextInput label={t.minor_id_number} value={line.minor_id_number} onChange={(v) => update(index, { minor_id_number: v })} />
             <TextInput label={t.guardian_cif} value={line.guardian_cif} onChange={(v) => update(index, { guardian_cif: v })} />
             <TextInput label={t.guardian_account_no} value={line.guardian_account_no} onChange={(v) => update(index, { guardian_account_no: v })} />

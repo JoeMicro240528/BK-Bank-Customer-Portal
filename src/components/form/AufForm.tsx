@@ -12,7 +12,8 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import Banner from "@/components/ui/Banner";
 import { CheckboxInput } from "./Fields";
-import { StepContent, stepOrder, type StepId } from "./steps";
+import { StepContent, stepOrder, type LockedValues, type StepId } from "./steps";
+import FormStepper from "./FormStepper";
 import styles from "./AufForm.module.css";
 import { copy } from "@/lib/auf/copy";
 import {
@@ -22,7 +23,7 @@ import {
   isCompleteIdentity,
   type FormState,
 } from "@/lib/auf/form";
-import { frontendApi, formatApiError } from "@/lib/api";
+import { frontendApi, errorMessage } from "@/lib/api";
 import type { Option } from "./Fields";
 
 type Language = "en" | "ar";
@@ -48,14 +49,20 @@ export default function AufForm({
   externalRef,
   initialState,
   countryOptions = [],
+  locked = {},
+  bankNames = {},
   onSubmitted,
 }: {
   language: Language;
   ownerId: string;
+  /** Identity values owned by SudaPass, rendered read-only. */
+  locked?: LockedValues;
   /** Existing draft to continue, if any. */
   externalRef?: string;
   initialState?: FormState;
   countryOptions?: Option[];
+  /** Bank id -> display name, for the review step. */
+  bankNames?: Record<string, string>;
   onSubmitted?: (externalRef: string) => void;
 }) {
   const t = copy[language];
@@ -85,6 +92,10 @@ export default function AufForm({
 
   /** Creates the request on first call, updates it thereafter. */
   const save = useCallback(async (): Promise<string | null> => {
+    // Without an owner there is nobody to save against -- the design-preview
+    // route renders the form this way, so navigation still works there.
+    if (!ownerId) return "preview";
+
     setSaveState("saving");
     setError("");
 
@@ -104,7 +115,7 @@ export default function AufForm({
       return ref;
     } catch (caught) {
       setSaveState("error");
-      setError(formatApiError(caught));
+      setError(errorMessage(caught));
       return null;
     }
   }, [form, language, ownerId]);
@@ -144,7 +155,7 @@ export default function AufForm({
       await frontendApi.submitRequest(ref, { language, ownerId });
       onSubmitted?.(ref);
     } catch (caught) {
-      setError(formatApiError(caught));
+      setError(errorMessage(caught));
     } finally {
       setSubmitting(false);
     }
@@ -158,8 +169,19 @@ export default function AufForm({
     ? t.reviewTitle
     : (t as unknown as Record<string, string>)[stepLabelKey[step]];
 
+  const stepLabels = [
+    ...stepOrder.map((id) => (t as unknown as Record<string, string>)[stepLabelKey[id]]),
+    t.step_review,
+  ];
+
   return (
     <section className={styles.card}>
+      <FormStepper
+        labels={stepLabels}
+        current={stepIndex}
+        onSelect={(index) => !busy && setStepIndex(index)}
+      />
+
       <div className={styles.head}>
         <h1>{title}</h1>
         <span className={styles.stepCount}>
@@ -228,6 +250,35 @@ export default function AufForm({
               </div>
             </dl>
 
+            {/* The accounts were chosen before the form began, so show them here
+                -- this is the last chance to check them before submitting. */}
+            <h3 className={styles.accountsTitle}>
+              {language === "ar" ? "الحسابات المختارة" : "Selected accounts"} (
+              {form.selected_accounts.length})
+            </h3>
+
+            {form.selected_accounts.length === 0 ? (
+              <p className={styles.accountsEmpty}>
+                {language === "ar"
+                  ? "لم يتم اختيار أي حساب."
+                  : "No accounts were selected."}
+              </p>
+            ) : (
+              <ul className={styles.accountsList}>
+                {form.selected_accounts.map((account, index) => (
+                  <li className={styles.accountRow} key={`${account.bank_id}-${index}`}>
+                    <span className={styles.accountBank}>
+                      {bankNames[String(account.bank_id)] ||
+                        `${language === "ar" ? "بنك" : "Bank"} #${account.bank_id}`}
+                    </span>
+                    <span className={styles.accountNumber} dir="ltr">
+                      {account.account_number}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
             <div className={styles.declaration}>
               <CheckboxInput
                 label={t.declaration_accepted}
@@ -240,6 +291,8 @@ export default function AufForm({
           <StepContent
             step={step}
             t={t}
+            language={language}
+            locked={locked}
             form={form}
             setField={setField}
             setForm={setForm}

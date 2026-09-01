@@ -68,6 +68,8 @@ export type FormState = {
   sponsor_business_sector: string;
   selected_bank_id: string;
   bank_account_id: string;
+  /** Bank/account pairs chosen before the form; sent with every save. */
+  selected_accounts: { bank_id: number; account_number: string }[];
   cif_number: string;
   business_sector: string;
   business_sector_other: string;
@@ -226,6 +228,7 @@ export function initialForm(): FormState {
     sponsor_business_sector: "",
     selected_bank_id: "",
     bank_account_id: "",
+    selected_accounts: [],
     cif_number: "",
     business_sector: "",
     business_sector_other: "",
@@ -331,6 +334,7 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     block: optionalText(form.block),
     house_no: optionalText(form.house_no),
     bank_account_id: parseOptionalInt(form.bank_account_id),
+    selected_accounts: form.selected_accounts,
     cif_number: optionalText(form.cif_number),
     business_sector: optionalText(form.business_sector),
     business_sector_other: optionalText(form.business_sector_other),
