@@ -1,0 +1,38 @@
+.actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  color: var(--brand-strong, #1c2d55);
+  cursor: pointer;
+}
+
+.action:hover {
+  background: var(--brand-soft, #e8edf7);
+}
+
+.action svg {
+  stroke: currentColor;
+}
+
+.actionPrimary {
+  border-color: transparent;
+  background: var(--brand, #283f76);
+  color: #fff;
+}
+
+.actionPrimary:hover {
+  filter: brightness(1.1);
+  background: var(--brand, #283f76);
+}

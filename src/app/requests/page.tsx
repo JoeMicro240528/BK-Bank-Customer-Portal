@@ -49,7 +49,8 @@ export default function RequestsPage() {
         language={language}
         requests={requests}
         onNewRequest={() => router.push("/new-request")}
-        onViewRequest={(id) => router.push(`/requests/${id}`)}
+        onViewRequest={(id) => router.push(`/requests/${encodeURIComponent(id)}`)}
+        onContinueRequest={(id) => router.push(`/new-request?ref=${encodeURIComponent(id)}`)}
       />
     </DashboardLayout>
   );

@@ -59,6 +59,7 @@ export default function DashboardPage() {
         requests={requests}
         onViewAll={() => router.push("/requests")}
         onViewRequest={(id) => router.push(`/requests/${encodeURIComponent(id)}`)}
+        onContinueRequest={(id) => router.push(`/new-request?ref=${encodeURIComponent(id)}`)}
       />
     </DashboardLayout>
   );

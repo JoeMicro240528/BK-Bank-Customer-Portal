@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, FileText, Plus } from "lucide-react";
+import { FileText, Plus } from "lucide-react";
 import { useState } from "react";
 import BankNames from "@/components/home/BankNames";
+import RowActions from "@/components/home/RowActions";
 import StatusPill from "@/components/request/StatusPill";
 import type { BankStatus } from "@/components/request/types";
 import type { RequestSummary } from "@/components/home/types";
@@ -29,6 +30,7 @@ const copy = {
     colStatus: "الحالة",
     colAction: "الإجراء",
     viewDetails: "عرض التفاصيل",
+    continueRequest: "متابعة استكمال الطلب",
     banksUnit: "بنوك",
     emptyTitle: "لا توجد طلبات",
     emptyBody: "لم تقم بإنشاء أي طلب تحديث بعد.",
@@ -58,6 +60,7 @@ const copy = {
     colStatus: "Status",
     colAction: "Action",
     viewDetails: "View details",
+    continueRequest: "Continue this request",
     banksUnit: "banks",
     emptyTitle: "No requests",
     emptyBody: "You have not created any update request yet.",
@@ -79,15 +82,16 @@ export default function RequestsList({
   requests,
   onNewRequest,
   onViewRequest,
+  onContinueRequest,
 }: {
   language: Language;
   requests: RequestSummary[];
   onNewRequest?: () => void;
   onViewRequest?: (id: string) => void;
+  onContinueRequest?: (id: string) => void;
 }) {
   const [filter, setFilter] = useState<Filter>("all");
   const t = copy[language];
-  const Arrow = language === "ar" ? ArrowLeft : ArrowRight;
 
   const visible =
     filter === "all" ? requests : requests.filter((request) => request.status === filter);
@@ -166,14 +170,13 @@ export default function RequestsList({
                       <StatusPill status={request.status} label={t.status[request.status]} />
                     </td>
                     <td>
-                      <button
-                        type="button"
-                        className={styles.detailsButton}
-                        onClick={() => onViewRequest?.(request.id)}
-                      >
-                        {t.viewDetails}
-                        <Arrow aria-hidden="true" size={14} />
-                      </button>
+                      <RowActions
+                        request={request}
+                        viewLabel={t.viewDetails}
+                        continueLabel={t.continueRequest}
+                        onView={(id) => onViewRequest?.(id)}
+                        onContinue={(id) => onContinueRequest?.(id)}
+                      />
                     </td>
                   </tr>
                 ))}

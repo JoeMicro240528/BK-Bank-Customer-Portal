@@ -2,6 +2,8 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { useNotifications } from "@/lib/useNotifications";
 import DirectionSync from "@/components/DirectionSync";
 import Sidebar from "./Sidebar";
 import TopBar from "./TopBar";
@@ -34,7 +36,13 @@ export default function DashboardLayout({
   children: ReactNode;
 }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  // The bell's own count, so every screen shows unread messages without each
+  // page having to fetch them.
+  const { items: notifications } = useNotifications(session?.user?.national_id, language);
+  const unread = notifications.filter((item) => !item.read).length;
   const t = dashboardCopy[language];
   const dir = language === "ar" ? "rtl" : "ltr";
 
@@ -90,7 +98,7 @@ export default function DashboardLayout({
           user={user}
           crumbs={crumbs}
           language={language}
-          notificationCount={notificationCount}
+          notificationCount={notificationCount ?? unread}
           onLanguageChange={onLanguageChange}
           onMenuClick={() => setMenuOpen((open) => !open)}
           onNotificationsClick={() => handleNavigate("notifications")}

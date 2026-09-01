@@ -40,6 +40,7 @@ export default function DashboardPreview() {
         stats={previewStats}
         requests={previewRequests}
         onViewRequest={() => router.push("/preview/request-details")}
+        onContinueRequest={() => router.push("/preview/form")}
         onViewAll={() => router.push("/preview/request-details")}
       />
     </DashboardLayout>

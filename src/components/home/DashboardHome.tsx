@@ -3,8 +3,6 @@
 import {
   AlertCircle,
   FileEdit,
-  ArrowLeft,
-  ArrowRight,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
@@ -14,6 +12,7 @@ import {
 import StatusPill from "@/components/request/StatusPill";
 import { homeCopy } from "./copy";
 import BankNames from "./BankNames";
+import RowActions from "./RowActions";
 import styles from "./DashboardHome.module.css";
 import type { DashboardStats, Language, RequestSummary } from "./types";
 
@@ -22,16 +21,17 @@ export default function DashboardHome({
   stats,
   requests,
   onViewRequest,
+  onContinueRequest,
   onViewAll,
 }: {
   language: Language;
   stats: DashboardStats;
   requests: RequestSummary[];
   onViewRequest: (id: string) => void;
+  onContinueRequest: (id: string) => void;
   onViewAll: () => void;
 }) {
   const t = homeCopy[language];
-  const Arrow = language === "ar" ? ArrowLeft : ArrowRight;
   const Chevron = language === "ar" ? ChevronLeft : ChevronRight;
 
   const tiles = [
@@ -105,14 +105,13 @@ export default function DashboardHome({
                         <StatusPill status={request.status} label={t.status[request.status]} />
                       </td>
                       <td>
-                        <button
-                          type="button"
-                          className={styles.detailsButton}
-                          onClick={() => onViewRequest?.(request.id)}
-                        >
-                          {t.viewDetails}
-                          <Arrow aria-hidden="true" size={14} />
-                        </button>
+                        <RowActions
+                          request={request}
+                          viewLabel={t.viewDetails}
+                          continueLabel={t.continueRequest}
+                          onView={onViewRequest}
+                          onContinue={onContinueRequest}
+                        />
                       </td>
                     </tr>
                   ))}

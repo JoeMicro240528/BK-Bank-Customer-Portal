@@ -39,6 +39,7 @@ export type HomeCopy = {
   colStatus: string;
   colAction: string;
   viewDetails: string;
+  continueRequest: string;
   banksUnit: string;
   emptyTitle: string;
   emptyBody: string;
