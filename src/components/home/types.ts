@@ -7,11 +7,14 @@ export type RequestSummary = {
   reference: string;
   date: string;
   bankCount: number;
+  /** Names of the banks on the request, when known. */
+  bankNames: string[];
   status: BankStatus;
 };
 
 export type DashboardStats = {
   total: number;
+  drafts: number;
   underReview: number;
   approved: number;
   actionRequired: number;
@@ -23,6 +26,7 @@ export type HomeCopy = {
   newRequest: string;
 
   statTotal: string;
+  statDrafts: string;
   statUnderReview: string;
   statApproved: string;
   statActionRequired: string;

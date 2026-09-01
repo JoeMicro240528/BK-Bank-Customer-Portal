@@ -2,6 +2,7 @@ import type {
   AUFRequestCreate,
   AUFRequestRead,
   AUFRequestUpdate,
+  AUFRequestSummary,
   MasterDataBank,
   MasterDataCity,
   MasterDataCountry,
@@ -82,7 +83,7 @@ export const frontendApi = {
     requestJson<MasterDataBank[]>("/master-data/banks", { method: "GET" }, options),
 
   listRequests: (options: RequestOptions) =>
-    requestJson<AUFRequestRead[]>("/auf-requests", { method: "GET" }, options),
+    requestJson<AUFRequestSummary[]>("/auf-requests", { method: "GET" }, options),
 
   createRequest: (payload: AUFRequestCreate, options: RequestOptions) =>
     requestJson<AUFRequestRead>(

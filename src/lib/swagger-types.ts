@@ -124,6 +124,27 @@ export interface BankUpdateFeedbackStatus {
   processed_at?: ISODateTime | null;
 }
 
+/**
+ * What GET /auf-requests returns -- a lighter model than AUFRequestRead.
+ * Notably it carries no selected_accounts, so bank names for a request that
+ * has no feedback yet (a draft) must come from the detail endpoint.
+ */
+export interface AUFRequestSummary {
+  reference: string;
+  external_ref?: string | null;
+  info_type: string;
+  source: string;
+  state: string;
+  name_arabic: string;
+  name_english: string;
+  cif_number?: string | null;
+  verification_state: string;
+  verification_message?: string | null;
+  verified_on?: string | null;
+  feedback: BankUpdateFeedbackStatus[];
+  created: string;
+}
+
 export interface AUFRequestRead {
   reference: string;
   external_ref?: string | null;

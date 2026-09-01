@@ -7,6 +7,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
     newRequest: "طلب تحديث جديد",
 
     statTotal: "إجمالي الطلبات",
+    statDrafts: "مسودات",
     statUnderReview: "قيد المراجعة",
     statApproved: "معتمدة",
     statActionRequired: "تحتاج إجراء",
@@ -33,6 +34,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
     contactSupport: "تواصل مع الدعم",
 
     status: {
+      draft: "مسودة",
       approved: "معتمد",
       under_review: "قيد المراجعة",
       action_required: "يحتاج إجراء",
@@ -45,6 +47,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
     newRequest: "New update request",
 
     statTotal: "Total requests",
+    statDrafts: "Drafts",
     statUnderReview: "Under review",
     statApproved: "Approved",
     statActionRequired: "Action required",
@@ -71,6 +74,7 @@ export const homeCopy: Record<Language, HomeCopy> = {
     contactSupport: "Contact support",
 
     status: {
+      draft: "Draft",
       approved: "Approved",
       under_review: "Under review",
       action_required: "Action required",

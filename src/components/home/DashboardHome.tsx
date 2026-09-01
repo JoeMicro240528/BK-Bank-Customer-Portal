@@ -2,6 +2,7 @@
 
 import {
   AlertCircle,
+  FileEdit,
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
@@ -17,6 +18,7 @@ import {
 } from "lucide-react";
 import StatusPill from "@/components/request/StatusPill";
 import { homeCopy } from "./copy";
+import BankNames from "./BankNames";
 import styles from "./DashboardHome.module.css";
 import type { DashboardStats, Language, RequestSummary } from "./types";
 
@@ -47,6 +49,7 @@ export default function DashboardHome({
 
   const tiles = [
     { key: "total", icon: FileText, value: stats.total, label: t.statTotal, cls: styles.tileTotal },
+    { key: "drafts", icon: FileEdit, value: stats.drafts, label: t.statDrafts, cls: styles.tileDraft },
     { key: "review", icon: Clock, value: stats.underReview, label: t.statUnderReview, cls: styles.tileReview },
     { key: "approved", icon: CheckCircle2, value: stats.approved, label: t.statApproved, cls: styles.tileApproved },
     { key: "action", icon: AlertCircle, value: stats.actionRequired, label: t.statActionRequired, cls: styles.tileAction },
@@ -127,9 +130,7 @@ export default function DashboardHome({
                       </td>
                       <td>{request.date}</td>
                       <td>
-                        {/* The list endpoint omits selected_accounts, so a count of 0
-                            means unknown rather than none. */}
-                        {request.bankCount > 0 ? `${request.bankCount} ${t.banksUnit}` : "—"}
+                        <BankNames request={request} banksUnit={t.banksUnit} />
                       </td>
                       <td>
                         <StatusPill status={request.status} label={t.status[request.status]} />

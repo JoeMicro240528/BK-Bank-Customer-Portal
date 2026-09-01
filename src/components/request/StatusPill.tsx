@@ -1,9 +1,10 @@
-import { AlertCircle, CheckCircle2, Clock } from "lucide-react";
+import { AlertCircle, CheckCircle2, Clock, FileEdit } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import styles from "./StatusPill.module.css";
 import type { BankStatus } from "./types";
 
 const icons: Record<BankStatus, LucideIcon> = {
+  draft: FileEdit,
   approved: CheckCircle2,
   under_review: Clock,
   action_required: AlertCircle,

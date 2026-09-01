@@ -1,7 +1,7 @@
 export type Language = "en" | "ar";
 
 /** Status of a single bank's review of the update request. */
-export type BankStatus = "approved" | "under_review" | "action_required";
+export type BankStatus = "draft" | "approved" | "under_review" | "action_required";
 
 /** State of one node in a progress timeline. */
 export type StepState = "done" | "current" | "pending" | "blocked";

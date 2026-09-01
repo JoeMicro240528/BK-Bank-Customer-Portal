@@ -2,6 +2,7 @@
 
 import { ArrowLeft, ArrowRight, FileText, Plus } from "lucide-react";
 import { useState } from "react";
+import BankNames from "@/components/home/BankNames";
 import StatusPill from "@/components/request/StatusPill";
 import type { BankStatus } from "@/components/request/types";
 import type { RequestSummary } from "@/components/home/types";
@@ -17,6 +18,7 @@ const copy = {
     newRequest: "طلب جديد",
     filters: {
       all: "الكل",
+      draft: "مسودة",
       under_review: "قيد المراجعة",
       approved: "معتمدة",
       action_required: "تحتاج إجراء",
@@ -33,6 +35,7 @@ const copy = {
     emptyFilteredTitle: "لا توجد طلبات بهذه الحالة",
     emptyFilteredBody: "جرّب اختيار حالة أخرى.",
     status: {
+      draft: "مسودة",
       approved: "معتمد",
       under_review: "قيد المراجعة",
       action_required: "يحتاج إجراء",
@@ -44,6 +47,7 @@ const copy = {
     newRequest: "New request",
     filters: {
       all: "All",
+      draft: "Draft",
       under_review: "Under review",
       approved: "Approved",
       action_required: "Action required",
@@ -60,6 +64,7 @@ const copy = {
     emptyFilteredTitle: "No requests with this status",
     emptyFilteredBody: "Try selecting a different status.",
     status: {
+      draft: "Draft",
       approved: "Approved",
       under_review: "Under review",
       action_required: "Action required",
@@ -67,7 +72,7 @@ const copy = {
   },
 } as const;
 
-const filterOrder: Filter[] = ["all", "under_review", "approved", "action_required"];
+const filterOrder: Filter[] = ["all", "draft", "under_review", "approved", "action_required"];
 
 export default function RequestsList({
   language,
@@ -155,9 +160,7 @@ export default function RequestsList({
                     </td>
                     <td>{request.date}</td>
                     <td>
-                      {/* The list endpoint omits selected_accounts, so a count of 0
-                          means unknown rather than none. */}
-                      {request.bankCount > 0 ? `${request.bankCount} ${t.banksUnit}` : "—"}
+                      <BankNames request={request} banksUnit={t.banksUnit} />
                     </td>
                     <td>
                       <StatusPill status={request.status} label={t.status[request.status]} />

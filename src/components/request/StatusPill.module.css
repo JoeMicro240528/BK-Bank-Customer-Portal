@@ -28,3 +28,9 @@
   background: #ffe4e6;
   color: #be123c;
 }
+
+.draft {
+  background: var(--surface-muted, #f8fafc);
+  color: var(--muted, #64748b);
+  border: 1px solid var(--line-soft, #eef2f7);
+}

@@ -31,6 +31,7 @@ export const requestCopy: Record<Language, RequestCopy> = {
     helpBody: "فريق الدعم متاح لمساعدتك",
     liveChat: "محادثة مباشرة",
     status: {
+      draft: "مسودة",
       approved: "معتمد",
       under_review: "قيد المراجعة",
       action_required: "يحتاج إجراء",
@@ -67,6 +68,7 @@ export const requestCopy: Record<Language, RequestCopy> = {
     helpBody: "Our support team is here to help",
     liveChat: "Live chat",
     status: {
+      draft: "Draft",
       approved: "Approved",
       under_review: "Under review",
       action_required: "Action required",

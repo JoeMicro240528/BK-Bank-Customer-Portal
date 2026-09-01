@@ -38,6 +38,7 @@ export default function DashboardPage() {
 
   const stats: DashboardStats = {
     total: requests.length,
+    drafts: requests.filter((item) => item.status === "draft").length,
     underReview: requests.filter((item) => item.status === "under_review").length,
     approved: requests.filter((item) => item.status === "approved").length,
     actionRequired: requests.filter((item) => item.status === "action_required").length,
