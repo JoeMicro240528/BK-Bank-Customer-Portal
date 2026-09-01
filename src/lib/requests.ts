@@ -34,7 +34,11 @@ export function mapRequestState(state: string | undefined): BankStatus {
  * that as "draft" claimed a submitted request was unsent.
  */
 export function mapBankState(state: string | undefined): BankStatus {
-  switch ((state || "").toLowerCase()) {
+  const value = (state || "").toLowerCase();
+
+  switch (value) {
+    // "updated" is what Odoo reports once a bank has applied the update.
+    case "updated":
     case "done":
     case "verified":
     case "approved":
@@ -44,7 +48,18 @@ export function mapBankState(state: string | undefined): BankStatus {
     case "canceled":
       return "action_required";
     // "draft" included: queued at the bank is still awaiting review.
+    case "draft":
+    case "":
+    case "pending":
+    case "in_progress":
+      return "under_review";
     default:
+      // The API types state as a free string with no documented values, so an
+      // unrecognised one silently reading as "under review" has twice shown a
+      // finished request as still in progress. Surface it instead of hiding it.
+      if (typeof console !== "undefined") {
+        console.warn(`Unrecognised bank feedback state: "${state}" -- treated as under review.`);
+      }
       return "under_review";
   }
 }
