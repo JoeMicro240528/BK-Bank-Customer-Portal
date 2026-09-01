@@ -23,9 +23,10 @@ const navIcons: Record<NavKey, LucideIcon> = {
   contact: Headphones,
 };
 
+// "newRequest" is deliberately absent: it is an action taken from the requests
+// screen, not a place, and listing both made the two entries look like rivals.
 const navOrder: NavKey[] = [
   "home",
-  "newRequest",
   "myRequests",
   "myData",
   "notifications",

@@ -66,7 +66,7 @@ export default function FormPreview() {
       onLanguageChange={setLanguage}
       user={previewUser}
       crumbs={[{ label: t.nav.home }, { label: t.nav.newRequest }]}
-      active="newRequest"
+      active="myRequests"
       badges={{ notifications: 3 }}
       notificationCount={3}
       onNavigate={(key) => {

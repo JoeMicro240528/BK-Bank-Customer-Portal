@@ -113,7 +113,7 @@ function NewRequestFlow() {
       onLanguageChange={setLanguage}
       user={{ name: user?.name || "", role: t.platformTagline, picture: user?.picture }}
       crumbs={[{ label: t.nav.home }, { label: t.nav.newRequest }]}
-      active="newRequest"
+      active="myRequests"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >
       {(error || banksError) && (
