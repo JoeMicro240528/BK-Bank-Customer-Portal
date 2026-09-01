@@ -1,0 +1,10 @@
+# Files that must never be pushed from a dev machine to a server: each
+# environment keeps its own secrets and its own AUTH_URL, and overwriting
+# them breaks the Sudapass redirect_uri.
+.git
+node_modules
+.next
+.env
+.env.local
+.env.*.local
+.env.production
