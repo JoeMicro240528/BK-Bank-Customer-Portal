@@ -29,9 +29,9 @@ export default function DashboardHome({
   language: Language;
   stats: DashboardStats;
   requests: RequestSummary[];
-  onNewRequest?: () => void;
-  onViewRequest?: (id: string) => void;
-  onViewAll?: () => void;
+  onNewRequest: () => void;
+  onViewRequest: (id: string) => void;
+  onViewAll: () => void;
 }) {
   const t = homeCopy[language];
   const Arrow = language === "ar" ? ArrowLeft : ArrowRight;
