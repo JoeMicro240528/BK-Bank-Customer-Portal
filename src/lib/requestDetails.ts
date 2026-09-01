@@ -1,6 +1,6 @@
 import type { BankReview, RequestDetailsData, TimelineStep } from "@/components/request/types";
 import type { AUFRequestRead } from "./swagger-types";
-import { mapRequestState, overallStatus } from "./requests";
+import { mapBankState, overallStatus } from "./requests";
 
 type Language = "en" | "ar";
 
@@ -58,7 +58,7 @@ const labels = {
 /** Builds the three-node timeline shown per bank from that bank's state. */
 function timelineFor(state: string, processedAt: string | null | undefined, language: Language): TimelineStep[] {
   const t = labels[language];
-  const status = mapRequestState(state);
+  const status = mapBankState(state);
   const when = processedAt ? `${formatDateTime(processedAt, language)} - ${formatTime(processedAt, language)}` : undefined;
 
   if (status === "approved") {
@@ -103,7 +103,7 @@ export function toRequestDetails(
       // The API has no branch field yet, so show a neutral placeholder.
       branch: t.mainBranch,
       accountNumber: account ? `**** ${account.account_number.slice(-4)}` : "",
-      status: mapRequestState(entry.state),
+      status: mapBankState(entry.state),
       lastUpdate: formatDateTime(entry.processed_at, language),
       lastUpdateTime: formatTime(entry.processed_at, language),
       timeline: timelineFor(entry.state, entry.processed_at, language),

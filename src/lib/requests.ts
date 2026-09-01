@@ -28,6 +28,28 @@ export function mapRequestState(state: string | undefined): BankStatus {
 }
 
 /**
+ * A bank's own processing state. Odoo reuses the word "draft" here, but it
+ * means something different than on the request: the bank simply has not
+ * picked the request up yet, not that the customer never sent it. Showing
+ * that as "draft" claimed a submitted request was unsent.
+ */
+export function mapBankState(state: string | undefined): BankStatus {
+  switch ((state || "").toLowerCase()) {
+    case "done":
+    case "verified":
+    case "approved":
+      return "approved";
+    case "rejected":
+    case "cancelled":
+    case "canceled":
+      return "action_required";
+    // "draft" included: queued at the bank is still awaiting review.
+    default:
+      return "under_review";
+  }
+}
+
+/**
  * The status a request should display, given its own state and the states its
  * banks reported. Odoo leaves a request "submitted" after a bank rejects it,
  * so the request-level state alone would claim a rejected request is still
@@ -37,7 +59,7 @@ export function overallStatus(state: string | undefined, bankStates: string[]): 
   const base = mapRequestState(state);
   if (base === "draft") return "draft";
 
-  const banks = bankStates.map(mapRequestState);
+  const banks = bankStates.map(mapBankState);
   if (banks.some((status) => status === "action_required")) return "action_required";
   if (banks.length > 0 && banks.every((status) => status === "approved")) return "approved";
   return base;
