@@ -14,7 +14,7 @@
   color: var(--muted, #64748b);
   font-size: 14px;
   font-weight: 600;
-  text-align: start;
+  text-align: center;
   white-space: nowrap;
 }
 
@@ -31,6 +31,7 @@
   font-size: 15px;
   color: var(--ink, #172033);
   vertical-align: middle;
+  text-align: center;
 }
 
 .rowMain td {
@@ -44,6 +45,8 @@
 .bankCell {
   display: flex;
   align-items: center;
+  /* A flex row ignores the cell's text-align, so centre it explicitly. */
+  justify-content: center;
   gap: 10px;
 }
 
