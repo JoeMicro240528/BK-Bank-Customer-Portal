@@ -20,7 +20,7 @@
 
 .head p {
   margin: 4px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted, #64748b);
 }
 
@@ -33,7 +33,7 @@
   border-radius: 10px;
   background: var(--surface, #fff);
   color: var(--brand-strong, #1c2d55);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -188,13 +188,13 @@
 
 .empty strong {
   display: block;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink, #172033);
 }
 
 .empty p {
   margin: 7px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted, #64748b);
 }
 

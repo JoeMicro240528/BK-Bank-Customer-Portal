@@ -67,7 +67,7 @@
   border-radius: 10px;
   background: transparent;
   color: var(--muted, #64748b);
-  font-size: 14px;
+  font-size: 15px;
   text-align: start;
   text-decoration: none;
   cursor: pointer;
@@ -103,7 +103,7 @@
   border-radius: 999px;
   background: #e11d48;
   color: #fff;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 

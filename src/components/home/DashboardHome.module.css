@@ -150,7 +150,7 @@
 
 .cardHead h2 {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink, #172033);
 }
 
@@ -185,7 +185,7 @@
   padding: 10px 16px;
   background: var(--surface-muted, #f8fafc);
   color: var(--muted, #64748b);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-align: start;
   white-space: nowrap;
@@ -194,7 +194,7 @@
 .table td {
   padding: 13px 16px;
   border-top: 1px solid var(--line-soft, #eef2f7);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink, #172033);
   white-space: nowrap;
 }
@@ -281,7 +281,7 @@
   border-radius: 10px;
   background: transparent;
   color: var(--ink, #172033);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-align: start;
   cursor: pointer;
@@ -313,7 +313,7 @@
   align-items: center;
   gap: 8px;
   color: var(--brand-strong, #1c2d55);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -339,7 +339,7 @@
   border-radius: 10px;
   background: var(--surface, #fff);
   color: var(--brand-strong, #1c2d55);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
 }

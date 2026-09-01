@@ -45,14 +45,14 @@
 .verifiedText time {
   display: block;
   margin-top: 2px;
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.8;
 }
 
 .stepsTitle {
   margin: 0;
   padding: 16px 16px 10px;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink, #172033);
 }
 
@@ -102,7 +102,7 @@
   background: var(--surface, #fff);
   border: 1.5px solid var(--line, #d8dee8);
   color: var(--muted, #64748b);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -120,7 +120,7 @@
 
 .stepText strong {
   display: block;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink, #172033);
 }
 
@@ -173,7 +173,7 @@
   align-items: center;
   gap: 7px;
   color: var(--brand-strong, #1c2d55);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
 }

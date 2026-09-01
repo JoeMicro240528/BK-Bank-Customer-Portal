@@ -55,7 +55,7 @@
 .card > p {
   margin: 0;
   color: var(--muted);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.65;
   max-width: 320px;
 }
@@ -68,7 +68,7 @@
 
 .trustBadges {
   color: var(--muted) !important;
-  font-size: 14px !important;
+  font-size: 15px !important;
 }
 
 .loginButton {
@@ -105,7 +105,7 @@
   background: #fff;
   color: var(--brand, #283f76);
   font-weight: 800;
-  font-size: 17px;
+  font-size: 18px;
 }
 
 .loginText {
@@ -120,7 +120,7 @@
 
 .loginText strong {
   display: block;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -140,7 +140,7 @@
   border-radius: 10px;
   background: var(--brand-soft, #e8edf7);
   color: var(--brand-strong, #1c2d55) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.55 !important;
   text-align: center;
 }
@@ -157,7 +157,7 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  font-size: 14px !important;
+  font-size: 15px !important;
 }
 
 .noAccount a {

@@ -20,7 +20,7 @@
 
 .head p {
   margin: 4px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted, #64748b);
 }
 
@@ -33,7 +33,7 @@
 
 .cardTitle {
   margin: 0 0 16px;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink, #172033);
 }
 
@@ -165,7 +165,7 @@
 
 .channelText dd {
   margin: 2px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--ink, #172033);
   overflow-wrap: anywhere;

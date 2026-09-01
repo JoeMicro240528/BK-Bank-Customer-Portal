@@ -15,7 +15,7 @@
 
 .head p {
   margin: 4px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--muted, #64748b);
 }
 
@@ -49,7 +49,7 @@
   border: 0;
   background: transparent;
   color: var(--ink, #172033);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   text-align: start;
   cursor: pointer;
@@ -95,7 +95,7 @@
 
 .answer {
   padding: 0 18px 18px 62px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.75;
   color: var(--muted, #64748b);
 }

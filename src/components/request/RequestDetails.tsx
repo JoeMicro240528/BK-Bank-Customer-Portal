@@ -79,10 +79,14 @@ export default function RequestDetails({
               )}
             </>
           ) : (
-            <p className={styles.noticeInfo}>
-              <Info aria-hidden="true" size={15} />
-              {t.submittedNotice}
-            </p>
+            // Suppressed when a bank has sent the request back -- promising the
+            // user it is on its way to approval would contradict the notice below.
+            !needsAction && (
+              <p className={styles.noticeInfo}>
+                <Info aria-hidden="true" size={15} />
+                {t.submittedNotice}
+              </p>
+            )
           )}
         </section>
 

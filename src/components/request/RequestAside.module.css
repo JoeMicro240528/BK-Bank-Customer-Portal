@@ -20,7 +20,7 @@
   border-radius: 10px;
   background: var(--surface, #fff);
   color: var(--ink, #172033);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
 }
@@ -46,7 +46,7 @@
   align-items: center;
   gap: 7px;
   margin: 0 0 14px;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink, #172033);
 }
 
@@ -67,7 +67,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .summaryRow dt {
@@ -94,7 +94,7 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--ink, #172033);
 }
 
@@ -127,7 +127,7 @@
   gap: 7px;
   margin-bottom: 12px;
   color: var(--brand-strong, #1c2d55);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   text-decoration: none;
 }
@@ -147,7 +147,7 @@
   border-radius: 10px;
   background: var(--surface, #fff);
   color: var(--brand-strong, #1c2d55);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
 }
