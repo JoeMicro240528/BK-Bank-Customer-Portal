@@ -14,6 +14,7 @@ import AufForm from "@/components/form/AufForm";
 import { initialForm, type FormState } from "@/lib/auf/form";
 import { useBanks } from "@/lib/useBanks";
 import { useDraft } from "@/lib/auf/useDraft";
+import { useCountries } from "@/lib/useCountries";
 
 export default function NewRequestPage() {
   const { data: session, status } = useSession();
@@ -27,6 +28,7 @@ export default function NewRequestPage() {
   // Hooks must run unconditionally, before the early return below.
   const { banks, error: banksError } = useBanks(language);
   const { draft, loading: draftLoading } = useDraft(session?.user?.national_id, language);
+  const { countries } = useCountries(language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -103,6 +105,7 @@ export default function NewRequestPage() {
           externalRef={formState ? undefined : draft?.externalRef}
           initialState={formState ?? draft?.state}
           bankNames={Object.fromEntries(banks.map((b) => [b.id, b.name]))}
+          countryOptions={countries}
           locked={{
             name: user?.name,
             nationalId: ownerId,

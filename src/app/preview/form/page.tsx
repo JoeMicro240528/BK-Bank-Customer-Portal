@@ -81,6 +81,11 @@ export default function FormPreview() {
         initialState={seeded}
         locked={lockedIdentity}
         bankNames={{ "3": "بنك الخرطوم", "4": "بنك فيصل الاسلامي" }}
+        countryOptions={[
+          { value: "205", label: "Sudan" },
+          { value: "65", label: "Egypt" },
+          { value: "194", label: "Saudi Arabia" },
+        ]}
       />
     </DashboardLayout>
   );
