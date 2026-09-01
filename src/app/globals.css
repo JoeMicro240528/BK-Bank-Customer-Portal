@@ -81,7 +81,7 @@ button:disabled {
 .portal-header h1 {
   max-width: 780px;
   margin: 8px 0 0;
-  font-size: 28px;
+  font-size: 31px;
   line-height: 1.18;
   letter-spacing: 0;
   overflow-wrap: break-word;
@@ -119,7 +119,7 @@ button:disabled {
   border-radius: 8px;
   background: var(--surface);
   color: var(--muted);
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .user-chip {
@@ -183,14 +183,14 @@ button:disabled {
   border-radius: 999px;
   background: var(--primary-soft);
   color: var(--primary-strong);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
 }
 
 .login-panel h2,
 .mock-users h2 {
   margin: 14px 0 8px;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1.2;
 }
 
@@ -237,7 +237,7 @@ button:disabled {
 
 .mock-users h2 {
   margin-top: 0;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .mock-user-grid {
@@ -264,7 +264,7 @@ button:disabled {
 }
 
 .mock-user-card strong {
-  font-size: 16px;
+  font-size: 17px;
 }
 
 .mock-user-card span,
@@ -310,7 +310,7 @@ button:disabled {
 .status-panel p {
   margin: 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   text-transform: uppercase;
 }
@@ -322,7 +322,7 @@ button:disabled {
   gap: 8px;
   flex-wrap: wrap;
   text-align: end;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .status-values span:last-child {
@@ -367,7 +367,7 @@ button:disabled {
   padding: 10px 12px;
   border: 1px solid;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.45;
 }
 
@@ -453,7 +453,7 @@ button:disabled {
   border-radius: 50%;
   background: var(--surface-muted);
   color: inherit;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -479,7 +479,7 @@ button:disabled {
 .form-title p {
   margin: 0 0 6px;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .form-title h2 {
@@ -487,7 +487,7 @@ button:disabled {
   align-items: center;
   gap: 10px;
   margin: 0;
-  font-size: 21px;
+  font-size: 23px;
   letter-spacing: 0;
 }
 
@@ -498,7 +498,7 @@ button:disabled {
   background: var(--surface-muted);
   color: var(--muted);
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -532,7 +532,7 @@ button:disabled {
 .field span,
 .checkbox-field span {
   color: #263449;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
   line-height: 1.35;
 }
@@ -605,7 +605,7 @@ button:disabled {
 .repeated-title h3,
 .review-panel h3 {
   margin: 0;
-  font-size: 17px;
+  font-size: 18px;
   letter-spacing: 0;
 }
 
@@ -651,7 +651,7 @@ button:disabled {
 
 .review-panel dt {
   color: var(--muted);
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .review-panel dd {
@@ -825,7 +825,7 @@ button:disabled {
 
   .step-button span:last-child {
     grid-area: label;
-    font-size: 14px;
+    font-size: 15px;
   }
 }
 
@@ -836,7 +836,7 @@ button:disabled {
   }
 
   .portal-header h1 {
-    font-size: 20px;
+    font-size: 22px;
     max-width: 100%;
   }
 

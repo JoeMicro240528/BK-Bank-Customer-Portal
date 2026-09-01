@@ -15,13 +15,13 @@
 
 .head h1 {
   margin: 0;
-  font-size: 19px;
+  font-size: 21px;
   color: var(--ink, #172033);
 }
 
 .head p {
   margin: 5px 0 0;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--muted, #64748b);
   line-height: 1.6;
 }
@@ -154,7 +154,7 @@
   align-items: center;
   justify-content: center;
   color: #fff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -216,7 +216,7 @@
   padding: 10px 12px;
   background: var(--surface-muted, #f8fafc);
   color: var(--muted, #64748b);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-align: start;
   white-space: nowrap;
@@ -225,7 +225,7 @@
 .table td {
   padding: 12px;
   border-top: 1px solid var(--line-soft, #eef2f7);
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ink, #172033);
   vertical-align: middle;
 }
@@ -246,7 +246,7 @@
   flex: none;
   border-radius: 50%;
   color: #fff;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -257,7 +257,7 @@
   border-radius: 999px;
   background: #dcfce7;
   color: #15803d;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -286,7 +286,7 @@
 .empty {
   padding: 22px;
   text-align: center;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--muted, #64748b);
 }
 

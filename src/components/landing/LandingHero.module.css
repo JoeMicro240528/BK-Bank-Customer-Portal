@@ -7,7 +7,7 @@
 
 .text h2 {
   margin: 0 0 12px;
-  font-size: 32px;
+  font-size: 35px;
   line-height: 1.25;
   color: var(--brand-strong);
 }
@@ -48,7 +48,7 @@
 }
 
 .feature strong {
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink);
 }
 

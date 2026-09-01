@@ -27,6 +27,22 @@ export function mapRequestState(state: string | undefined): BankStatus {
   }
 }
 
+/**
+ * The status a request should display, given its own state and the states its
+ * banks reported. Odoo leaves a request "submitted" after a bank rejects it,
+ * so the request-level state alone would claim a rejected request is still
+ * under review. Shared by the list and the details page so they never disagree.
+ */
+export function overallStatus(state: string | undefined, bankStates: string[]): BankStatus {
+  const base = mapRequestState(state);
+  if (base === "draft") return "draft";
+
+  const banks = bankStates.map(mapRequestState);
+  if (banks.some((status) => status === "action_required")) return "action_required";
+  if (banks.length > 0 && banks.every((status) => status === "approved")) return "approved";
+  return base;
+}
+
 function formatDate(value: string | undefined, language: Language): string {
   if (!value) return "";
 
@@ -61,6 +77,9 @@ export function toRequestSummary(request: AUFRequestSummary, language: Language)
     date: formatDate(request.created, language),
     bankCount: bankNames.length,
     bankNames,
-    status: mapRequestState(request.state),
+    status: overallStatus(
+      request.state,
+      (request.feedback || []).map((entry) => entry.state),
+    ),
   };
 }

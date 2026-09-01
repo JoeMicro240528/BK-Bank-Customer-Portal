@@ -1,11 +1,6 @@
-import type {
-  BankReview,
-  BankStatus,
-  RequestDetailsData,
-  TimelineStep,
-} from "@/components/request/types";
+import type { BankReview, RequestDetailsData, TimelineStep } from "@/components/request/types";
 import type { AUFRequestRead } from "./swagger-types";
-import { mapRequestState } from "./requests";
+import { mapRequestState, overallStatus } from "./requests";
 
 type Language = "en" | "ar";
 
@@ -117,25 +112,16 @@ export function toRequestDetails(
 
   const approved = banks.filter((bank) => bank.status === "approved").length;
   const allApproved = banks.length > 0 && approved === banks.length;
-  const needsAction = banks.some((bank) => bank.status === "action_required");
 
-  // The request-level state stays "submitted" even after a bank rejects, so
-  // reading it alone told the user their request was under review while the
-  // only bank on it had already sent it back. Bank feedback wins.
-  const requestStatus = mapRequestState(request.state);
-  const overallStatus: BankStatus =
-    requestStatus === "draft"
-      ? "draft"
-      : needsAction
-        ? "action_required"
-        : allApproved
-          ? "approved"
-          : requestStatus;
+  const status = overallStatus(
+    request.state,
+    feedback.map((entry) => entry.state),
+  );
 
   return {
     reference: request.reference,
     externalRef: request.external_ref || "",
-    status: overallStatus,
+    status,
     createdAt: `${formatDateTime(request.created, language)} - ${formatTime(request.created, language)}`,
     bankCount: new Set(accounts.map((a) => a.bank_id)).size,
     accountCount: accounts.length,

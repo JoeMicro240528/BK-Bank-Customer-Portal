@@ -55,7 +55,7 @@
   background: var(--surface, #fff);
   border: 2px solid var(--line-soft, #eef2f7);
   color: var(--muted, #64748b);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -76,7 +76,7 @@
 }
 
 .label {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--ink, #172033);
   line-height: 1.35;
@@ -99,7 +99,7 @@
   .node {
     width: 30px;
     height: 30px;
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .step:not(:first-child)::before {

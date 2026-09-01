@@ -22,7 +22,7 @@
 
 .cardHead h2 {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--ink, #172033);
 }
 
@@ -68,7 +68,7 @@
 
 .rowText dd {
   margin: 2px 0 0;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--ink, #172033);
 }
@@ -105,7 +105,7 @@
   display: flex;
   flex-direction: column;
   gap: 7px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.65;
   color: #b45309;
 }
@@ -144,7 +144,7 @@
 
 .secure p {
   margin: 5px 0 0;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--brand-strong, #1c2d55);
 }

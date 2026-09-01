@@ -47,7 +47,7 @@
   background: var(--surface, #fff);
   border: 2px solid var(--line-soft, #eef2f7);
   color: var(--muted, #64748b);
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -81,7 +81,7 @@
 }
 
 .date {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted, #64748b);
 }
 
@@ -91,11 +91,11 @@
   }
 
   .label {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .date {
-    font-size: 11px;
+    font-size: 12px;
   }
 
   .node {
