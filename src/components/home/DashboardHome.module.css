@@ -132,11 +132,6 @@
   align-items: start;
 }
 
-/* Carries the new-request button now that the welcome banner is gone. */
-.topBar {
-  display: flex;
-  justify-content: flex-end;
-}
 
 .card {
   border: 1px solid var(--line-soft, #eef2f7);

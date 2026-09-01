@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Clock,
   FileText,
-  Plus,
 } from "lucide-react";
 import StatusPill from "@/components/request/StatusPill";
 import { homeCopy } from "./copy";
@@ -22,14 +21,12 @@ export default function DashboardHome({
   language,
   stats,
   requests,
-  onNewRequest,
   onViewRequest,
   onViewAll,
 }: {
   language: Language;
   stats: DashboardStats;
   requests: RequestSummary[];
-  onNewRequest: () => void;
   onViewRequest: (id: string) => void;
   onViewAll: () => void;
 }) {
@@ -48,13 +45,6 @@ export default function DashboardHome({
 
   return (
     <div className={styles.page}>
-      <div className={styles.topBar}>
-        <button type="button" className={styles.newRequestButton} onClick={onNewRequest}>
-          <Plus aria-hidden="true" size={17} />
-          {t.newRequest}
-        </button>
-      </div>
-
       <section className={styles.stats}>
         {tiles.map((tile) => (
           <div className={styles.tile} key={tile.key}>

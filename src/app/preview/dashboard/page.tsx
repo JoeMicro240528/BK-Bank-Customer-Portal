@@ -39,7 +39,6 @@ export default function DashboardPreview() {
         language={language}
         stats={previewStats}
         requests={previewRequests}
-        onNewRequest={() => router.push("/preview/new-request")}
         onViewRequest={() => router.push("/preview/request-details")}
         onViewAll={() => router.push("/preview/request-details")}
       />

@@ -57,7 +57,6 @@ export default function DashboardPage() {
         language={language}
         stats={stats}
         requests={requests}
-        onNewRequest={() => router.push("/new-request")}
         onViewAll={() => router.push("/requests")}
         onViewRequest={(id) => router.push(`/requests/${encodeURIComponent(id)}`)}
       />
