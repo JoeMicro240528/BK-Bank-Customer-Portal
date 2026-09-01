@@ -95,7 +95,13 @@ export default function RequestDetailsPage() {
           <Loader2 className="page-loading-spinner" aria-hidden="true" />
         </div>
       ) : request ? (
-        <RequestDetails request={request} language={language} />
+        <RequestDetails
+          request={request}
+          language={language}
+          onContinue={() =>
+            router.push(`/new-request?ref=${encodeURIComponent(request.externalRef)}`)
+          }
+        />
       ) : (
         !error && (
           <p style={{ color: "var(--muted)", fontSize: 14 }}>

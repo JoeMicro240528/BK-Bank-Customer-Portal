@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, Loader2 } from "lucide-react";
 import Banner from "@/components/ui/Banner";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -16,18 +16,22 @@ import { useBanks } from "@/lib/useBanks";
 import { useDraft } from "@/lib/auf/useDraft";
 import { useCountries } from "@/lib/useCountries";
 
-export default function NewRequestPage() {
+function NewRequestFlow() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [language, setLanguage] = useState<Language>("ar");
   const [error, setError] = useState("");
+
+  // Set only when continuing a saved draft from its details page.
+  const resumeRef = searchParams.get("ref") || undefined;
 
   /** Once banks are chosen the flow moves on to the detail form. */
   const [formState, setFormState] = useState<FormState | null>(null);
 
   // Hooks must run unconditionally, before the early return below.
   const { banks, error: banksError } = useBanks(language);
-  const { draft, loading: draftLoading } = useDraft(session?.user?.national_id, language);
+  const { draft, loading: draftLoading } = useDraft(session?.user?.national_id, language, resumeRef);
   const { countries } = useCountries(language);
 
   useEffect(() => {
@@ -36,8 +40,7 @@ export default function NewRequestPage() {
     }
   }, [status, router]);
 
-  // Wait for the draft lookup too, so a returning user is not shown the bank
-  // picker for a moment before being moved into their saved request.
+  // When resuming, wait for the draft so the bank picker never flashes first.
   if (status === "loading" || status === "unauthenticated" || draftLoading) {
     return (
       <div className="page-loading">
@@ -147,5 +150,23 @@ export default function NewRequestPage() {
         />
       )}
     </DashboardLayout>
+  );
+}
+
+/**
+ * useSearchParams opts the tree into client rendering, so the boundary is
+ * required for the build to prerender this route's shell.
+ */
+export default function NewRequestPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="page-loading">
+          <Loader2 className="page-loading-spinner" aria-hidden="true" />
+        </div>
+      }
+    >
+      <NewRequestFlow />
+    </Suspense>
   );
 }

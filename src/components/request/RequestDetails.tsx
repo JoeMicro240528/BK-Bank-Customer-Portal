@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, CalendarDays, Copy, Info } from "lucide-react";
+import { AlertCircle, ArrowLeft, CalendarDays, Copy, Info } from "lucide-react";
 import BankReviewTable from "./BankReviewTable";
 import RequestAside from "./RequestAside";
 import RequestStepper from "./RequestStepper";
@@ -12,12 +12,15 @@ import type { Language, RequestDetailsData } from "./types";
 export default function RequestDetails({
   request,
   language,
+  onContinue,
 }: {
   request: RequestDetailsData;
   language: Language;
+  onContinue?: () => void;
 }) {
   const t = requestCopy[language];
   const needsAction = request.banks.some((bank) => bank.status === "action_required");
+  const isDraft = request.status === "draft";
 
   const copyReference = () => {
     void navigator.clipboard?.writeText(request.reference);
@@ -62,10 +65,25 @@ export default function RequestDetails({
 
           <RequestStepper steps={request.stepper} />
 
-          <p className={styles.noticeInfo}>
-            <Info aria-hidden="true" size={15} />
-            {t.submittedNotice}
-          </p>
+          {isDraft ? (
+            <>
+              <p className={styles.noticeInfo}>
+                <Info aria-hidden="true" size={15} />
+                {t.draftNotice}
+              </p>
+              {onContinue && request.externalRef && (
+                <button type="button" className={styles.continueButton} onClick={onContinue}>
+                  <ArrowLeft aria-hidden="true" size={16} />
+                  {t.continueRequest}
+                </button>
+              )}
+            </>
+          ) : (
+            <p className={styles.noticeInfo}>
+              <Info aria-hidden="true" size={15} />
+              {t.submittedNotice}
+            </p>
+          )}
         </section>
 
         <section className={styles.card}>

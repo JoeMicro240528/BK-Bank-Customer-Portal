@@ -29,6 +29,8 @@ export type BankReview = {
 
 export type RequestDetailsData = {
   reference: string;
+  /** Key the update and submit endpoints are addressed by; empty if unsaved. */
+  externalRef: string;
   status: BankStatus;
   createdAt: string;
   bankCount: number;
@@ -49,6 +51,8 @@ export type RequestCopy = {
   createdLabel: string;
   copyReference: string;
   submittedNotice: string;
+  draftNotice: string;
+  continueRequest: string;
   bankReviewTitle: string;
   colBank: string;
   colBranch: string;

@@ -10,16 +10,22 @@ type Language = "en" | "ar";
 export type Draft = { externalRef: string; state: FormState };
 
 /**
- * Finds the user's most recent unsubmitted request so the form can continue it
- * instead of starting a second one. Only drafts carrying an external_ref are
- * usable, since that is what the update and submit endpoints are keyed on.
+ * Loads one saved draft by its external_ref so the form can pick up where the
+ * user left off. Resuming is always an explicit choice -- continuing from the
+ * draft's own details page -- because silently reopening the newest draft made
+ * "new request" unable to ever start a new one.
  */
-export function useDraft(ownerId: string | undefined, language: Language) {
+export function useDraft(
+  ownerId: string | undefined,
+  language: Language,
+  externalRef: string | undefined,
+) {
   const [draft, setDraft] = useState<Draft | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(externalRef));
 
   useEffect(() => {
-    if (!ownerId) {
+    if (!ownerId || !externalRef) {
+      setDraft(null);
       setLoading(false);
       return;
     }
@@ -28,19 +34,9 @@ export function useDraft(ownerId: string | undefined, language: Language) {
     setLoading(true);
 
     frontendApi
-      .listRequests({ language, ownerId })
-      .then(async (rows) => {
-        const candidate = rows
-          .filter((row) => row.state === "draft" && row.external_ref)
-          .sort((a, b) => (a.created < b.created ? 1 : -1))[0];
-
-        if (!candidate?.external_ref || cancelled) return;
-
-        // The list omits most fields, so fetch the full record to restore it.
-        const full = await frontendApi.getRequest(candidate.external_ref, { language, ownerId });
-        if (cancelled) return;
-
-        setDraft({ externalRef: candidate.external_ref, state: toFormState(full) });
+      .getRequest(externalRef, { language, ownerId })
+      .then((full) => {
+        if (!cancelled) setDraft({ externalRef, state: toFormState(full) });
       })
       .catch(() => {
         // A failed lookup should not block starting a new request.
@@ -53,7 +49,7 @@ export function useDraft(ownerId: string | undefined, language: Language) {
     return () => {
       cancelled = true;
     };
-  }, [ownerId, language]);
+  }, [ownerId, language, externalRef]);
 
   return { draft, loading };
 }

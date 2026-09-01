@@ -115,6 +115,7 @@ export function toRequestDetails(
 
   return {
     reference: request.reference,
+    externalRef: request.external_ref || "",
     status: mapRequestState(request.state),
     createdAt: `${formatDateTime(request.created, language)} - ${formatTime(request.created, language)}`,
     bankCount: new Set(accounts.map((a) => a.bank_id)).size,

@@ -10,6 +10,8 @@ export const requestCopy: Record<Language, RequestCopy> = {
     createdLabel: "تاريخ إنشاء الطلب",
     copyReference: "نسخ رقم الطلب",
     submittedNotice: "تم إرسال طلبك بنجاح إلى البنوك المختارة. سيتم إشعارك عند اعتماد جميع البنوك.",
+    draftNotice: "هذا الطلب ما زال مسودة ولم يُرسل إلى البنوك بعد. يمكنك متابعة استكماله وإرساله.",
+    continueRequest: "متابعة استكمال الطلب",
     bankReviewTitle: "حالة المراجعة لدى البنوك",
     colBank: "البنك",
     colBranch: "الفرع",
@@ -47,6 +49,9 @@ export const requestCopy: Record<Language, RequestCopy> = {
     copyReference: "Copy request number",
     submittedNotice:
       "Your request was sent successfully to the selected banks. You will be notified once all banks approve it.",
+    draftNotice:
+      "This request is still a draft and has not been sent to the banks yet. You can continue and submit it.",
+    continueRequest: "Continue this request",
     bankReviewTitle: "Review status across banks",
     colBank: "Bank",
     colBranch: "Branch",
