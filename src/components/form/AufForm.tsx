@@ -60,8 +60,8 @@ const stepLabelKey: Record<StepId, string> = {
  * document_type is a free string in the API with no documented values. These
  * are the ones we send; confirm them with the bank before relying on them.
  */
-/** Comfortably inside nginx's 25MB cap, and quick enough over a slow link. */
-const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+/** The limit shown to customers on every attachment field. */
+const MAX_UPLOAD_BYTES = 1024 * 1024;
 
 function documentTypeFor(key: string): string {
   if (key.startsWith("certificate:")) return "income_certificate";

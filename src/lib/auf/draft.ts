@@ -1,5 +1,5 @@
 import type { AUFRequestRead } from "@/lib/swagger-types";
-import { initialForm, type FormState } from "./form";
+import { initialForm, splitName, type FormState } from "./form";
 
 /**
  * Maps a saved draft back into form state so a returning user continues where
@@ -35,6 +35,17 @@ export function toFormState(request: AUFRequestRead): FormState {
 
     name_arabic: request.name_arabic || "",
     name_english: request.name_english || "",
+    // The API stores one string; split it back into the four parts the form
+    // shows, so a resumed draft is not missing its name.
+    ...(() => {
+      const [first, second, third, fourth] = splitName(request.name_english);
+      return {
+        name_en_first: first,
+        name_en_second: second,
+        name_en_third: third,
+        name_en_fourth: fourth,
+      };
+    })(),
     mother_maiden_name: text("mother_maiden_name"),
     gender: text("gender"),
     date_of_birth: text("date_of_birth"),

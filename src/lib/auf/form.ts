@@ -226,6 +226,18 @@ export const optionSets = {
   ],
 };
 
+/**
+ * SudaPass gives one full name; the guide asks for it in four parts. Anything
+ * past the fourth word joins the last part rather than being dropped.
+ */
+export function splitName(full: string | undefined): [string, string, string, string] {
+  const parts = (full || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return ["", "", "", ""];
+
+  const [first = "", second = "", third = "", ...rest] = parts;
+  return [first, second, third, rest.join(" ")];
+}
+
 export function initialForm(): FormState {
   return {
     external_ref: "",

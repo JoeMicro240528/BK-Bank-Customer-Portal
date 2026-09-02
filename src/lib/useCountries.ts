@@ -9,6 +9,8 @@ type Language = "en" | "ar";
 /** Country options for the birth-country and nationality selects. */
 export function useCountries(language: Language, enabled = true) {
   const [countries, setCountries] = useState<Option[]>([]);
+  /** ISO alpha-2 -> master-data id, for resolving the SudaPass nationality. */
+  const [codeToId, setCodeToId] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(enabled);
 
   useEffect(() => {
@@ -25,6 +27,14 @@ export function useCountries(language: Language, enabled = true) {
       .then((rows) => {
         if (cancelled) return;
 
+        setCodeToId(
+          Object.fromEntries(
+            rows
+              .filter((row): row is typeof row & { code: string } => Boolean(row.code))
+              .map((row) => [row.code.toUpperCase(), String(row.id)]),
+          ),
+        );
+
         setCountries(
           rows
             .map((row) => ({ value: String(row.id), label: row.name }))
@@ -33,7 +43,10 @@ export function useCountries(language: Language, enabled = true) {
       })
       .catch(() => {
         // An empty list still lets the rest of the form be completed.
-        if (!cancelled) setCountries([]);
+        if (!cancelled) {
+          setCountries([]);
+          setCodeToId({});
+        }
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -44,5 +57,5 @@ export function useCountries(language: Language, enabled = true) {
     };
   }, [language, enabled]);
 
-  return { countries, loading };
+  return { countries, codeToId, loading };
 }

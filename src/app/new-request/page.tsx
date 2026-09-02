@@ -11,10 +11,11 @@ import type { Language } from "@/components/dashboard/types";
 import NewRequestScreen from "@/components/wizard/NewRequestScreen";
 import type { AddedAccount } from "@/components/wizard/types";
 import AufForm from "@/components/form/AufForm";
-import { initialForm, type FormState } from "@/lib/auf/form";
+import { initialForm, splitName, type FormState } from "@/lib/auf/form";
 import { useBanks } from "@/lib/useBanks";
 import { useDraft } from "@/lib/auf/useDraft";
 import { useCountries } from "@/lib/useCountries";
+import { resolveNationalityId } from "@/lib/format";
 
 function NewRequestFlow() {
   const { data: session, status } = useSession();
@@ -32,7 +33,7 @@ function NewRequestFlow() {
   // Hooks must run unconditionally, before the early return below.
   const { banks, error: banksError } = useBanks(language);
   const { draft, loading: draftLoading } = useDraft(session?.user?.national_id, language, resumeRef);
-  const { countries } = useCountries(language);
+  const { countries, codeToId } = useCountries(language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -85,6 +86,18 @@ function NewRequestFlow() {
       ...initialForm(),
       name_arabic: user?.name || "",
       name_english: user?.name || "",
+      // Prefilled from SudaPass so nothing is retyped; still editable, since
+      // SudaPass returns some names in Arabic and this form asks for English.
+      ...(() => {
+        const [first, second, third, fourth] = splitName(user?.name);
+        return {
+          name_en_first: first,
+          name_en_second: second,
+          name_en_third: third,
+          name_en_fourth: fourth,
+        };
+      })(),
+      nationality_id: resolveNationalityId(user?.nationality, codeToId),
       email: user?.email || "",
       gender: user?.gender || "",
       date_of_birth: user?.birthDate || "",

@@ -48,3 +48,33 @@ export function formatGender(value: string | undefined, language: Language): str
 
   return value;
 }
+
+/**
+ * SudaPass reports nationality as an ISO alpha-3 code ("SDN"), while the
+ * master-data countries carry alpha-2 ("SD"). Only the codes we can actually
+ * meet are listed; anything else falls back to the picker.
+ */
+const alpha3ToAlpha2: Record<string, string> = {
+  SDN: "SD", EGY: "EG", SAU: "SA", ARE: "AE", ETH: "ET", ERI: "ER",
+  TCD: "TD", SSD: "SS", LBY: "LY", QAT: "QA", KWT: "KW", BHR: "BH",
+  OMN: "OM", JOR: "JO", SYR: "SY", LBN: "LB", IRQ: "IQ", YEM: "YE",
+  TUR: "TR", GBR: "GB", USA: "US", CAN: "CA", FRA: "FR", DEU: "DE",
+  CHN: "CN", IND: "IN", PAK: "PK", NGA: "NG", KEN: "KE", ZAF: "ZA",
+  MAR: "MA", DZA: "DZ", TUN: "TN", SOM: "SO", UGA: "UG", TZA: "TZ",
+};
+
+/**
+ * The master-data id for a SudaPass nationality, or "" when it cannot be
+ * resolved -- in which case the form should keep asking for it.
+ */
+export function resolveNationalityId(
+  nationality: string | undefined,
+  codeToId: Record<string, string>,
+): string {
+  if (!nationality) return "";
+
+  const raw = nationality.trim().toUpperCase();
+  const alpha2 = raw.length === 3 ? alpha3ToAlpha2[raw] : raw.length === 2 ? raw : undefined;
+
+  return (alpha2 && codeToId[alpha2]) || "";
+}

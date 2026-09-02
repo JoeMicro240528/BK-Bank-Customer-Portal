@@ -12,6 +12,7 @@ import {
   type Option,
 } from "./Fields";
 import { optionSets, type FormState } from "@/lib/auf/form";
+import { formatNationality } from "@/lib/format";
 import type { AufCopy } from "@/lib/auf/copy";
 
 /** Identity values that come from SudaPass and cannot be edited here. */
@@ -161,13 +162,23 @@ export function StepContent({ step, ...props }: Props & { step: StepId }) {
 }
 
 /** Step 2 of the guide: basic customer data. */
-function PersonalStep({ t, language, form, setField, countryOptions, files, setFile }: Props) {
+function PersonalStep({
+  t,
+  language,
+  locked,
+  form,
+  setField,
+  countryOptions,
+  files,
+  setFile,
+}: Props) {
   const note = language === "ar" ? "من سوداباس" : "From SudaPass";
   const empty = language === "ar" ? "غير متوفر" : "Not provided";
   const fileLabels = {
     chooseLabel: t.chooseFile,
     emptyLabel: t.noFileChosen,
     clearLabel: t.clearFile,
+    hint: t.fileSizeHint,
   };
 
   return (
@@ -198,14 +209,25 @@ function PersonalStep({ t, language, form, setField, countryOptions, files, setF
           onChange={(value) => setField("name_en_fourth", value)}
         />
 
-        <SelectInput
-          label={t.nationality_id}
-          value={form.nationality_id}
-          options={countryOptions}
-          placeholder={t.selectPlaceholder}
-          required
-          onChange={(value) => setField("nationality_id", value)}
-        />
+        {/* Resolved from the SudaPass nationality code; only asked for when
+            that code could not be matched to a country. */}
+        {locked.nationality && form.nationality_id ? (
+          <ReadOnlyField
+            label={t.nationality_id}
+            value={formatNationality(locked.nationality, language)}
+            emptyText={empty}
+            sourceNote={note}
+          />
+        ) : (
+          <SelectInput
+            label={t.nationality_id}
+            value={form.nationality_id}
+            options={countryOptions}
+            placeholder={t.selectPlaceholder}
+            required
+            onChange={(value) => setField("nationality_id", value)}
+          />
+        )}
         <ReadOnlyField
           label={t.date_of_birth}
           value={form.date_of_birth}
@@ -312,6 +334,7 @@ function WorkStep({ t, language, form, setField, files, setFile }: Props) {
     chooseLabel: t.chooseFile,
     emptyLabel: t.noFileChosen,
     clearLabel: t.clearFile,
+    hint: t.fileSizeHint,
   };
 
   const commercial = form.selected_accounts.filter(
@@ -388,12 +411,12 @@ function WorkStep({ t, language, form, setField, files, setFile }: Props) {
             return (
               <FileInput
                 key={key}
+                {...fileLabels}
                 label={`${t.commercialCertificate} — ${account.account_number}`}
-                hint={t.commercialCertificateHint}
+                hint={`${t.commercialCertificateHint} ${t.fileSizeHint}`}
                 required
                 file={files[key] ?? null}
                 onChange={(file) => setFile(key, file)}
-                {...fileLabels}
               />
             );
           })}
@@ -409,6 +432,7 @@ function FinancialStep({ t, form, setField, files, setFile }: Props) {
     chooseLabel: t.chooseFile,
     emptyLabel: t.noFileChosen,
     clearLabel: t.clearFile,
+    hint: t.fileSizeHint,
   };
 
   return (
