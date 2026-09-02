@@ -100,13 +100,19 @@ export const frontendApi = {
    */
   uploadDocument: (
     externalRef: string,
-    input: { documentType: string; file: File; description?: string },
+    input: {
+      documentType: string;
+      file: File;
+      description?: string;
+      documentTypeOther?: string;
+    },
     options: RequestOptions,
   ) => {
     const body = new FormData();
     body.append("document_type", input.documentType);
     body.append("files", input.file);
     if (input.description) body.append("description", input.description);
+    if (input.documentTypeOther) body.append("document_type_other", input.documentTypeOther);
 
     // Without a deadline a stalled upload leaves the form saying "saving"
     // forever, with no way for the customer to tell what happened.

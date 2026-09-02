@@ -60,6 +60,10 @@ const stepLabelKey: Record<StepId, string> = {
  * document_type is a free string in the API with no documented values. These
  * are the ones we send; confirm them with the bank before relying on them.
  */
+function isInvalidDocumentType(caught: unknown): boolean {
+  return errorMessage(caught).toLowerCase().includes("document_type");
+}
+
 /** The limit shown to customers on every attachment field. */
 const MAX_UPLOAD_BYTES = 1024 * 1024;
 
@@ -184,14 +188,36 @@ export default function AufForm({
 
       for (const [key, file] of pending) {
         if (!file) continue;
+
+        const documentType = documentTypeFor(key);
+
         try {
           await frontendApi.uploadDocument(
             ref,
-            { documentType: documentTypeFor(key), file, description: key },
+            { documentType, file, description: key },
             options,
           );
           uploadedRef.current.add(key);
         } catch (caught) {
+          // The API publishes document_type as a free string but validates it
+          // against a selection it does not document. When our value is
+          // rejected, fall back to the "other" escape the schema implies,
+          // carrying the intended type as text so the bank can still read it.
+          if (isInvalidDocumentType(caught)) {
+            try {
+              await frontendApi.uploadDocument(
+                ref,
+                { documentType: "other", documentTypeOther: documentType, file, description: key },
+                options,
+              );
+              uploadedRef.current.add(key);
+              continue;
+            } catch (fallbackFailed) {
+              setError(errorMessage(fallbackFailed));
+              continue;
+            }
+          }
+
           setError(errorMessage(caught));
         }
       }
