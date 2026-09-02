@@ -1,7 +1,15 @@
 .grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
+  column-gap: 20px;
+  row-gap: 22px;
+}
+
+/* Consecutive grids are separate groups of fields; let them breathe apart. */
+.grid + .grid,
+.grid + .checkboxGrid,
+.checkboxGrid + .grid {
+  margin-top: 26px;
 }
 
 .gridWide {
@@ -11,7 +19,7 @@
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   min-width: 0;
 }
 
@@ -160,7 +168,8 @@
 .checkboxGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  column-gap: 20px;
+  row-gap: 12px;
 }
 
 /* --- repeated groups (identity lines, income sources, minors) --- */
@@ -238,11 +247,76 @@
 }
 
 /* --- file attachment --- */
-.fileRow {
+.fileWrap {
+  position: relative;
+}
+
+/* Sized and bordered like a text input, so a required attachment reads as a
+   field rather than a stray button. */
+.fileBox {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px dashed var(--line, #dbe3ef);
+  border-radius: 10px;
+  background: var(--surface-muted, #f8fafc);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.fileBox:hover {
+  border-color: var(--brand, #283f76);
+  background: var(--brand-soft, #e8edf7);
+}
+
+.fileBoxFilled {
+  border-style: solid;
+  border-color: #86c8a4;
+  background: #f0fdf4;
+}
+
+.fileIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--brand, #283f76);
+}
+
+.fileBoxFilled .fileIcon {
+  color: #15803d;
+}
+
+.fileIcon svg {
+  stroke: currentColor;
+}
+
+.fileText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fileText strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink, #172033);
+}
+
+.fileText span {
+  font-size: 13px;
+  color: var(--muted, #64748b);
 }
 
 .fileInput {
@@ -253,42 +327,18 @@
   pointer-events: none;
 }
 
-.fileButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 14px;
-  border: 1px solid var(--line, #dbe3ef);
-  border-radius: 9px;
-  background: var(--surface, #fff);
-  color: var(--brand-strong, #1c2d55);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.fileButton:hover {
-  background: var(--brand-soft, #e8edf7);
-}
-
-.fileName {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 14px;
-  color: var(--muted, #64748b);
-}
-
 .fileClear {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 10px;
+  transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border: 0;
-  border-radius: 7px;
+  border-radius: 8px;
   background: transparent;
   color: var(--muted, #64748b);
   cursor: pointer;

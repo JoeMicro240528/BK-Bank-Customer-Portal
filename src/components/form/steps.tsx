@@ -76,6 +76,77 @@ function localise(
   }));
 }
 
+/**
+ * Labels of the required answers a step is still missing. The asterisk beside a
+ * field is decoration -- these inputs are not inside a <form>, so nothing was
+ * stopping a customer skipping a step, including the certificate a commercial
+ * account calls for.
+ */
+export function missingFields(
+  step: StepId,
+  form: FormState,
+  files: Record<string, File | null>,
+  t: AufCopy,
+): string[] {
+  const missing: string[] = [];
+  const text = (value: string, label: string) => {
+    if (!value.trim()) missing.push(label);
+  };
+  const file = (key: string, label: string) => {
+    if (!files[key]) missing.push(label);
+  };
+
+  switch (step) {
+    case "personal":
+      text(form.name_en_first, t.nameEnFirst);
+      text(form.name_en_second, t.nameEnSecond);
+      text(form.name_en_third, t.nameEnThird);
+      text(form.name_en_fourth, t.nameEnFourth);
+      text(form.nationality_id, t.nationality_id);
+      text(form.mother_maiden_name, t.mother_maiden_name);
+      text(form.place_of_birth, t.placeOfBirth);
+      file(FILE_ID_DOCUMENT, t.idDocument);
+      file(FILE_PERSONAL_PHOTO, t.personalPhoto);
+      break;
+
+    case "contact":
+      text(form.mobile_personal, t.mobile_personal);
+      text(form.city_id, t.city_id);
+      text(form.district, t.district);
+      text(form.street, t.street);
+      text(form.house_no, t.house_no);
+      break;
+
+    case "work":
+      text(form.primary_income_source, t.primary_income_source);
+      text(form.job_title, t.job_title);
+      text(form.employment_status, t.workType);
+      text(form.employer_name, t.employer_name);
+      text(form.monthly_income_amount, t.monthlyIncomeAmount);
+      file(FILE_INCOME_PROOF, t.incomeProof);
+
+      // A commercial account owes an income certificate of its own.
+      for (const account of form.selected_accounts) {
+        if (account.account_kind !== "commercial") continue;
+        file(
+          certificateKey(account.account_number),
+          `${t.commercialCertificate} — ${account.account_number}`,
+        );
+      }
+      break;
+
+    case "financial":
+      text(form.account_purpose, t.accountPurpose);
+      text(form.expected_txn_monthly_value, t.expectedTxnValue);
+      text(form.expected_txn_monthly_count, t.expectedTxnCount);
+      file(FILE_SIGNATURE, t.signature);
+      if (!form.declaration_accepted) missing.push(t.declaration_accepted);
+      break;
+  }
+
+  return missing;
+}
+
 export function StepContent({ step, ...props }: Props & { step: StepId }) {
   switch (step) {
     case "personal":

@@ -12,7 +12,13 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import Banner from "@/components/ui/Banner";
 import { CheckboxInput } from "./Fields";
-import { StepContent, stepOrder, type LockedValues, type StepId } from "./steps";
+import {
+  StepContent,
+  missingFields,
+  stepOrder,
+  type LockedValues,
+  type StepId,
+} from "./steps";
 import FormStepper from "./FormStepper";
 import styles from "./AufForm.module.css";
 import { copy } from "@/lib/auf/copy";
@@ -186,6 +192,16 @@ export default function AufForm({
   }, [form, language, ownerId]);
 
   const goNext = async () => {
+    // Check before saving: a half-filled step should not reach the backend,
+    // and the customer should be told what is missing rather than moving on.
+    const missing = isReview ? [] : missingFields(step as StepId, form, files, t);
+
+    if (missing.length > 0) {
+      setError(`${t.missingRequired}: ${missing.join("، ")}`);
+      setSaveState("idle");
+      return;
+    }
+
     const saved = await save();
     // Only advance once the step is safely stored.
     if (saved) setStepIndex((index) => Math.min(index + 1, stepOrder.length));

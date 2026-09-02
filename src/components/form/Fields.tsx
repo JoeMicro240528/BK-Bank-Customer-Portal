@@ -1,10 +1,16 @@
 "use client";
 
-import { ChevronDown, Lock, Paperclip, Plus, ShieldCheck, Trash2, X } from "lucide-react";
+import { ChevronDown, FileCheck, Lock, Plus, ShieldCheck, Trash2, Upload, X } from "lucide-react";
 import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 import styles from "./Fields.module.css";
 
 export type Option = { value: string; label: string };
+
+function formatSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 /**
  * A value that came from SudaPass. Shown but not editable -- identity data is
@@ -126,19 +132,26 @@ export function FileInput({
         {required && <span className={styles.required}>*</span>}
       </label>
 
-      <div className={styles.fileRow}>
-        <label className={styles.fileButton} htmlFor={id}>
-          <Paperclip aria-hidden="true" size={15} />
-          {chooseLabel}
+      <div className={styles.fileWrap}>
+        {/* The whole box is the label, so clicking anywhere opens the picker. */}
+        <label className={`${styles.fileBox} ${file ? styles.fileBoxFilled : ""}`} htmlFor={id}>
+          <span className={styles.fileIcon}>
+            {file ? <FileCheck aria-hidden="true" size={18} /> : <Upload aria-hidden="true" size={18} />}
+          </span>
+          <span className={styles.fileText}>
+            <strong>{file ? file.name : chooseLabel}</strong>
+            <span>{file ? formatSize(file.size) : emptyLabel}</span>
+          </span>
+          <input
+            id={id}
+            className={styles.fileInput}
+            type="file"
+            accept="image/*,application/pdf"
+            onChange={(event) => onChange(event.target.files?.[0] ?? null)}
+          />
         </label>
-        <input
-          id={id}
-          className={styles.fileInput}
-          type="file"
-          accept="image/*,application/pdf"
-          onChange={(event) => onChange(event.target.files?.[0] ?? null)}
-        />
-        <span className={styles.fileName}>{file ? file.name : emptyLabel}</span>
+
+        {/* Outside the label: a button inside it would reopen the picker. */}
         {file && (
           <button
             type="button"
@@ -147,7 +160,7 @@ export function FileInput({
             title={clearLabel}
             onClick={() => onChange(null)}
           >
-            <X aria-hidden="true" size={15} />
+            <X aria-hidden="true" size={16} />
           </button>
         )}
       </div>
