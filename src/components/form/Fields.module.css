@@ -236,3 +236,99 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* --- file attachment --- */
+.fileRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fileButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 14px;
+  border: 1px solid var(--line, #dbe3ef);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--brand-strong, #1c2d55);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fileButton:hover {
+  background: var(--brand-soft, #e8edf7);
+}
+
+.fileName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--muted, #64748b);
+}
+
+.fileClear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--muted, #64748b);
+  cursor: pointer;
+}
+
+.fileClear:hover {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+/* --- yes / no --- */
+.yesNo {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.yesNoOption {
+  min-width: 84px;
+  padding: 9px 18px;
+  border: 1px solid var(--line, #dbe3ef);
+  border-radius: 9px;
+  background: var(--surface, #fff);
+  color: var(--ink, #172033);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.yesNoOption:hover {
+  background: var(--brand-soft, #e8edf7);
+}
+
+.yesNoActive {
+  border-color: transparent;
+  background: var(--brand, #283f76);
+  color: #fff;
+}
+
+.yesNoActive:hover {
+  background: var(--brand, #283f76);
+  filter: brightness(1.08);
+}

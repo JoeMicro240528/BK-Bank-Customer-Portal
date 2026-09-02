@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   ArrowRight,
+  Briefcase,
   ChevronDown,
   ClipboardList,
   CreditCard,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import styles from "./AccountsCard.module.css";
-import type { AddedAccount, BankOption, Language, WizardCopy } from "./types";
+import type { AccountKind, AddedAccount, BankOption, Language, WizardCopy } from "./types";
 
 export default function AccountsCard({
   t,
@@ -37,6 +38,7 @@ export default function AccountsCard({
   const [bankId, setBankId] = useState("");
   const [branchId, setBranchId] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
+  const [kind, setKind] = useState<AccountKind>("personal");
 
   const selectedBank = useMemo(
     () => banks.find((bank) => bank.id === bankId),
@@ -56,11 +58,13 @@ export default function AccountsCard({
       bankColor: selectedBank.color,
       branch: branch?.name ?? "",
       accountNumber: accountNumber.trim(),
+      kind,
     });
 
     setBankId("");
     setBranchId("");
     setAccountNumber("");
+    setKind("personal");
   };
 
   const ContinueArrow = language === "ar" ? ArrowLeft : ArrowRight;
@@ -166,6 +170,29 @@ export default function AccountsCard({
               />
             </div>
           </div>
+
+          <div className={styles.field}>
+            <label htmlFor="accountKind">
+              {t.accountKind} <span className={styles.required}>*</span>
+            </label>
+            <div className={styles.control}>
+              <span className={styles.controlIcon}>
+                <Briefcase aria-hidden="true" size={17} />
+              </span>
+              <select
+                id="accountKind"
+                value={kind}
+                onChange={(event) => setKind(event.target.value as AccountKind)}
+              >
+                <option value="personal">{t.accountKindPersonal}</option>
+                <option value="commercial">{t.accountKindCommercial}</option>
+              </select>
+              <span className={styles.caret}>
+                <ChevronDown aria-hidden="true" size={16} />
+              </span>
+            </div>
+            <p className={styles.hint}>{t.accountKindHint}</p>
+          </div>
         </div>
 
         <button
@@ -194,6 +221,7 @@ export default function AccountsCard({
                   <th>{t.colBank}</th>
                   <th>{t.colBranch}</th>
                   <th>{t.colAccount}</th>
+                  <th>{t.colKind}</th>
                   <th>{t.colStatus}</th>
                   <th>{t.colActions}</th>
                 </tr>
@@ -211,6 +239,17 @@ export default function AccountsCard({
                     </td>
                     <td>{account.branch}</td>
                     <td dir="ltr">{account.accountNumber}</td>
+                    <td>
+                      <span
+                        className={
+                          account.kind === "commercial" ? styles.kindCommercial : styles.kindPersonal
+                        }
+                      >
+                        {account.kind === "commercial"
+                          ? t.accountKindCommercial
+                          : t.accountKindPersonal}
+                      </span>
+                    </td>
                     <td>
                       <span className={styles.addedPill}>{t.statusAdded}</span>
                     </td>

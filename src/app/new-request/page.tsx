@@ -103,6 +103,7 @@ function NewRequestFlow() {
       selected_accounts: accounts.map((account) => ({
         bank_id: Number(account.bankId),
         account_number: account.accountNumber,
+        account_kind: account.kind,
       })),
     });
   };

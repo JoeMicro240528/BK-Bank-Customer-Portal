@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Lock, Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { ChevronDown, Lock, Paperclip, Plus, ShieldCheck, Trash2, X } from "lucide-react";
 import { useId, type InputHTMLAttributes, type ReactNode } from "react";
 import styles from "./Fields.module.css";
 
@@ -89,6 +89,114 @@ export function TextInput({
         />
       </div>
       {hint && <span className={styles.hint}>{hint}</span>}
+    </div>
+  );
+}
+
+/**
+ * A file attachment. The file is held in form state until the step is saved,
+ * then uploaded against the request's external_ref -- a request has to exist
+ * before anything can be attached to it.
+ */
+export function FileInput({
+  label,
+  file,
+  onChange,
+  required = false,
+  hint,
+  chooseLabel,
+  emptyLabel,
+  clearLabel,
+}: {
+  label: string;
+  file: File | null;
+  onChange: (file: File | null) => void;
+  required?: boolean;
+  hint?: string;
+  chooseLabel: string;
+  emptyLabel: string;
+  clearLabel: string;
+}) {
+  const id = useId();
+
+  return (
+    <div className={styles.field}>
+      <label className={styles.label} htmlFor={id}>
+        {label}
+        {required && <span className={styles.required}>*</span>}
+      </label>
+
+      <div className={styles.fileRow}>
+        <label className={styles.fileButton} htmlFor={id}>
+          <Paperclip aria-hidden="true" size={15} />
+          {chooseLabel}
+        </label>
+        <input
+          id={id}
+          className={styles.fileInput}
+          type="file"
+          accept="image/*,application/pdf"
+          onChange={(event) => onChange(event.target.files?.[0] ?? null)}
+        />
+        <span className={styles.fileName}>{file ? file.name : emptyLabel}</span>
+        {file && (
+          <button
+            type="button"
+            className={styles.fileClear}
+            aria-label={clearLabel}
+            title={clearLabel}
+            onClick={() => onChange(null)}
+          >
+            <X aria-hidden="true" size={15} />
+          </button>
+        )}
+      </div>
+
+      {hint && <span className={styles.hint}>{hint}</span>}
+    </div>
+  );
+}
+
+/** A yes/no question, as the guide presents them: two buttons, not a dropdown. */
+export function YesNo({
+  label,
+  value,
+  onChange,
+  yesLabel,
+  noLabel,
+  required = false,
+}: {
+  label: string;
+  value: boolean;
+  onChange: (value: boolean) => void;
+  yesLabel: string;
+  noLabel: string;
+  required?: boolean;
+}) {
+  return (
+    <div className={styles.field}>
+      <span className={styles.label}>
+        {label}
+        {required && <span className={styles.required}>*</span>}
+      </span>
+      <div className={styles.yesNo} role="group">
+        <button
+          type="button"
+          className={`${styles.yesNoOption} ${value ? styles.yesNoActive : ""}`}
+          aria-pressed={value}
+          onClick={() => onChange(true)}
+        >
+          {yesLabel}
+        </button>
+        <button
+          type="button"
+          className={`${styles.yesNoOption} ${!value ? styles.yesNoActive : ""}`}
+          aria-pressed={!value}
+          onClick={() => onChange(false)}
+        >
+          {noLabel}
+        </button>
+      </div>
     </div>
   );
 }

@@ -44,14 +44,20 @@ function readStep(externalRef?: string): number {
 }
 
 const stepLabelKey: Record<StepId, string> = {
-  applicant: "step_applicant",
-  identity: "step_identity",
-  residence: "step_residence",
-  work: "step_work",
-  income: "step_income",
-  compliance: "step_compliance",
-  minors: "step_minors",
+  personal: "stepPersonal",
+  contact: "stepContact",
+  work: "stepWork",
+  financial: "stepFinancial",
 };
+
+/**
+ * document_type is a free string in the API with no documented values. These
+ * are the ones we send; confirm them with the bank before relying on them.
+ */
+function documentTypeFor(key: string): string {
+  if (key.startsWith("certificate:")) return "income_certificate";
+  return key;
+}
 
 /**
  * The AUF request form, split into steps that each save to the backend when
@@ -87,10 +93,16 @@ export default function AufForm({
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  /** Attachments, held outside the draft: a File cannot be serialised. */
+  const [files, setFiles] = useState<Record<string, File | null>>({});
 
   // Held in a ref so the first save can create the request and later saves
   // update it, without re-rendering on every change.
   const refRef = useRef<string>(externalRef || "");
+  const filesRef = useRef(files);
+  filesRef.current = files;
+  /** Keys already sent, so a later step does not upload the same file twice. */
+  const uploadedRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     if (externalRef) refRef.current = externalRef;
@@ -119,6 +131,10 @@ export default function AufForm({
   );
 
   /** Creates the request on first call, updates it thereafter. */
+  const setFile = useCallback((key: string, file: File | null) => {
+    setFiles((previous) => ({ ...previous, [key]: file }));
+  }, []);
+
   const save = useCallback(async (): Promise<string | null> => {
     // Without an owner there is nobody to save against -- the design-preview
     // route renders the form this way, so navigation still works there.
@@ -137,6 +153,27 @@ export default function AufForm({
         refRef.current = ref;
       } else {
         await frontendApi.updateRequest(ref, buildUpdatePayload(form, ref), options);
+      }
+
+      // Attachments need a request to hang off, so they go up after the save.
+      // A failed upload must not lose the step's typed answers, so it only
+      // reports and leaves the file selected for another try.
+      const pending = Object.entries(filesRef.current).filter(
+        ([key, file]) => file && !uploadedRef.current.has(key),
+      );
+
+      for (const [key, file] of pending) {
+        if (!file) continue;
+        try {
+          await frontendApi.uploadDocument(
+            ref,
+            { documentType: documentTypeFor(key), file, description: key },
+            options,
+          );
+          uploadedRef.current.add(key);
+        } catch (caught) {
+          setError(errorMessage(caught));
+        }
       }
 
       setSaveState("saved");
@@ -332,6 +369,8 @@ export default function AufForm({
             setField={setField}
             setForm={setForm}
             countryOptions={countryOptions}
+            files={files}
+            setFile={setFile}
           />
         )}
       </div>

@@ -134,9 +134,12 @@ export function toFormState(request: AUFRequestRead): FormState {
       guardian_account_no: str(line.guardian_account_no),
       annual_income_amount: num(line.annual_income_amount),
     })),
+    // The API does not store the declared kind, so a restored draft falls back
+    // to personal and the customer can correct it.
     selected_accounts: (request.selected_accounts || []).map((account) => ({
       bank_id: account.bank_id,
       account_number: account.account_number,
+      account_kind: "personal" as const,
     })),
   };
 }

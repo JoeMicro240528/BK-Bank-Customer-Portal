@@ -43,7 +43,8 @@ async function requestJson<T>(
   headers.set("Accept", "application/json");
   headers.set("Accept-Language", options.language);
 
-  if (init.body) {
+  // FormData sets its own multipart boundary; overriding it breaks the upload.
+  if (init.body && !(init.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
 
@@ -92,6 +93,27 @@ export const frontendApi = {
       { method: "POST", body: JSON.stringify(payload) },
       options,
     ),
+
+  /**
+   * Attaches a file to a request. document_type is a free string in the API
+   * with no documented values -- see DOCUMENT_TYPES for the ones we send.
+   */
+  uploadDocument: (
+    externalRef: string,
+    input: { documentType: string; file: File; description?: string },
+    options: RequestOptions,
+  ) => {
+    const body = new FormData();
+    body.append("document_type", input.documentType);
+    body.append("files", input.file);
+    if (input.description) body.append("description", input.description);
+
+    return requestJson<unknown>(
+      `/auf-requests/${encodeURIComponent(externalRef)}/documents`,
+      { method: "POST", body },
+      options,
+    );
+  },
 
   /** Chatter on a request. Keyed on the human reference, not external_ref. */
   listMessages: (reference: string, options: RequestOptions) =>

@@ -37,11 +37,27 @@ export type MinorFormLine = {
   annual_income_amount: string;
 };
 
+/** One selected account, with the type the customer declared for it. */
+export type SelectedAccountLine = {
+  bank_id: number;
+  account_number: string;
+  /** Self-declared: the API does not report an account's type. */
+  account_kind: "personal" | "commercial";
+};
+
 export type FormState = {
   external_ref: string;
   info_type: InfoType;
   name_arabic: string;
   name_english: string;
+  /**
+   * The guide asks for the English name in four parts; the API stores one
+   * string, so these are joined into name_english on save.
+   */
+  name_en_first: string;
+  name_en_second: string;
+  name_en_third: string;
+  name_en_fourth: string;
   mother_maiden_name: string;
   gender: string;
   date_of_birth: string;
@@ -69,7 +85,7 @@ export type FormState = {
   selected_bank_id: string;
   bank_account_id: string;
   /** Bank/account pairs chosen before the form; sent with every save. */
-  selected_accounts: { bank_id: number; account_number: string }[];
+  selected_accounts: SelectedAccountLine[];
   cif_number: string;
   business_sector: string;
   business_sector_other: string;
@@ -111,6 +127,20 @@ export type FormState = {
   fatca_stay_reason: string;
   fatca_stay_reason_specify: string;
   declaration_accepted: boolean;
+
+  /**
+   * Fields the guide requires that the API has nowhere to store yet. They are
+   * collected and kept in the draft so nothing the customer types is lost, but
+   * they are not sent -- see buildCreatePayload.
+   */
+  place_of_birth: string;
+  is_beneficial_owner: boolean;
+  account_purpose: string;
+  expected_txn_monthly_value: string;
+  expected_txn_monthly_count: string;
+  /** Monthly figure from the guide; sent as annual_income_amount x 12. */
+  monthly_income_amount: string;
+
   identity_lines: IdentityFormLine[];
   income_source_lines: IncomeSourceFormLine[];
   minor_lines: MinorFormLine[];
@@ -202,6 +232,10 @@ export function initialForm(): FormState {
     info_type: "update",
     name_arabic: "",
     name_english: "",
+    name_en_first: "",
+    name_en_second: "",
+    name_en_third: "",
+    name_en_fourth: "",
     mother_maiden_name: "",
     gender: "",
     date_of_birth: "",
@@ -270,6 +304,12 @@ export function initialForm(): FormState {
     fatca_stay_reason: "",
     fatca_stay_reason_specify: "",
     declaration_accepted: false,
+    place_of_birth: "",
+    is_beneficial_owner: true,
+    account_purpose: "",
+    expected_txn_monthly_value: "",
+    expected_txn_monthly_count: "",
+    monthly_income_amount: "",
     identity_lines: [emptyIdentityLine()],
     income_source_lines: [],
     minor_lines: [],
@@ -309,12 +349,29 @@ export function emptyMinorLine(): MinorFormLine {
   };
 }
 
+/** The four name parts joined, falling back to whatever was already stored. */
+function englishName(form: FormState): string {
+  const parts = [form.name_en_first, form.name_en_second, form.name_en_third, form.name_en_fourth]
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return parts.length > 0 ? parts.join(" ") : form.name_english.trim();
+}
+
+function annualIncome(form: FormState): number | undefined {
+  const monthly = parseOptionalFloat(form.monthly_income_amount);
+  if (typeof monthly === "number") return monthly * 12;
+
+  const annual = parseOptionalFloat(form.annual_income_amount);
+  return typeof annual === "number" ? annual : undefined;
+}
+
 export function buildCreatePayload(form: FormState, externalRef: string): AUFRequestCreate {
   return {
     external_ref: optionalText(externalRef),
     info_type: form.info_type,
     name_arabic: form.name_arabic.trim(),
-    name_english: form.name_english.trim(),
+    name_english: englishName(form),
     mother_maiden_name: optionalText(form.mother_maiden_name),
     gender: optionalText(form.gender),
     date_of_birth: optionalText(form.date_of_birth),
@@ -334,7 +391,10 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     block: optionalText(form.block),
     house_no: optionalText(form.house_no),
     bank_account_id: parseOptionalInt(form.bank_account_id),
-    selected_accounts: form.selected_accounts,
+    selected_accounts: form.selected_accounts.map(({ bank_id, account_number }) => ({
+      bank_id,
+      account_number,
+    })),
     cif_number: optionalText(form.cif_number),
     business_sector: optionalText(form.business_sector),
     business_sector_other: optionalText(form.business_sector_other),
@@ -350,7 +410,8 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     income_other_sources: optionalText(form.income_other_sources),
     monthly_income_range: optionalText(form.monthly_income_range),
     annual_income_range: optionalText(form.annual_income_range),
-    annual_income_amount: parseOptionalFloat(form.annual_income_amount),
+    // The guide collects a monthly figure and the API stores an annual one.
+    annual_income_amount: annualIncome(form),
     source_funds_open_account: optionalText(form.source_funds_open_account),
     source_funds_fund_account: optionalText(form.source_funds_fund_account),
     expected_txn_deposits: form.expected_txn_deposits,

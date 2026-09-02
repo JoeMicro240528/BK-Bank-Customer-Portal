@@ -26,6 +26,7 @@ const previewAccounts: AddedAccount[] = [
     bankColor: "#f59e0b",
     branch: "فرع الخرطوم الرئيسي",
     accountNumber: "1234567890123",
+    kind: "personal" as const,
   },
   {
     id: "2",
@@ -34,6 +35,7 @@ const previewAccounts: AddedAccount[] = [
     bankColor: "#15803d",
     branch: "فرع المقرن",
     accountNumber: "9876543210987",
+    kind: "commercial" as const,
   },
   {
     id: "3",
@@ -42,6 +44,7 @@ const previewAccounts: AddedAccount[] = [
     bankColor: "#1d4ed8",
     branch: "فرع السوق العربي",
     accountNumber: "1112223334445",
+    kind: "personal" as const,
   },
 ];
 

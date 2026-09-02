@@ -44,8 +44,8 @@ export default function FormPreview() {
     date_of_birth: lockedIdentity.birthDate,
     mobile_personal: lockedIdentity.phone,
     selected_accounts: [
-      { bank_id: 3, account_number: "1234567890123" },
-      { bank_id: 4, account_number: "9876543210987" },
+      { bank_id: 3, account_number: "1234567890123", account_kind: "personal" as const },
+      { bank_id: 4, account_number: "9876543210987", account_kind: "commercial" as const },
     ],
     identity_lines: [
       {

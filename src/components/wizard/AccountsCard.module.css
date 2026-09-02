@@ -349,3 +349,31 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Account type, self-declared -- the API reports no type of its own. */
+.hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted, #64748b);
+}
+
+.kindPersonal,
+.kindCommercial {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.kindPersonal {
+  background: var(--surface-muted, #f1f5f9);
+  color: var(--muted, #64748b);
+}
+
+.kindCommercial {
+  background: #fef3c7;
+  color: #b45309;
+}

@@ -32,7 +32,9 @@ async function proxy(request: NextRequest, context: RouteContext) {
     const response = await fetch(backendUrl, {
       method: request.method,
       headers,
-      body: canHaveBody(request.method) ? await request.text() : undefined,
+      // Read as bytes, not text: a multipart upload carries binary file data
+      // that decoding to a string would corrupt.
+      body: canHaveBody(request.method) ? await request.arrayBuffer() : undefined,
       cache: "no-store",
     });
 
