@@ -60,6 +60,9 @@ const stepLabelKey: Record<StepId, string> = {
  * document_type is a free string in the API with no documented values. These
  * are the ones we send; confirm them with the bank before relying on them.
  */
+/** Comfortably inside nginx's 25MB cap, and quick enough over a slow link. */
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+
 function documentTypeFor(key: string): string {
   if (key.startsWith("certificate:")) return "income_certificate";
   return key;
@@ -137,9 +140,20 @@ export default function AufForm({
   );
 
   /** Creates the request on first call, updates it thereafter. */
-  const setFile = useCallback((key: string, file: File | null) => {
-    setFiles((previous) => ({ ...previous, [key]: file }));
-  }, []);
+  const setFile = useCallback(
+    (key: string, file: File | null) => {
+      // Rejected here rather than after a long upload that the server would
+      // refuse anyway -- nginx accepts 25MB, and this stays well inside it.
+      if (file && file.size > MAX_UPLOAD_BYTES) {
+        setError(`${t.fileTooLarge}: ${file.name}`);
+        return;
+      }
+
+      setError("");
+      setFiles((previous) => ({ ...previous, [key]: file }));
+    },
+    [t],
+  );
 
   const save = useCallback(async (): Promise<string | null> => {
     // Without an owner there is nobody to save against -- the design-preview

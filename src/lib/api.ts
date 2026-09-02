@@ -108,9 +108,11 @@ export const frontendApi = {
     body.append("files", input.file);
     if (input.description) body.append("description", input.description);
 
+    // Without a deadline a stalled upload leaves the form saying "saving"
+    // forever, with no way for the customer to tell what happened.
     return requestJson<unknown>(
       `/auf-requests/${encodeURIComponent(externalRef)}/documents`,
-      { method: "POST", body },
+      { method: "POST", body, signal: AbortSignal.timeout(90_000) },
       options,
     );
   },
