@@ -78,7 +78,7 @@ export default function DashboardLayout({
       <Sidebar
         t={t}
         active={active}
-        badges={badges}
+        badges={{ notifications: unread || undefined, ...badges }}
         open={menuOpen}
         onNavigate={handleNavigate}
       />
