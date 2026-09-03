@@ -1,5 +1,8 @@
 .page {
   max-width: 880px;
+  /* Capped width alone left the list against the start edge, with the rest of
+     the screen empty beside it. */
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
   gap: 16px;
