@@ -9,6 +9,7 @@ export type LandingCopy = {
   english: string;
   arabic: string;
   heroTitle: string;
+  heroLogoAlt: string;
   heroSubtitle: string;
   featureSecureTitle: string;
   featureSecureDesc: string;

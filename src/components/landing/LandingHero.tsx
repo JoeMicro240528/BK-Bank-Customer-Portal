@@ -1,36 +1,65 @@
-import { BadgeCheck, Building2, Clock, Landmark, ShieldCheck } from "lucide-react";
+import { Clock, Landmark, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import styles from "./LandingHero.module.css";
 import type { LandingCopy } from "./types";
 
+/**
+ * The banks the portal covers, orbiting the Central Bank mark. Listed here
+ * rather than fetched: the landing page is public and master-data needs a
+ * session. Each logo is cropped to its emblem so it reads at badge size --
+ * the full lock-ups carry a wordmark that would be illegible at 44px.
+ */
+const banks: {
+  bic: string;
+  name: string;
+  logo: string;
+  bleed?: boolean;
+  tall?: boolean;
+}[] = [
+  { bic: "BOK", name: "بنك الخرطوم", logo: "/banks/bok.png", bleed: true },
+  { bic: "ONB", name: "بنك أم درمان الوطني", logo: "/banks/onb.png" },
+  { bic: "FIB", name: "بنك فيصل الإسلامي", logo: "/banks/fib.png" },
+  { bic: "SAL", name: "مصرف السلام", logo: "/banks/salam.png", tall: true },
+  { bic: "NIL", name: "بنك النيل", logo: "/banks/nile.png" },
+  { bic: "NBS", name: "البنك الأهلي السوداني", logo: "/banks/nbs.png" },
+];
+
 export default function LandingHero({ t }: { t: LandingCopy }) {
   return (
     <div className={styles.hero}>
-      <div className={styles.illustration} aria-hidden="true">
-        <span className={styles.orbitRing} />
+      <div className={styles.illustration}>
+        <span className={styles.orbitRing} aria-hidden="true" />
+
         <Image
-          src="/shield-illustration.png"
-          alt=""
-          width={220}
-          height={220}
+          src="/cbos-logo.png"
+          alt={t.heroLogoAlt}
+          width={300}
+          height={213}
           className={styles.core}
           priority
         />
-        <span className={`${styles.orbit} ${styles.orbit1}`}>
-          <Landmark size={18} />
-        </span>
-        <span className={`${styles.orbit} ${styles.orbit2}`}>
-          <Building2 size={18} />
-        </span>
-        <span className={`${styles.orbit} ${styles.orbit3}`}>
-          <BadgeCheck size={18} />
-        </span>
-        <span className={`${styles.orbit} ${styles.orbit4}`}>
-          <Building2 size={18} />
-        </span>
-        <span className={`${styles.orbit} ${styles.orbit5}`}>
-          <Landmark size={18} />
-        </span>
+
+        {banks.map((bank, index) => (
+          <span
+            key={bank.bic}
+            className={`${styles.orbit} ${styles[`orbit${index + 1}`]}`}
+            title={bank.name}
+          >
+            <Image
+              src={bank.logo}
+              alt={bank.name}
+              width={44}
+              height={44}
+              className={[
+                styles.orbitLogo,
+                bank.bleed ? styles.orbitLogoBleed : "",
+                bank.tall ? styles.orbitLogoTall : "",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+            />
+          </span>
+        ))}
       </div>
 
       <div className={styles.text}>
