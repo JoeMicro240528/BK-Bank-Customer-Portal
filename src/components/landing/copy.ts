@@ -10,6 +10,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     english: "English",
     arabic: "Arabic",
     heroTitle: "Update your data once for all banks",
+    heroLogoAlt: "Central Bank of Sudan",
     heroSubtitle:
       "A secure, centralized platform that lets you update your personal and financial data at every participating bank in a few simple steps.",
     featureSecureTitle: "Safe & protected",
@@ -48,6 +49,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     english: "English",
     arabic: "العربية",
     heroTitle: "تحديث بياناتك مرة واحدة لجميع البنوك",
+    heroLogoAlt: "بنك السودان المركزي",
     heroSubtitle:
       "منصة مركزية وآمنة تتيح لك تحديث بياناتك الشخصية والمالية لدى جميع البنوك المشاركة بخطوات بسيطة وسهلة.",
     featureSecureTitle: "آمن ومحمي",
