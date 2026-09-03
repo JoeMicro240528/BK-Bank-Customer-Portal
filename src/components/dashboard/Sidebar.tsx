@@ -24,7 +24,7 @@ const navIcons: Record<NavKey, LucideIcon> = {
 
 // "newRequest" is deliberately absent: it is an action taken from the requests
 // screen, not a place, and listing both made the two entries look like rivals.
-const navOrder: NavKey[] = ["home", "myRequests", "faq", "contact"];
+const navOrder: NavKey[] = ["home", "myRequests", "notifications", "faq", "contact"];
 
 export default function Sidebar({
   t,
