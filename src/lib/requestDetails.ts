@@ -123,7 +123,6 @@ export function toRequestDetails(
     externalRef: request.external_ref || "",
     status,
     createdAt: `${formatDateTime(request.created, language)} - ${formatTime(request.created, language)}`,
-    bankCount: new Set(accounts.map((a) => a.bank_id)).size,
     accountCount: accounts.length,
     requestType: t.updateType,
     supportPhone,

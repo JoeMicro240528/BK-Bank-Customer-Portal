@@ -34,8 +34,8 @@
   height: 40px;
   flex: none;
   border-radius: 11px;
-  background: var(--brand-soft, #e8edf7);
-  color: var(--brand, #283f76);
+  background: var(--brand-soft, #e3f4ea);
+  color: var(--brand, #009341);
 }
 
 .headIcon svg {
@@ -122,8 +122,8 @@
 
 .control select:focus,
 .control input:focus {
-  border-color: var(--brand, #283f76);
-  box-shadow: 0 0 0 3px rgba(40, 63, 118, 0.12);
+  border-color: var(--brand, #009341);
+  box-shadow: 0 0 0 3px rgba(0, 147, 65, 0.12);
 }
 
 .control select:disabled {
@@ -181,15 +181,15 @@
   border: 1.5px dashed var(--line, #d8dee8);
   border-radius: 11px;
   background: transparent;
-  color: var(--brand-strong, #1c2d55);
+  color: var(--brand-strong, #115931);
   font-size: 15.5px;
   font-weight: 600;
   cursor: pointer;
 }
 
 .addButton:hover:not(:disabled) {
-  border-color: var(--brand, #283f76);
-  background: var(--brand-soft, #e8edf7);
+  border-color: var(--brand, #009341);
+  background: var(--brand-soft, #e3f4ea);
 }
 
 .addButton:disabled {
@@ -323,7 +323,7 @@
   padding: 12px 26px;
   border: 0;
   border-radius: 10px;
-  background: var(--brand, #283f76);
+  background: var(--brand, #009341);
   color: #fff;
   font-size: 15.5px;
   font-weight: 700;
@@ -331,7 +331,7 @@
 }
 
 .continueButton:hover:not(:disabled) {
-  background: var(--brand-strong, #1c2d55);
+  background: var(--brand-strong, #115931);
 }
 
 .continueButton:disabled {

@@ -25,8 +25,11 @@ export function useBanks(language: Language) {
       .getBanks({ language })
       .then((rows) => {
         if (cancelled) return;
+        // This portal is scoped to Omdurman National Bank only -- the API
+        // still returns the full master-data bank list, so filter it down.
+        const onbRows = rows.filter((row) => row.bic?.toUpperCase() === "ONB");
         setBanks(
-          rows.map((row, index) => ({
+          onbRows.map((row, index) => ({
             id: String(row.id),
             name: row.name,
             color: chipColors[index % chipColors.length],

@@ -2,7 +2,7 @@ import type { Language, WizardCopy } from "./types";
 
 export const wizardCopy: Record<Language, WizardCopy> = {
   ar: {
-    platformName: "منصة التحقق المركزي",
+    platformName: "منصة بنك أم درمان الوطني",
     platformTagline: "لتحديث بيانات العملاء",
     logout: "تسجيل خروج",
     language: "اللغة",
@@ -18,7 +18,7 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     },
     stepHints: {
       identity: "تم بنجاح",
-      details: "اختر البنوك وأضف الحسابات",
+      details: "أضف حساباتك وفروعك",
       review: "مراجعة بياناتك قبل الإرسال",
       submit: "سيتم مراجعته من البنوك",
     },
@@ -31,11 +31,10 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     helpBody: "للمساعدة يمكنك التواصل مع مركز الدعم",
 
     pageTitle: "بيانات الطلب",
-    pageSubtitle: "أضف حساباتك في البنوك والفروع المطلوب تحديث بياناتك لديها",
-    singleRequestNotice: "سيتم إنشاء طلب تحديث واحد شامل لجميع البنوك المحددة.",
+    pageSubtitle: "أضف حساباتك في الفروع المطلوب تحديث بياناتك لديها",
+    singleRequestNotice: "سيتم إنشاء طلب تحديث واحد شامل لجميع حساباتك المضافة.",
 
     addAccountsTitle: "إضافة الحسابات",
-    selectBank: "اختر البنك",
     selectBranch: "اختر الفرع",
     accountNumber: "رقم الحساب",
     accountNumberPlaceholder: "أدخل رقم الحساب",
@@ -62,10 +61,10 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     summaryTitle: "ملخص طلب التحديث",
     requestTypeLabel: "نوع الطلب",
     requestTypeValue: "تحديث بيانات شخصية ومالية",
-    bankCountLabel: "عدد البنوك",
+    bankCountLabel: "عدد الفروع",
     accountCountLabel: "عدد الحسابات",
     requestDateLabel: "تاريخ الطلب",
-    banksUnit: "بنوك",
+    banksUnit: "فروع",
     accountsUnit: "حسابات",
 
     notesTitle: "ملاحظات هامة",
@@ -78,14 +77,14 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     secureTitle: "بياناتك آمنة ومحمية",
     secureBody: "جميع بياناتك مشفرة وآمنة وفق أعلى معايير الحماية.",
 
-    footerRights: "جميع الحقوق محفوظة © 2026 منصة التحقق المركزي لتحديث بيانات العملاء",
+    footerRights: "جميع الحقوق محفوظة © 2026 منصة بنك أم درمان الوطني لتحديث بيانات العملاء",
     footerTerms: "الشروط والأحكام",
     footerPrivacy: "سياسة الخصوصية",
     footerFaq: "الأسئلة الشائعة",
   },
 
   en: {
-    platformName: "Central Verification Platform",
+    platformName: "Omdurman National Bank Platform",
     platformTagline: "For updating customer data",
     logout: "Sign out",
     language: "Language",
@@ -101,7 +100,7 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     },
     stepHints: {
       identity: "Completed",
-      details: "Choose banks and add accounts",
+      details: "Add your accounts and branches",
       review: "Review your data before sending",
       submit: "Will be reviewed by the banks",
     },
@@ -114,11 +113,10 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     helpBody: "Contact our support centre for assistance",
 
     pageTitle: "Request details",
-    pageSubtitle: "Add your accounts at the banks and branches where your data should be updated",
-    singleRequestNotice: "A single update request will be created covering all selected banks.",
+    pageSubtitle: "Add your accounts at the branches where your data should be updated",
+    singleRequestNotice: "A single update request will be created covering all added accounts.",
 
     addAccountsTitle: "Add accounts",
-    selectBank: "Select bank",
     selectBranch: "Select branch",
     accountNumber: "Account number",
     accountNumberPlaceholder: "Enter the account number",
@@ -145,10 +143,10 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     summaryTitle: "Update request summary",
     requestTypeLabel: "Request type",
     requestTypeValue: "Personal and financial data update",
-    bankCountLabel: "Banks",
+    bankCountLabel: "Branches",
     accountCountLabel: "Accounts",
     requestDateLabel: "Request date",
-    banksUnit: "banks",
+    banksUnit: "branches",
     accountsUnit: "accounts",
 
     notesTitle: "Important notes",
@@ -161,7 +159,7 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     secureTitle: "Your data is safe and protected",
     secureBody: "All your data is encrypted and secured to the highest protection standards.",
 
-    footerRights: "© 2026 Central Verification Platform for updating customer data. All rights reserved.",
+    footerRights: "© 2026 Omdurman National Bank Platform for updating customer data. All rights reserved.",
     footerTerms: "Terms & Conditions",
     footerPrivacy: "Privacy Policy",
     footerFaq: "FAQ",

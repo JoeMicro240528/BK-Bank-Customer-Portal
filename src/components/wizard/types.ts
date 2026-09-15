@@ -57,7 +57,6 @@ export type WizardCopy = {
   singleRequestNotice: string;
 
   addAccountsTitle: string;
-  selectBank: string;
   selectBranch: string;
   accountNumber: string;
   accountNumberPlaceholder: string;

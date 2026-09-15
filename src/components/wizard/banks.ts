@@ -1,19 +1,16 @@
 /**
- * Branch options per bank.
+ * Branch options per bank. The portal is scoped to Omdurman National Bank
+ * only, so this only ever needs the ONB entry.
  *
- * The banks themselves come from the backend (`/master-data/banks`), but that
+ * The bank itself comes from the backend (`/master-data/banks`), but that
  * API has no concept of branches -- `BankAccountSelection` is only bank_id +
  * account_number. So branches are held here, keyed by the bank's BIC, until the
  * backend gains a branch field. Selected branches are collected in the wizard
  * but not yet sent.
  */
 const branchesByBic: Record<string, string[]> = {
-  // بنك الخرطوم
-  BOK: ["فرع الخرطوم الرئيسي", "فرع الرياض", "فرع بحري", "فرع أم درمان"],
   // بنك امدرمان الوطني
   ONB: ["فرع السوق العربي", "فرع أم درمان الرئيسي", "فرع الخرطوم 2"],
-  // بنك فيصل الاسلامي
-  FBK: ["فرع المقرن", "فرع السوق المحلي", "فرع الخرطوم الرئيسي"],
 };
 
 const defaultBranches = ["الفرع الرئيسي"];

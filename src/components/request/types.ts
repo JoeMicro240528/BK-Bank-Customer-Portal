@@ -33,7 +33,6 @@ export type RequestDetailsData = {
   externalRef: string;
   status: BankStatus;
   createdAt: string;
-  bankCount: number;
   accountCount: number;
   requestType: string;
   updatedFields: string[];
@@ -63,11 +62,9 @@ export type RequestCopy = {
   viewDetails: string;
   actionNotice: string;
   summaryTitle: string;
-  bankCountLabel: string;
   accountCountLabel: string;
   requestTypeLabel: string;
   overallStatusLabel: string;
-  banksUnit: string;
   accountsUnit: string;
   updatedFieldsTitle: string;
   helpTitle: string;

@@ -40,8 +40,8 @@
 
 .stepBarDone .stepBarNode,
 .stepBarCurrent .stepBarNode {
-  background: var(--brand, #283f76);
-  border-color: var(--brand, #283f76);
+  background: var(--brand, #009341);
+  border-color: var(--brand, #009341);
   color: #fff;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .stepBarLineDone {
-  background: var(--brand, #283f76);
+  background: var(--brand, #009341);
 }
 
 @media (max-width: 900px) {

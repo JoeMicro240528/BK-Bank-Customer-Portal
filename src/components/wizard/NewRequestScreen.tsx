@@ -46,7 +46,7 @@ export default function NewRequestScreen({
     { key: "submit", label: t.steps.submit, hint: t.stepHints.submit, state: "pending" },
   ];
 
-  const bankCount = new Set(accounts.map((account) => account.bankId)).size;
+  const branchCount = new Set(accounts.map((account) => account.branch)).size;
 
   const handleAdd = (account: Omit<AddedAccount, "id">) => {
     setAccounts((previous) => [
@@ -79,7 +79,7 @@ export default function NewRequestScreen({
 
         <SummaryAside
           t={t}
-          bankCount={bankCount}
+          branchCount={branchCount}
           accountCount={accounts.length}
           requestDate={today}
         />

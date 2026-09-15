@@ -43,7 +43,7 @@
 }
 
 .saving {
-  color: var(--brand-strong, #1c2d55);
+  color: var(--brand-strong, #115931);
 }
 
 .spin {
@@ -89,9 +89,9 @@
 
 .declaration {
   padding: 14px;
-  border: 1px solid var(--brand-soft, #e8edf7);
+  border: 1px solid var(--brand-soft, #e3f4ea);
   border-radius: 12px;
-  background: var(--brand-soft, #e8edf7);
+  background: var(--brand-soft, #e3f4ea);
 }
 
 /* --- actions --- */
@@ -134,12 +134,12 @@
 
 .nextButton {
   border: 0;
-  background: var(--brand, #283f76);
+  background: var(--brand, #009341);
   color: #fff;
 }
 
 .nextButton:hover:not(:disabled) {
-  background: var(--brand-strong, #1c2d55);
+  background: var(--brand-strong, #115931);
 }
 
 .submitButton {
