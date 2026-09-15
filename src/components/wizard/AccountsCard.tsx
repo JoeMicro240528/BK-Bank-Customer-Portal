@@ -11,7 +11,7 @@ import {
   Plus,
   Trash2,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import styles from "./AccountsCard.module.css";
 import type { AddedAccount, BankOption, Language, WizardCopy } from "./types";
 
@@ -34,16 +34,14 @@ export default function AccountsCard({
   onBack: () => void;
   onContinue: () => void;
 }) {
-  const [bankId, setBankId] = useState("");
+  // The portal only ever offers one bank (Omdurman National Bank), so there's
+  // nothing to pick -- just use whatever master-data returned for it.
+  const selectedBank = banks[0];
+
   const [branchId, setBranchId] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
 
-  const selectedBank = useMemo(
-    () => banks.find((bank) => bank.id === bankId),
-    [banks, bankId],
-  );
-
-  const canAdd = Boolean(bankId && branchId && accountNumber.trim());
+  const canAdd = Boolean(selectedBank && branchId && accountNumber.trim());
 
   const handleAdd = () => {
     if (!canAdd || !selectedBank) return;
@@ -58,7 +56,6 @@ export default function AccountsCard({
       accountNumber: accountNumber.trim(),
     });
 
-    setBankId("");
     setBranchId("");
     setAccountNumber("");
   };
@@ -87,41 +84,6 @@ export default function AccountsCard({
         <h2 className={styles.sectionTitle}>{t.addAccountsTitle}</h2>
 
         <div className={styles.fieldGrid}>
-          <div className={styles.field}>
-            <label htmlFor="bank">
-              {t.selectBank} <span className={styles.required}>*</span>
-            </label>
-            <div className={styles.control}>
-              <span className={styles.controlIcon}>
-                {selectedBank ? (
-                  <span className={styles.bankChip} style={{ background: selectedBank.color }}>
-                    {selectedBank.name.charAt(0)}
-                  </span>
-                ) : (
-                  <Landmark aria-hidden="true" size={17} />
-                )}
-              </span>
-              <select
-                id="bank"
-                value={bankId}
-                onChange={(event) => {
-                  setBankId(event.target.value);
-                  setBranchId("");
-                }}
-              >
-                <option value="">{t.selectBank}</option>
-                {banks.map((bank) => (
-                  <option key={bank.id} value={bank.id}>
-                    {bank.name}
-                  </option>
-                ))}
-              </select>
-              <span className={styles.caret}>
-                <ChevronDown aria-hidden="true" size={16} />
-              </span>
-            </div>
-          </div>
-
           <div className={styles.field}>
             <label htmlFor="branch">
               {t.selectBranch} <span className={styles.required}>*</span>

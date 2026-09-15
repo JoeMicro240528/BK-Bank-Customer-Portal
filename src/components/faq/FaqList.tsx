@@ -15,18 +15,18 @@ const copy = {
 const faqs: { id: string; q: { ar: string; en: string }; a: { ar: string; en: string } }[] = [
   {
     id: "what",
-    q: { ar: "ما هي منصة التحقق المركزي؟", en: "What is the Central Verification Platform?" },
+    q: { ar: "ما هي منصة بنك أم درمان الوطني؟", en: "What is the Omdurman National Bank Platform?" },
     a: {
-      ar: "منصة مركزية تتيح لك تحديث بياناتك الشخصية والمالية مرة واحدة لدى جميع البنوك المشاركة، بدلاً من زيارة كل بنك على حدة.",
-      en: "A central platform that lets you update your personal and financial data once across all participating banks, instead of visiting each bank separately.",
+      ar: "منصة تتيح لك تحديث بياناتك الشخصية والمالية لدى بنك أم درمان الوطني بخطوات بسيطة، بدلاً من زيارة الفرع.",
+      en: "A platform that lets you update your personal and financial data at Omdurman National Bank in a few simple steps, instead of visiting the branch.",
     },
   },
   {
     id: "who",
     q: { ar: "من يمكنه استخدام المنصة؟", en: "Who can use the platform?" },
     a: {
-      ar: "كل من يملك حساباً في أحد البنوك المشاركة وحساباً موثقاً في منصة سوداباس.",
-      en: "Anyone who holds an account at one of the participating banks and has a verified SudaPass account.",
+      ar: "كل من يملك حساباً لدى بنك أم درمان الوطني وحساباً موثقاً في منصة سوداباس.",
+      en: "Anyone who holds an account at Omdurman National Bank and has a verified SudaPass account.",
     },
   },
   {
@@ -41,21 +41,21 @@ const faqs: { id: string; q: { ar: string; en: string }; a: { ar: string; en: st
     id: "duration",
     q: { ar: "كم يستغرق اعتماد الطلب؟", en: "How long does approval take?" },
     a: {
-      ar: "عادة من 1 إلى 5 أيام عمل، وتختلف المدة من بنك لآخر. يمكنك متابعة حالة الطلب لدى كل بنك من صفحة طلباتي.",
-      en: "Usually 1 to 5 working days, and it varies by bank. You can track the status at each bank from the My Requests page.",
+      ar: "عادة من 1 إلى 5 أيام عمل. يمكنك متابعة حالة الطلب من صفحة طلباتي.",
+      en: "Usually 1 to 5 working days. You can track the status from the My Requests page.",
     },
   },
   {
     id: "multiple",
-    q: { ar: "هل يمكنني إضافة أكثر من بنك في الطلب؟", en: "Can I add more than one bank to a request?" },
+    q: { ar: "هل يمكنني إضافة أكثر من حساب في الطلب؟", en: "Can I add more than one account to a request?" },
     a: {
-      ar: "نعم. يمكنك إضافة عدة حسابات في بنوك وفروع مختلفة، وسيتم إنشاء طلب تحديث واحد شامل لجميع البنوك المحددة.",
-      en: "Yes. You can add several accounts across different banks and branches, and a single update request will be created covering all of them.",
+      ar: "نعم. يمكنك إضافة عدة حسابات في فروع مختلفة لبنك أم درمان الوطني، وسيتم إنشاء طلب تحديث واحد شامل لجميعها.",
+      en: "Yes. You can add several accounts across different branches of Omdurman National Bank, and a single update request will be created covering all of them.",
     },
   },
   {
     id: "rejected",
-    q: { ar: "ماذا أفعل إذا طلب البنك إجراءً إضافياً؟", en: "What if a bank requests further action?" },
+    q: { ar: "ماذا أفعل إذا طلب البنك إجراءً إضافياً؟", en: "What if the bank requests further action?" },
     a: {
       ar: "ستصلك رسالة نصية وإشعار داخل المنصة يوضح الإجراء المطلوب. في الغالب يتطلب الأمر زيارة الفرع لاستكمال التحقق.",
       en: "You will receive an SMS and an in-platform notification explaining what is required. In most cases it means visiting the branch to complete verification.",

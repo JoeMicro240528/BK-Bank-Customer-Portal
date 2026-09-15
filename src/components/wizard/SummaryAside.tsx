@@ -12,18 +12,18 @@ import type { WizardCopy } from "./types";
 
 export default function SummaryAside({
   t,
-  bankCount,
+  branchCount,
   accountCount,
   requestDate,
 }: {
   t: WizardCopy;
-  bankCount: number;
+  branchCount: number;
   accountCount: number;
   requestDate: string;
 }) {
   const rows = [
     { icon: UserRound, label: t.requestTypeLabel, value: t.requestTypeValue },
-    { icon: Landmark, label: t.bankCountLabel, value: `${bankCount} ${t.banksUnit}` },
+    { icon: Landmark, label: t.bankCountLabel, value: `${branchCount} ${t.banksUnit}` },
     { icon: CreditCard, label: t.accountCountLabel, value: `${accountCount} ${t.accountsUnit}` },
     { icon: CalendarDays, label: t.requestDateLabel, value: requestDate },
   ];

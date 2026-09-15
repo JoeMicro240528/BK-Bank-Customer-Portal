@@ -52,7 +52,7 @@
 
 .cardTitle svg {
   stroke: currentColor;
-  color: var(--brand, #283f76);
+  color: var(--brand, #009341);
 }
 
 .summaryList {
@@ -101,24 +101,24 @@
 .fieldItem svg {
   flex: none;
   stroke: currentColor;
-  color: var(--brand, #283f76);
+  color: var(--brand, #009341);
 }
 
 .helpCard {
   composes: card;
-  background: var(--brand-soft, #e8edf7);
+  background: var(--brand-soft, #e3f4ea);
   border-color: transparent;
 }
 
 .helpCard .cardTitle {
-  color: var(--brand-strong, #1c2d55);
+  color: var(--brand-strong, #115931);
 }
 
 .helpBody {
   margin: 0 0 12px;
   font-size: 14.5px;
   line-height: 1.6;
-  color: var(--brand-strong, #1c2d55);
+  color: var(--brand-strong, #115931);
 }
 
 .phone {
@@ -126,7 +126,7 @@
   align-items: center;
   gap: 7px;
   margin-bottom: 12px;
-  color: var(--brand-strong, #1c2d55);
+  color: var(--brand-strong, #115931);
   font-size: 15px;
   font-weight: 700;
   text-decoration: none;
@@ -146,14 +146,14 @@
   border: 0;
   border-radius: 10px;
   background: var(--surface, #fff);
-  color: var(--brand-strong, #1c2d55);
+  color: var(--brand-strong, #115931);
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .chatButton:hover {
-  background: #f2f5fc;
+  background: var(--brand-wash, #f0f9f4);
 }
 
 .chatButton svg {

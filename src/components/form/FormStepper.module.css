@@ -40,7 +40,7 @@
 
 .done:not(:first-child)::before,
 .current:not(:first-child)::before {
-  background: var(--brand-tint, #c3d0ea);
+  background: var(--brand-tint, #b8ddc6);
 }
 
 .node {
@@ -64,15 +64,15 @@
 }
 
 .done .node {
-  background: var(--brand, #283f76);
-  border-color: var(--brand, #283f76);
+  background: var(--brand, #009341);
+  border-color: var(--brand, #009341);
   color: #fff;
 }
 
 .current .node {
-  background: var(--brand-soft, #e8edf7);
-  border-color: var(--brand, #283f76);
-  color: var(--brand-strong, #1c2d55);
+  background: var(--brand-soft, #e3f4ea);
+  border-color: var(--brand, #009341);
+  color: var(--brand-strong, #115931);
 }
 
 .label {

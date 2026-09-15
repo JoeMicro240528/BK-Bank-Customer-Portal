@@ -30,12 +30,6 @@ export default function RequestAside({
         </h2>
         <dl className={styles.summaryList}>
           <div className={styles.summaryRow}>
-            <dt>{t.bankCountLabel}</dt>
-            <dd>
-              {request.bankCount} {t.banksUnit}
-            </dd>
-          </div>
-          <div className={styles.summaryRow}>
             <dt>{t.accountCountLabel}</dt>
             <dd>
               {request.accountCount} {t.accountsUnit}

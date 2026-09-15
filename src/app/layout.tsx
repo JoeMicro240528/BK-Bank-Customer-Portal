@@ -4,8 +4,8 @@ import "./globals.css";
 import AuthSessionProvider from "@/components/session-provider";
 
 export const metadata: Metadata = {
-  title: "CBOS Customer Information Update",
-  description: "Public customer information update portal for CBOS AUF requests.",
+  title: "ONB Customer Information Update",
+  description: "Public customer information update portal for Omdurman National Bank AUF requests.",
 };
 
 export default function RootLayout({

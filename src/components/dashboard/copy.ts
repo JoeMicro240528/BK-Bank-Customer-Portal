@@ -2,7 +2,7 @@ import type { DashboardCopy, Language } from "./types";
 
 export const dashboardCopy: Record<Language, DashboardCopy> = {
   ar: {
-    platformName: "منصة التحقق المركزي",
+    platformName: "منصة بنك أم درمان الوطني",
     platformTagline: "لتحديث بيانات العملاء",
     nav: {
       home: "الرئيسية",
@@ -22,7 +22,7 @@ export const dashboardCopy: Record<Language, DashboardCopy> = {
     notifications: "الإشعارات",
   },
   en: {
-    platformName: "Central Verification Platform",
+    platformName: "Omdurman National Bank Platform",
     platformTagline: "For updating customer data",
     nav: {
       home: "Home",
