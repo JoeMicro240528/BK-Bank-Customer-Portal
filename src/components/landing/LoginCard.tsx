@@ -1,4 +1,4 @@
-import { AlertCircle, Check, ChevronLeft, Lock, ShieldUser } from "lucide-react";
+import { AlertCircle, Check, Lock, ShieldUser } from "lucide-react";
 import Banner from "@/components/ui/Banner";
 import styles from "./LoginCard.module.css";
 import type { LandingCopy } from "./types";
@@ -42,13 +42,6 @@ export default function LoginCard({
         {t.privacyNote}
       </p>
 
-      <div className={styles.noAccount}>
-        <span>{t.noAccount}</span>
-        <a href="https://sudapass.sd" target="_blank" rel="noreferrer">
-          <ChevronLeft aria-hidden="true" size={14} />
-          {t.createAccount}
-        </a>
-      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, Globe2, LogOut, Menu, UserRound } from "lucide-react";
+import Link from "next/link";
 import { Fragment, useEffect, useRef, useState } from "react";
 import Avatar from "@/components/ui/Avatar";
 import styles from "./TopBar.module.css";
@@ -83,9 +84,11 @@ export default function TopBar({
                 {isLast || !crumb.href ? (
                   <span className={isLast ? styles.crumbCurrent : undefined}>{crumb.label}</span>
                 ) : (
-                  <a className={styles.crumbLink} href={crumb.href}>
+                  // In-app navigation: a plain <a> reloaded the page, which
+                  // briefly reset an English user to Arabic.
+                  <Link className={styles.crumbLink} href={crumb.href}>
                     {crumb.label}
-                  </a>
+                  </Link>
                 )}
               </Fragment>
             );

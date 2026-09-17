@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLanguage } from "@/lib/language";
+import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
-import type { Language } from "@/components/dashboard/types";
 import ContactPanel from "@/components/contact/ContactPanel";
 
 export default function Page() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [language, setLanguage] = useState<Language>("ar");
+  const [language, setLanguage] = useLanguage();
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -36,7 +36,7 @@ export default function Page() {
       language={language}
       onLanguageChange={setLanguage}
       user={{ name: user?.name || "", role: t.platformTagline, picture: user?.picture }}
-      crumbs={[{ label: t.nav.home }, { label: t.nav.contact }]}
+      crumbs={[{ label: t.nav.home, href: "/dashboard" }, { label: t.nav.contact }]}
       active="contact"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >

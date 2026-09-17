@@ -20,11 +20,13 @@ import {
   type StepId,
 } from "./steps";
 import FormStepper from "./FormStepper";
+import { useStates } from "@/lib/useStates";
 import styles from "./AufForm.module.css";
 import { copy } from "@/lib/auf/copy";
 import {
   buildCreatePayload,
   buildUpdatePayload,
+  englishName,
   initialForm,
   isCompleteIdentity,
   type FormState,
@@ -68,7 +70,6 @@ function isInvalidDocumentType(caught: unknown): boolean {
 const MAX_UPLOAD_BYTES = 1024 * 1024;
 
 function documentTypeFor(key: string): string {
-  if (key.startsWith("certificate:")) return "income_certificate";
   return key;
 }
 
@@ -82,6 +83,7 @@ export default function AufForm({
   externalRef,
   initialState,
   countryOptions = [],
+  countryCodeById = {},
   locked = {},
   bankNames = {},
   onSubmitted,
@@ -94,6 +96,8 @@ export default function AufForm({
   externalRef?: string;
   initialState?: FormState;
   countryOptions?: Option[];
+  /** Country id -> ISO alpha-2, to look up states of the country of birth. */
+  countryCodeById?: Record<string, string>;
   /** Bank id -> display name, for the review step. */
   bankNames?: Record<string, string>;
   onSubmitted?: (externalRef: string) => void;
@@ -106,6 +110,10 @@ export default function AufForm({
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { states: birthStates, loading: birthStatesLoading } = useStates(
+    countryCodeById[form.birth_country_id],
+    language,
+  );
   /** Attachments, held outside the draft: a File cannot be serialised. */
   const [files, setFiles] = useState<Record<string, File | null>>({});
 
@@ -234,7 +242,12 @@ export default function AufForm({
   const goNext = async () => {
     // Check before saving: a half-filled step should not reach the backend,
     // and the customer should be told what is missing rather than moving on.
-    const missing = isReview ? [] : missingFields(step as StepId, form, files, t);
+    const missing = isReview
+      ? []
+      : missingFields(step as StepId, form, files, t, {
+          statesLoading: birthStatesLoading,
+          stateCount: birthStates.length,
+        });
 
     if (missing.length > 0) {
       setError(`${t.missingRequired}: ${missing.join("، ")}`);
@@ -358,7 +371,7 @@ export default function AufForm({
               </div>
               <div className={styles.reviewItem}>
                 <dt>{t.name_english}</dt>
-                <dd>{form.name_english || "-"}</dd>
+                <dd>{englishName(form) || "-"}</dd>
               </div>
               <div className={styles.reviewItem}>
                 <dt>{t.mobile_personal}</dt>
@@ -427,6 +440,8 @@ export default function AufForm({
             countryOptions={countryOptions}
             files={files}
             setFile={setFile}
+            birthStates={birthStates}
+            birthStatesLoading={birthStatesLoading}
           />
         )}
       </div>

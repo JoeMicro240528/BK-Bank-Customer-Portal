@@ -350,30 +350,51 @@
   }
 }
 
-/* Account type, self-declared -- the API reports no type of its own. */
-.hint {
-  margin: 6px 0 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--muted, #64748b);
+
+/* --- national ID: shown from SudaPass, never editable --- */
+.control input.lockedInput {
+  padding-inline-end: 36px;
+  background: var(--surface-muted, #f8fafc);
+  color: var(--ink, #172033);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  cursor: default;
 }
 
-.kindPersonal,
-.kindCommercial {
+/* A read-only value shouldn't light up as if it could be typed into. */
+.control input.lockedInput:focus {
+  border-color: var(--line, #d8dee8);
+  box-shadow: none;
+}
+
+.lockIcon {
+  position: absolute;
+  inset-inline-end: 12px;
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.kindPersonal {
-  background: var(--surface-muted, #f1f5f9);
+  pointer-events: none;
   color: var(--muted, #64748b);
 }
 
-.kindCommercial {
-  background: #fef3c7;
-  color: #b45309;
+.lockIcon svg,
+.sourceNote svg,
+.fieldError svg {
+  stroke: currentColor;
+}
+
+.sourceNote,
+.fieldError {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+}
+
+.sourceNote {
+  color: var(--muted, #64748b);
+}
+
+.fieldError {
+  color: #be123c;
+  line-height: 1.45;
 }

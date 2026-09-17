@@ -3,8 +3,6 @@ export type Language = "en" | "ar";
 export type LandingCopy = {
   platformName: string;
   platformTagline: string;
-  navAbout: string;
-  navHelp: string;
   language: string;
   english: string;
   arabic: string;
@@ -21,8 +19,6 @@ export type LandingCopy = {
   welcomeIntro: string;
   trustBadges: string;
   privacyNote: string;
-  noAccount: string;
-  createAccount: string;
   sudapassTitle: string;
   sudapassLogin: string;
   howItWorks: string;
@@ -35,6 +31,4 @@ export type LandingCopy = {
   step4Title: string;
   step4Desc: string;
   footerRights: string;
-  footerTerms: string;
-  footerPrivacy: string;
 };

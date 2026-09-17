@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLanguage } from "@/lib/language";
+import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -8,13 +9,12 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
 import DashboardHome from "@/components/home/DashboardHome";
 import type { DashboardStats } from "@/components/home/types";
-import type { Language } from "@/components/dashboard/types";
 import { useRequests } from "@/lib/useRequests";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [language, setLanguage] = useState<Language>("ar");
+  const [language, setLanguage] = useLanguage();
 
   // Called before the early return below -- hooks cannot run conditionally.
   const { requests } = useRequests(session?.user?.national_id, language);

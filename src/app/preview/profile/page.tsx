@@ -45,7 +45,6 @@ export default function ProfilePreview() {
           gender: "male",
           nationality: "SDN",
         }}
-        onContinue={() => router.push("/preview/new-request")}
       />
     </DashboardLayout>
   );

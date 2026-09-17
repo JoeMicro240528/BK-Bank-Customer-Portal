@@ -151,25 +151,5 @@
   stroke: currentColor;
 }
 
-.noAccount {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  width: 100%;
-  font-size: 16px !important;
-}
 
-.noAccount a {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--brand-strong);
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
-}
 
-.noAccount a:hover {
-  text-decoration: underline;
-}

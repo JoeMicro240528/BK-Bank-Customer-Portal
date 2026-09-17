@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/lib/language";
 import { Suspense, useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -7,11 +8,10 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import Banner from "@/components/ui/Banner";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
-import type { Language } from "@/components/dashboard/types";
 import NewRequestScreen from "@/components/wizard/NewRequestScreen";
 import type { AddedAccount } from "@/components/wizard/types";
 import AufForm from "@/components/form/AufForm";
-import { initialForm, splitName, type FormState } from "@/lib/auf/form";
+import { initialForm, type FormState } from "@/lib/auf/form";
 import { useBanks } from "@/lib/useBanks";
 import { useDraft } from "@/lib/auf/useDraft";
 import { useCountries } from "@/lib/useCountries";
@@ -21,7 +21,7 @@ function NewRequestFlow() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [language, setLanguage] = useState<Language>("ar");
+  const [language, setLanguage] = useLanguage();
   const [error, setError] = useState("");
 
   // Set only when continuing a saved draft from its details page.
@@ -33,7 +33,7 @@ function NewRequestFlow() {
   // Hooks must run unconditionally, before the early return below.
   const { banks, error: banksError } = useBanks(language);
   const { draft, loading: draftLoading } = useDraft(session?.user?.national_id, language, resumeRef);
-  const { countries, codeToId } = useCountries(language);
+  const { countries, codeToId, idToCode } = useCountries(language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -56,8 +56,12 @@ function NewRequestFlow() {
 
   // The API rejects any save without a primary national ID, so guarantee one
   // even if a restored draft came back without its identity lines.
-  const withIdentity = (state: FormState): FormState =>
-    state.identity_lines.some((line) => line.is_primary && line.id_number.trim())
+  const withIdentity = (incoming: FormState): FormState => {
+    // A resumed draft also takes its Arabic name from SudaPass, not from what
+    // was stored, since that is the identity the request is filed under.
+    const state = user?.name ? { ...incoming, name_arabic: user.name } : incoming;
+
+    return state.identity_lines.some((line) => line.is_primary && line.id_number.trim())
       ? state
       : {
           ...state,
@@ -74,6 +78,7 @@ function NewRequestFlow() {
             ...state.identity_lines.filter((line) => line.id_number.trim()),
           ],
         };
+  };
 
   /** Seeds the form from the session and the chosen accounts, then hands over. */
   const startForm = (accounts: AddedAccount[]) => {
@@ -84,19 +89,11 @@ function NewRequestFlow() {
 
     setFormState({
       ...initialForm(),
+      // The Arabic name is the customer's SudaPass name and is never asked for.
+      // The English name is typed into its four fields: SudaPass holds the name
+      // in Arabic, so prefilling "English" boxes from it would be wrong.
       name_arabic: user?.name || "",
-      name_english: user?.name || "",
-      // Prefilled from SudaPass so nothing is retyped; still editable, since
-      // SudaPass returns some names in Arabic and this form asks for English.
-      ...(() => {
-        const [first, second, third, fourth] = splitName(user?.name);
-        return {
-          name_en_first: first,
-          name_en_second: second,
-          name_en_third: third,
-          name_en_fourth: fourth,
-        };
-      })(),
+      name_english: "",
       nationality_id: resolveNationalityId(user?.nationality, codeToId),
       email: user?.email || "",
       gender: user?.gender || "",
@@ -116,7 +113,6 @@ function NewRequestFlow() {
       selected_accounts: accounts.map((account) => ({
         bank_id: Number(account.bankId),
         account_number: account.accountNumber,
-        account_kind: account.kind,
       })),
     });
   };
@@ -126,7 +122,11 @@ function NewRequestFlow() {
       language={language}
       onLanguageChange={setLanguage}
       user={{ name: user?.name || "", role: t.platformTagline, picture: user?.picture }}
-      crumbs={[{ label: t.nav.home }, { label: t.nav.newRequest }]}
+      crumbs={[
+        { label: t.nav.home, href: "/dashboard" },
+        { label: t.nav.myRequests, href: "/requests" },
+        { label: t.nav.newRequest },
+      ]}
       active="myRequests"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >
@@ -144,6 +144,7 @@ function NewRequestFlow() {
           initialState={withIdentity(formState ?? draft!.state)}
           bankNames={Object.fromEntries(banks.map((b) => [b.id, b.name]))}
           countryOptions={countries}
+          countryCodeById={idToCode}
           locked={{
             name: user?.name,
             nationalId: ownerId,
@@ -159,7 +160,8 @@ function NewRequestFlow() {
         <NewRequestScreen
           language={language}
           banks={banks}
-          onBack={() => router.push("/profile")}
+          nationalId={ownerId}
+          onBack={() => router.push("/requests")}
           onContinue={startForm}
         />
       )}

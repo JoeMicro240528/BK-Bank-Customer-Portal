@@ -1,5 +1,6 @@
 "use client";
 
+import { useLanguage } from "@/lib/language";
 import { useEffect, useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
@@ -7,7 +8,6 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import Banner from "@/components/ui/Banner";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
-import type { Language } from "@/components/dashboard/types";
 import RequestDetails from "@/components/request/RequestDetails";
 import type { RequestDetailsData } from "@/components/request/types";
 import { frontendApi, errorMessage } from "@/lib/api";
@@ -19,7 +19,7 @@ export default function RequestDetailsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams<{ id: string }>();
-  const [language, setLanguage] = useState<Language>("ar");
+  const [language, setLanguage] = useLanguage();
   const [request, setRequest] = useState<RequestDetailsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -77,7 +77,7 @@ export default function RequestDetailsPage() {
       onLanguageChange={setLanguage}
       user={{ name: user?.name || "", role: t.platformTagline, picture: user?.picture }}
       crumbs={[
-        { label: t.nav.home },
+        { label: t.nav.home, href: "/dashboard" },
         { label: t.nav.myRequests, href: "/requests" },
         { label: request?.reference || (language === "ar" ? "تفاصيل الطلب" : "Request details") },
       ]}

@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLanguage } from "@/lib/language";
+import { useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { dashboardCopy } from "@/components/dashboard/copy";
-import type { Language } from "@/components/dashboard/types";
 import RequestsList from "@/components/requests/RequestsList";
 import { useRequests } from "@/lib/useRequests";
 
 export default function RequestsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [language, setLanguage] = useState<Language>("ar");
+  const [language, setLanguage] = useLanguage();
 
   // Called before the early return below -- hooks cannot run conditionally.
   const { requests } = useRequests(session?.user?.national_id, language);
@@ -41,7 +41,7 @@ export default function RequestsPage() {
       language={language}
       onLanguageChange={setLanguage}
       user={{ name: user?.name || "", role: t.platformTagline, picture: user?.picture }}
-      crumbs={[{ label: t.nav.home }, { label: t.nav.myRequests }]}
+      crumbs={[{ label: t.nav.home, href: "/dashboard" }, { label: t.nav.myRequests }]}
       active="myRequests"
       onLogout={() => signOut({ callbackUrl: "/" })}
     >

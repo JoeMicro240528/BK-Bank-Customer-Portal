@@ -19,12 +19,14 @@ const SUPPORT_PHONE = "+249 123 456 789";
 export default function NewRequestScreen({
   language,
   banks,
+  nationalId,
   initialAccounts = [],
   onBack,
   onContinue,
 }: {
   language: Language;
   banks: BankOption[];
+  nationalId?: string;
   initialAccounts?: AddedAccount[];
   onBack?: () => void;
   onContinue?: (accounts: AddedAccount[]) => void;
@@ -70,6 +72,7 @@ export default function NewRequestScreen({
           t={t}
           language={language}
           banks={banks}
+          nationalId={nationalId}
           accounts={accounts}
           onAdd={handleAdd}
           onRemove={handleRemove}

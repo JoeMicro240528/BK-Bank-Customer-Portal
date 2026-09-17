@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import AuthSessionProvider from "@/components/session-provider";
+import { LanguageProvider } from "@/lib/language";
 
 export const metadata: Metadata = {
   title: "ONB Customer Information Update",
@@ -16,7 +17,9 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl">
       <body>
-        <AuthSessionProvider>{children}</AuthSessionProvider>
+        <AuthSessionProvider>
+          <LanguageProvider>{children}</LanguageProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

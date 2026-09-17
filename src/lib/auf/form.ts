@@ -37,12 +37,10 @@ export type MinorFormLine = {
   annual_income_amount: string;
 };
 
-/** One selected account, with the type the customer declared for it. */
+/** One selected account, as the API stores it. */
 export type SelectedAccountLine = {
   bank_id: number;
   account_number: string;
-  /** Self-declared: the API does not report an account's type. */
-  account_kind: "personal" | "commercial";
 };
 
 export type FormState = {
@@ -58,6 +56,14 @@ export type FormState = {
   name_en_second: string;
   name_en_third: string;
   name_en_fourth: string;
+  /**
+   * The guide asks for the mother's name in four parts; the API stores one
+   * string, so these are joined into mother_maiden_name on save.
+   */
+  mother_name_first: string;
+  mother_name_second: string;
+  mother_name_third: string;
+  mother_name_fourth: string;
   mother_maiden_name: string;
   gender: string;
   date_of_birth: string;
@@ -108,6 +114,13 @@ export type FormState = {
   expected_txn_cheques: boolean;
   expected_txn_inward: boolean;
   expected_txn_outward: boolean;
+  /**
+   * The single combined PEP question, and who it applies to. The API keeps two
+   * flags (pep_is_pep, pep_relative_pep); these are set from the holder so a
+   * "yes" with no holder chosen yet has somewhere to live.
+   */
+  pep_any: boolean;
+  pep_holder: "" | "self" | "relative" | "both";
   pep_is_pep: boolean;
   pep_position: string;
   pep_relative_pep: boolean;
@@ -130,11 +143,18 @@ export type FormState = {
 
   /**
    * Fields the guide requires that the API has nowhere to store yet. They are
-   * collected and kept in the draft so nothing the customer types is lost, but
-   * they are not sent -- see buildCreatePayload.
+   * collected but not sent -- see buildCreatePayload -- and because a draft is
+   * rebuilt from the API, they are not restored when a draft is resumed.
    */
-  place_of_birth: string;
+  /** State of birth, a master-data state id. Country goes to birth_country_id. */
+  birth_state_id: string;
   is_beneficial_owner: boolean;
+  /** The beneficial owner, asked only when the customer is not one. */
+  bo_full_name: string;
+  bo_relationship: string;
+  bo_id_number: string;
+  bo_nationality_id: string;
+  bo_address: string;
   account_purpose: string;
   expected_txn_monthly_value: string;
   expected_txn_monthly_count: string;
@@ -238,6 +258,39 @@ export function splitName(full: string | undefined): [string, string, string, st
   return [first, second, third, rest.join(" ")];
 }
 
+/** Words that open a compound name and belong with the word after them. */
+const ARABIC_NAME_PREFIXES = new Set(["عبد", "ابو", "أبو", "أبي", "ابي"]);
+/** Words that close a compound name and belong with the word before them. */
+const ARABIC_NAME_SUFFIXES = new Set(["الدين", "الله"]);
+
+/**
+ * An Arabic name in four parts, keeping compound names whole ("عبد الرحمن",
+ * "نور الدين", "أبو بكر") rather than cutting at every space. Used to put a
+ * stored name back into its boxes: the API keeps only the joined string, so a
+ * plain split would scatter a compound name across two boxes on resume.
+ */
+export function splitArabicName(full: string | undefined): [string, string, string, string] {
+  const words = (full || "").trim().split(/\s+/).filter(Boolean);
+  const parts: string[] = [];
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    const next = words[i + 1];
+
+    if (ARABIC_NAME_PREFIXES.has(word) && next !== undefined) {
+      parts.push(`${word} ${next}`);
+      i++;
+    } else if (ARABIC_NAME_SUFFIXES.has(word) && parts.length > 0) {
+      parts[parts.length - 1] = `${parts[parts.length - 1]} ${word}`;
+    } else {
+      parts.push(word);
+    }
+  }
+
+  const [first = "", second = "", third = "", ...rest] = parts;
+  return [first, second, third, rest.join(" ")];
+}
+
 export function initialForm(): FormState {
   return {
     external_ref: "",
@@ -248,6 +301,10 @@ export function initialForm(): FormState {
     name_en_second: "",
     name_en_third: "",
     name_en_fourth: "",
+    mother_name_first: "",
+    mother_name_second: "",
+    mother_name_third: "",
+    mother_name_fourth: "",
     mother_maiden_name: "",
     gender: "",
     date_of_birth: "",
@@ -297,6 +354,8 @@ export function initialForm(): FormState {
     expected_txn_cheques: false,
     expected_txn_inward: false,
     expected_txn_outward: false,
+    pep_any: false,
+    pep_holder: "",
     pep_is_pep: false,
     pep_position: "",
     pep_relative_pep: false,
@@ -316,8 +375,13 @@ export function initialForm(): FormState {
     fatca_stay_reason: "",
     fatca_stay_reason_specify: "",
     declaration_accepted: false,
-    place_of_birth: "",
+    birth_state_id: "",
     is_beneficial_owner: true,
+    bo_full_name: "",
+    bo_relationship: "",
+    bo_id_number: "",
+    bo_nationality_id: "",
+    bo_address: "",
     account_purpose: "",
     expected_txn_monthly_value: "",
     expected_txn_monthly_count: "",
@@ -361,13 +425,23 @@ export function emptyMinorLine(): MinorFormLine {
   };
 }
 
-/** The four name parts joined, falling back to whatever was already stored. */
-function englishName(form: FormState): string {
-  const parts = [form.name_en_first, form.name_en_second, form.name_en_third, form.name_en_fourth]
+/** The mother's name as typed into its four fields. */
+export function motherName(form: FormState): string {
+  return [form.mother_name_first, form.mother_name_second, form.mother_name_third, form.mother_name_fourth]
     .map((part) => part.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .join(" ");
+}
 
-  return parts.length > 0 ? parts.join(" ") : form.name_english.trim();
+/**
+ * The English name as typed into its four fields. No fallback to a stored
+ * value: that could be the Arabic SudaPass name sent under the English label.
+ */
+export function englishName(form: FormState): string {
+  return [form.name_en_first, form.name_en_second, form.name_en_third, form.name_en_fourth]
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .join(" ");
 }
 
 function annualIncome(form: FormState): number | undefined {
@@ -384,7 +458,7 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     info_type: form.info_type,
     name_arabic: form.name_arabic.trim(),
     name_english: englishName(form),
-    mother_maiden_name: optionalText(form.mother_maiden_name),
+    mother_maiden_name: optionalText(motherName(form)),
     gender: optionalText(form.gender),
     date_of_birth: optionalText(form.date_of_birth),
     birth_country_id: parseOptionalInt(form.birth_country_id),
@@ -403,10 +477,7 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     block: optionalText(form.block),
     house_no: optionalText(form.house_no),
     bank_account_id: parseOptionalInt(form.bank_account_id),
-    selected_accounts: form.selected_accounts.map(({ bank_id, account_number }) => ({
-      bank_id,
-      account_number,
-    })),
+    selected_accounts: form.selected_accounts,
     cif_number: optionalText(form.cif_number),
     business_sector: optionalText(form.business_sector),
     business_sector_other: optionalText(form.business_sector_other),

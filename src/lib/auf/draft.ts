@@ -1,5 +1,5 @@
 import type { AUFRequestRead } from "@/lib/swagger-types";
-import { initialForm, splitName, type FormState } from "./form";
+import { initialForm, splitArabicName, splitName, type FormState } from "./form";
 
 /**
  * Maps a saved draft back into form state so a returning user continues where
@@ -36,9 +36,13 @@ export function toFormState(request: AUFRequestRead): FormState {
     name_arabic: request.name_arabic || "",
     name_english: request.name_english || "",
     // The API stores one string; split it back into the four parts the form
-    // shows, so a resumed draft is not missing its name.
+    // shows. Older drafts stored the Arabic SudaPass name here, which must not
+    // reappear in the English boxes.
     ...(() => {
-      const [first, second, third, fourth] = splitName(request.name_english);
+      const stored = request.name_english || "";
+      const [first, second, third, fourth] = /[\u0600-\u06FF]/.test(stored)
+        ? ["", "", "", ""]
+        : splitName(stored);
       return {
         name_en_first: first,
         name_en_second: second,
@@ -47,6 +51,15 @@ export function toFormState(request: AUFRequestRead): FormState {
       };
     })(),
     mother_maiden_name: text("mother_maiden_name"),
+    ...(() => {
+      const [first, second, third, fourth] = splitArabicName(text("mother_maiden_name"));
+      return {
+        mother_name_first: first,
+        mother_name_second: second,
+        mother_name_third: third,
+        mother_name_fourth: fourth,
+      };
+    })(),
     gender: text("gender"),
     date_of_birth: text("date_of_birth"),
     birth_country_id: number("birth_country_id"),
@@ -96,6 +109,16 @@ export function toFormState(request: AUFRequestRead): FormState {
     expected_txn_inward: flag("expected_txn_inward"),
     expected_txn_outward: flag("expected_txn_outward"),
 
+    // Rebuild the combined question from the two flags the API stores.
+    pep_any: flag("pep_is_pep") || flag("pep_relative_pep"),
+    pep_holder:
+      flag("pep_is_pep") && flag("pep_relative_pep")
+        ? "both"
+        : flag("pep_is_pep")
+          ? "self"
+          : flag("pep_relative_pep")
+            ? "relative"
+            : "",
     pep_is_pep: flag("pep_is_pep"),
     pep_position: text("pep_position"),
     pep_relative_pep: flag("pep_relative_pep"),
@@ -145,12 +168,9 @@ export function toFormState(request: AUFRequestRead): FormState {
       guardian_account_no: str(line.guardian_account_no),
       annual_income_amount: num(line.annual_income_amount),
     })),
-    // The API does not store the declared kind, so a restored draft falls back
-    // to personal and the customer can correct it.
     selected_accounts: (request.selected_accounts || []).map((account) => ({
       bank_id: account.bank_id,
       account_number: account.account_number,
-      account_kind: "personal" as const,
     })),
   };
 }

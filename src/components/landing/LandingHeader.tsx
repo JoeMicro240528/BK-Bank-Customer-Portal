@@ -1,4 +1,4 @@
-import { Globe2, HelpCircle, Info, ShieldCheck } from "lucide-react";
+import { Globe2, ShieldCheck } from "lucide-react";
 import styles from "./LandingHeader.module.css";
 import type { Language, LandingCopy } from "./types";
 
@@ -24,14 +24,6 @@ export default function LandingHeader({
       </div>
 
       <nav className={styles.nav}>
-        <a className={styles.navLink} href="#about">
-          <Info aria-hidden="true" size={16} />
-          {t.navAbout}
-        </a>
-        <a className={styles.navLink} href="#help">
-          <HelpCircle aria-hidden="true" size={16} />
-          {t.navHelp}
-        </a>
         <label className={styles.langControl}>
           <Globe2 aria-hidden="true" size={16} />
           <select

@@ -24,7 +24,6 @@ const previewAccounts: AddedAccount[] = [
     bankColor: "#009341",
     branch: "فرع السوق العربي",
     accountNumber: "1234567890123",
-    kind: "personal" as const,
   },
   {
     id: "2",
@@ -33,7 +32,6 @@ const previewAccounts: AddedAccount[] = [
     bankColor: "#009341",
     branch: "فرع أم درمان الرئيسي",
     accountNumber: "9876543210987",
-    kind: "commercial" as const,
   },
 ];
 
@@ -66,6 +64,7 @@ export default function NewRequestPreview() {
       <NewRequestScreen
         language={language}
         banks={previewBanks}
+        nationalId="12345678901"
         initialAccounts={previewAccounts}
         onBack={() => router.push("/preview/profile")}
         onContinue={() => router.push("/preview/requests")}

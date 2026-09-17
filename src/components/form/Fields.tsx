@@ -6,6 +6,9 @@ import styles from "./Fields.module.css";
 
 export type Option = { value: string; label: string };
 
+/** Anything that can't appear in a name written in English letters. */
+export const LATIN_NAME_DISALLOWED = /[^A-Za-z '\-]/g;
+
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
@@ -48,6 +51,16 @@ export function ReadOnlyField({
   );
 }
 
+/** A labelled break inside a long step, e.g. PEP or FATCA. */
+export function FormSection({ title, note }: { title: string; note?: string }) {
+  return (
+    <div className={styles.section}>
+      <h3 className={styles.sectionTitle}>{title}</h3>
+      {note && <p className={styles.sectionNote}>{note}</p>}
+    </div>
+  );
+}
+
 export function FieldGrid({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return <div className={`${styles.grid} ${wide ? styles.gridWide : ""}`}>{children}</div>;
 }
@@ -60,6 +73,7 @@ export function TextInput({
   type = "text",
   hint,
   digitsOnly = false,
+  latinOnly = false,
   ...rest
 }: {
   label: string;
@@ -70,13 +84,23 @@ export function TextInput({
   hint?: string;
   /** Keep only digits (and a leading +), for phone and account numbers. */
   digitsOnly?: boolean;
+  /**
+   * Keep only English letters, spaces, hyphens and apostrophes, for names
+   * that must be in Latin script. Arabic and digits are dropped as typed.
+   */
+  latinOnly?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "type">) {
   const id = useId();
 
   // Held as text rather than a number input: leading zeros matter, and the API
   // takes these as strings.
-  const clean = (raw: string) =>
-    digitsOnly ? raw.replace(/(?!^\+)\D/g, "").replace(/^\+?/, raw.startsWith("+") ? "+" : "") : raw;
+  const clean = (raw: string) => {
+    if (digitsOnly) {
+      return raw.replace(/(?!^\+)\D/g, "").replace(/^\+?/, raw.startsWith("+") ? "+" : "");
+    }
+    if (latinOnly) return raw.replace(LATIN_NAME_DISALLOWED, "");
+    return raw;
+  };
 
   return (
     <div className={styles.field}>
@@ -113,6 +137,7 @@ export function FileInput({
   chooseLabel,
   emptyLabel,
   clearLabel,
+  disabled = false,
 }: {
   label: string;
   file: File | null;
@@ -122,6 +147,8 @@ export function FileInput({
   chooseLabel: string;
   emptyLabel: string;
   clearLabel: string;
+  /** Shown but not usable, for an attachment that doesn't apply to this customer. */
+  disabled?: boolean;
 }) {
   const id = useId();
 
@@ -134,7 +161,17 @@ export function FileInput({
 
       <div className={styles.fileWrap}>
         {/* The whole box is the label, so clicking anywhere opens the picker. */}
-        <label className={`${styles.fileBox} ${file ? styles.fileBoxFilled : ""}`} htmlFor={id}>
+        <label
+          className={[
+            styles.fileBox,
+            file && !disabled ? styles.fileBoxFilled : "",
+            disabled ? styles.fileBoxDisabled : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          htmlFor={id}
+          aria-disabled={disabled || undefined}
+        >
           <span className={styles.fileIcon}>
             {file ? <FileCheck aria-hidden="true" size={18} /> : <Upload aria-hidden="true" size={18} />}
           </span>
@@ -147,12 +184,13 @@ export function FileInput({
             className={styles.fileInput}
             type="file"
             accept="image/*,application/pdf"
+            disabled={disabled}
             onChange={(event) => onChange(event.target.files?.[0] ?? null)}
           />
         </label>
 
         {/* Outside the label: a button inside it would reopen the picker. */}
-        {file && (
+        {file && !disabled && (
           <button
             type="button"
             className={styles.fileClear}

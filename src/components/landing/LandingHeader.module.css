@@ -49,19 +49,6 @@
   flex-wrap: wrap;
 }
 
-.navLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 16px;
-  text-decoration: none;
-}
-
-.navLink:hover {
-  color: var(--ink);
-}
-
 .langControl {
   display: inline-flex;
   align-items: center;
@@ -95,10 +82,6 @@
   .nav {
     gap: 12px;
     width: 100%;
-    justify-content: space-between;
-  }
-
-  .navLink {
-    font-size: 15px;
+    justify-content: flex-end;
   }
 }

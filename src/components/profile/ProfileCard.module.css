@@ -158,34 +158,6 @@
   stroke: currentColor;
 }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 18px 18px;
-}
-
-.continueButton {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  border: 0;
-  border-radius: 10px;
-  background: var(--brand, #009341);
-  color: #fff;
-  font-size: 15.5px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.continueButton:hover {
-  background: var(--brand-strong, #115931);
-}
-
-.continueButton svg {
-  stroke: currentColor;
-}
-
 @media (max-width: 720px) {
   .grid {
     grid-template-columns: 1fr;

@@ -16,8 +16,6 @@ export type BankOption = {
   branches: { id: string; name: string }[];
 };
 
-export type AccountKind = "personal" | "commercial";
-
 export type AddedAccount = {
   id: string;
   bankId: string;
@@ -25,12 +23,6 @@ export type AddedAccount = {
   bankColor: string;
   branch: string;
   accountNumber: string;
-  /**
-   * Self-declared. The API's CustomerBankAccount carries no account type, so
-   * the customer tells us -- a commercial account requires an income
-   * certificate later in the form.
-   */
-  kind: AccountKind;
 };
 
 export type WizardCopy = {
@@ -57,6 +49,9 @@ export type WizardCopy = {
   singleRequestNotice: string;
 
   addAccountsTitle: string;
+  nationalId: string;
+  fromSudapass: string;
+  nationalIdInvalid: string;
   selectBranch: string;
   accountNumber: string;
   accountNumberPlaceholder: string;
@@ -66,11 +61,6 @@ export type WizardCopy = {
   colBank: string;
   colBranch: string;
   colAccount: string;
-  colKind: string;
-  accountKind: string;
-  accountKindPersonal: string;
-  accountKindCommercial: string;
-  accountKindHint: string;
   colStatus: string;
   colActions: string;
   statusAdded: string;
@@ -96,7 +86,5 @@ export type WizardCopy = {
   secureBody: string;
 
   footerRights: string;
-  footerTerms: string;
-  footerPrivacy: string;
   footerFaq: string;
 };

@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  ArrowLeft,
-  ArrowRight,
   CalendarDays,
   Flag,
   IdCard,
@@ -41,7 +39,6 @@ const copy = {
     gender: "الجنس",
     nationality: "الجنسية",
     notice: "هذه البيانات مسترجعة من سوداباس ولا يمكن تعديلها من هنا.",
-    continue: "متابعة",
     notProvided: "غير متوفر",
   },
   en: {
@@ -54,7 +51,6 @@ const copy = {
     gender: "Gender",
     nationality: "Nationality",
     notice: "This data is retrieved from SudaPass and cannot be edited here.",
-    continue: "Continue",
     notProvided: "Not provided",
   },
 } as const;
@@ -62,14 +58,11 @@ const copy = {
 export default function ProfileCard({
   user,
   language,
-  onContinue,
 }: {
   user: ProfileUser;
   language: Language;
-  onContinue?: () => void;
 }) {
   const t = copy[language];
-  const Arrow = language === "ar" ? ArrowLeft : ArrowRight;
 
   const items: { key: string; icon: LucideIcon; label: string; value: string; ltr?: boolean }[] = [
     {
@@ -150,13 +143,6 @@ export default function ProfileCard({
           <Info aria-hidden="true" size={15} />
           {t.notice}
         </p>
-
-        <div className={styles.actions}>
-          <button type="button" className={styles.continueButton} onClick={onContinue}>
-            {t.continue}
-            <Arrow aria-hidden="true" size={17} />
-          </button>
-        </div>
       </section>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Download, FileText, Printer } from "lucide-react";
+import { FileText } from "lucide-react";
 import StatusPill from "./StatusPill";
 import styles from "./RequestAside.module.css";
 import type { RequestCopy, RequestDetailsData } from "./types";
@@ -12,17 +12,6 @@ export default function RequestAside({
 }) {
   return (
     <aside className={styles.aside}>
-      <div className={styles.actions}>
-        <button type="button" className={styles.actionButton}>
-          <Download aria-hidden="true" size={16} />
-          {t.downloadPdf}
-        </button>
-        <button type="button" className={styles.actionButton}>
-          <Printer aria-hidden="true" size={16} />
-          {t.print}
-        </button>
-      </div>
-
       <section className={styles.card}>
         <h2 className={styles.cardTitle}>
           <FileText aria-hidden="true" size={17} />

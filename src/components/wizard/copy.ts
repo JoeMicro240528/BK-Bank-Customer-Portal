@@ -35,6 +35,9 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     singleRequestNotice: "سيتم إنشاء طلب تحديث واحد شامل لجميع حساباتك المضافة.",
 
     addAccountsTitle: "إضافة الحسابات",
+    nationalId: "الرقم الوطني",
+    fromSudapass: "من سوداباس",
+    nationalIdInvalid: "الرقم الوطني في سوداباس غير صالح، يجب أن يكون 11 رقماً. يرجى التواصل مع الدعم.",
     selectBranch: "اختر الفرع",
     accountNumber: "رقم الحساب",
     accountNumberPlaceholder: "أدخل رقم الحساب",
@@ -44,11 +47,6 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     colBank: "البنك",
     colBranch: "الفرع",
     colAccount: "رقم الحساب",
-    colKind: "نوع الحساب",
-    accountKind: "نوع الحساب",
-    accountKindPersonal: "شخصي",
-    accountKindCommercial: "تجاري",
-    accountKindHint: "الحساب التجاري يتطلب إرفاق شهادة دخل لاحقاً في الاستمارة.",
     colStatus: "الحالة",
     colActions: "الإجراءات",
     statusAdded: "تمت الإضافة",
@@ -78,8 +76,6 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     secureBody: "جميع بياناتك مشفرة وآمنة وفق أعلى معايير الحماية.",
 
     footerRights: "جميع الحقوق محفوظة © 2026 منصة بنك أم درمان الوطني لتحديث بيانات العملاء",
-    footerTerms: "الشروط والأحكام",
-    footerPrivacy: "سياسة الخصوصية",
     footerFaq: "الأسئلة الشائعة",
   },
 
@@ -117,6 +113,9 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     singleRequestNotice: "A single update request will be created covering all added accounts.",
 
     addAccountsTitle: "Add accounts",
+    nationalId: "National ID",
+    fromSudapass: "From SudaPass",
+    nationalIdInvalid: "The national ID on your SudaPass record isn't valid: it must be 11 digits. Please contact support.",
     selectBranch: "Select branch",
     accountNumber: "Account number",
     accountNumberPlaceholder: "Enter the account number",
@@ -126,11 +125,6 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     colBank: "Bank",
     colBranch: "Branch",
     colAccount: "Account no.",
-    colKind: "Account type",
-    accountKind: "Account type",
-    accountKindPersonal: "Personal",
-    accountKindCommercial: "Commercial",
-    accountKindHint: "A commercial account requires an income certificate later in the form.",
     colStatus: "Status",
     colActions: "Actions",
     statusAdded: "Added",
@@ -160,8 +154,6 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     secureBody: "All your data is encrypted and secured to the highest protection standards.",
 
     footerRights: "© 2026 Omdurman National Bank Platform for updating customer data. All rights reserved.",
-    footerTerms: "Terms & Conditions",
-    footerPrivacy: "Privacy Policy",
     footerFaq: "FAQ",
   },
 };

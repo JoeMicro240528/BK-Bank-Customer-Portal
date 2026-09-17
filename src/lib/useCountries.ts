@@ -57,5 +57,8 @@ export function useCountries(language: Language, enabled = true) {
     };
   }, [language, enabled]);
 
-  return { countries, codeToId, loading };
+  /** Master-data id -> ISO alpha-2, the key the states endpoint is queried by. */
+  const idToCode = Object.fromEntries(Object.entries(codeToId).map(([code, id]) => [id, code]));
+
+  return { countries, codeToId, idToCode, loading };
 }

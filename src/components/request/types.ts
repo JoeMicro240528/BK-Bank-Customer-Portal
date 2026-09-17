@@ -44,8 +44,6 @@ export type RequestDetailsData = {
 export type RequestCopy = {
   pageTitle: string;
   pageSubtitle: string;
-  downloadPdf: string;
-  print: string;
   referenceLabel: string;
   createdLabel: string;
   copyReference: string;

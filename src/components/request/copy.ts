@@ -4,8 +4,6 @@ export const requestCopy: Record<Language, RequestCopy> = {
   ar: {
     pageTitle: "تفاصيل طلب التحديث",
     pageSubtitle: "متابعة حالة طلبك لدى بنك أم درمان الوطني",
-    downloadPdf: "تحميل PDF",
-    print: "طباعة",
     referenceLabel: "رقم طلب التحديث",
     createdLabel: "تاريخ إنشاء الطلب",
     copyReference: "نسخ رقم الطلب",
@@ -40,8 +38,6 @@ export const requestCopy: Record<Language, RequestCopy> = {
   en: {
     pageTitle: "Update request details",
     pageSubtitle: "Track your request status with Omdurman National Bank",
-    downloadPdf: "Download PDF",
-    print: "Print",
     referenceLabel: "Update request number",
     createdLabel: "Request created on",
     copyReference: "Copy request number",

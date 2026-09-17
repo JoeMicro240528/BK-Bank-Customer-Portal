@@ -3,23 +3,27 @@
 import {
   ArrowLeft,
   ArrowRight,
-  Briefcase,
   ChevronDown,
   ClipboardList,
+  AlertCircle,
   CreditCard,
+  IdCard,
   Info,
+  Lock,
+  ShieldCheck,
   Landmark,
   Plus,
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
 import styles from "./AccountsCard.module.css";
-import type { AccountKind, AddedAccount, BankOption, Language, WizardCopy } from "./types";
+import type { AddedAccount, BankOption, Language, WizardCopy } from "./types";
 
 export default function AccountsCard({
   t,
   language,
   banks,
+  nationalId,
   accounts,
   onAdd,
   onRemove,
@@ -29,6 +33,8 @@ export default function AccountsCard({
   t: WizardCopy;
   language: Language;
   banks: BankOption[];
+  /** From SudaPass; shown locked, never typed by the customer. */
+  nationalId?: string;
   accounts: AddedAccount[];
   onAdd: (account: Omit<AddedAccount, "id">) => void;
   onRemove: (id: string) => void;
@@ -41,9 +47,13 @@ export default function AccountsCard({
 
   const [branchId, setBranchId] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
-  const [kind, setKind] = useState<AccountKind>("personal");
 
   const canAdd = Boolean(selectedBank && branchId && accountNumber.trim());
+
+  // The bank's form requires an 11-digit national ID. It comes from SudaPass
+  // and can't be edited here, so a malformed one blocks the request rather
+  // than being silently sent.
+  const nationalIdValid = /^\d{11}$/.test(nationalId ?? "");
 
   const handleAdd = () => {
     if (!canAdd || !selectedBank) return;
@@ -56,12 +66,10 @@ export default function AccountsCard({
       bankColor: selectedBank.color,
       branch: branch?.name ?? "",
       accountNumber: accountNumber.trim(),
-      kind,
     });
 
     setBranchId("");
     setAccountNumber("");
-    setKind("personal");
   };
 
   const ContinueArrow = language === "ar" ? ArrowLeft : ArrowRight;
@@ -83,6 +91,41 @@ export default function AccountsCard({
         <Info aria-hidden="true" size={15} />
         {t.singleRequestNotice}
       </p>
+
+      <div className={styles.section}>
+        <div className={styles.fieldGrid}>
+          <div className={styles.field}>
+            <label htmlFor="nationalId">{t.nationalId}</label>
+            <div className={styles.control}>
+              <span className={styles.controlIcon}>
+                <IdCard aria-hidden="true" size={17} />
+              </span>
+              <input
+                id="nationalId"
+                className={styles.lockedInput}
+                value={nationalId ?? ""}
+                readOnly
+                aria-readonly="true"
+                dir="ltr"
+              />
+              <span className={styles.lockIcon}>
+                <Lock aria-hidden="true" size={15} />
+              </span>
+            </div>
+            {nationalIdValid ? (
+              <span className={styles.sourceNote}>
+                <ShieldCheck aria-hidden="true" size={13} />
+                {t.fromSudapass}
+              </span>
+            ) : (
+              <span className={styles.fieldError}>
+                <AlertCircle aria-hidden="true" size={13} />
+                {t.nationalIdInvalid}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className={styles.section}>
         <h2 className={styles.sectionTitle}>{t.addAccountsTitle}</h2>
@@ -132,29 +175,6 @@ export default function AccountsCard({
               />
             </div>
           </div>
-
-          <div className={styles.field}>
-            <label htmlFor="accountKind">
-              {t.accountKind} <span className={styles.required}>*</span>
-            </label>
-            <div className={styles.control}>
-              <span className={styles.controlIcon}>
-                <Briefcase aria-hidden="true" size={17} />
-              </span>
-              <select
-                id="accountKind"
-                value={kind}
-                onChange={(event) => setKind(event.target.value as AccountKind)}
-              >
-                <option value="personal">{t.accountKindPersonal}</option>
-                <option value="commercial">{t.accountKindCommercial}</option>
-              </select>
-              <span className={styles.caret}>
-                <ChevronDown aria-hidden="true" size={16} />
-              </span>
-            </div>
-            <p className={styles.hint}>{t.accountKindHint}</p>
-          </div>
         </div>
 
         <button
@@ -183,7 +203,6 @@ export default function AccountsCard({
                   <th>{t.colBank}</th>
                   <th>{t.colBranch}</th>
                   <th>{t.colAccount}</th>
-                  <th>{t.colKind}</th>
                   <th>{t.colStatus}</th>
                   <th>{t.colActions}</th>
                 </tr>
@@ -201,17 +220,6 @@ export default function AccountsCard({
                     </td>
                     <td>{account.branch}</td>
                     <td dir="ltr">{account.accountNumber}</td>
-                    <td>
-                      <span
-                        className={
-                          account.kind === "commercial" ? styles.kindCommercial : styles.kindPersonal
-                        }
-                      >
-                        {account.kind === "commercial"
-                          ? t.accountKindCommercial
-                          : t.accountKindPersonal}
-                      </span>
-                    </td>
                     <td>
                       <span className={styles.addedPill}>{t.statusAdded}</span>
                     </td>
@@ -241,7 +249,7 @@ export default function AccountsCard({
         <button
           type="button"
           className={styles.continueButton}
-          disabled={accounts.length === 0}
+          disabled={accounts.length === 0 || !nationalIdValid}
           onClick={onContinue}
         >
           <ContinueArrow aria-hidden="true" size={17} />
