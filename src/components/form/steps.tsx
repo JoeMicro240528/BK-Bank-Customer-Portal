@@ -6,7 +6,9 @@ import {
   FieldGrid,
   FileInput,
   FormSection,
+  ARABIC_NAME_DISALLOWED,
   LATIN_NAME_DISALLOWED,
+  MAX_DIGITS,
   ReadOnlyField,
   SelectInput,
   TextInput,
@@ -106,6 +108,11 @@ export function missingFields(
   const text = (value: string, label: string) => {
     if (!value.trim()) missing.push(label);
   };
+  const number = (value: string, label: string) => {
+    if (value && !new RegExp(`^\\+?\\d{1,${MAX_DIGITS}}$`).test(value)) {
+      missing.push(`${label} (${t.digitsOnlyMax})`);
+    }
+  };
   const file = (key: string, label: string) => {
     if (!files[key]) missing.push(label);
   };
@@ -126,6 +133,16 @@ export function missingFields(
           missing.push(`${label} (${t.englishLettersOnly})`);
         }
       }
+      for (const [value, label] of [
+        [form.mother_name_first, t.motherNameFirst],
+        [form.mother_name_second, t.motherNameSecond],
+        [form.mother_name_third, t.motherNameThird],
+        [form.mother_name_fourth, t.motherNameFourth],
+      ] as const) {
+        if (value.trim() && new RegExp(ARABIC_NAME_DISALLOWED.source).test(value)) {
+          missing.push(`${label} (${t.arabicLettersOnly})`);
+        }
+      }
       text(form.nationality_id, t.nationality_id);
       text(form.mother_name_first, t.motherNameFirst);
       text(form.mother_name_second, t.motherNameSecond);
@@ -143,6 +160,8 @@ export function missingFields(
 
     case "contact":
       text(form.mobile_personal, t.mobile_personal);
+      number(form.mobile_personal, t.mobile_personal);
+      number(form.mobile_additional, t.mobile_additional);
       text(form.city_id, t.city_id);
       text(form.district, t.district);
       text(form.street, t.street);
@@ -158,6 +177,7 @@ export function missingFields(
       }
       if (!isIncomeExempt(form.employment_status)) text(form.employer_name, t.employer_name);
       text(form.monthly_income_amount, t.monthlyIncomeAmount);
+      number(form.monthly_income_amount, t.monthlyIncomeAmount);
       if (!isIncomeExempt(form.employment_status)) file(FILE_INCOME_PROOF, t.incomeProof);
       break;
 
@@ -190,6 +210,8 @@ export function missingFields(
       text(form.account_purpose, t.accountPurpose);
       text(form.expected_txn_monthly_value, t.expectedTxnValue);
       text(form.expected_txn_monthly_count, t.expectedTxnCount);
+      number(form.expected_txn_monthly_value, t.expectedTxnValue);
+      number(form.expected_txn_monthly_count, t.expectedTxnCount);
       file(FILE_SIGNATURE, t.signature);
       if (!form.declaration_accepted) missing.push(t.declaration_accepted);
       break;
@@ -280,24 +302,32 @@ function PersonalStep({
           label={t.motherNameFirst}
           value={form.mother_name_first}
           required
+          arabicOnly
+          hint={t.arabicLettersOnly}
           onChange={(value) => setField("mother_name_first", value)}
         />
         <TextInput
           label={t.motherNameSecond}
           value={form.mother_name_second}
           required
+          arabicOnly
+          hint={t.arabicLettersOnly}
           onChange={(value) => setField("mother_name_second", value)}
         />
         <TextInput
           label={t.motherNameThird}
           value={form.mother_name_third}
           required
+          arabicOnly
+          hint={t.arabicLettersOnly}
           onChange={(value) => setField("mother_name_third", value)}
         />
         <TextInput
           label={t.motherNameFourth}
           value={form.mother_name_fourth}
           required
+          arabicOnly
+          hint={t.arabicLettersOnly}
           onChange={(value) => setField("mother_name_fourth", value)}
         />
       </FieldGrid>

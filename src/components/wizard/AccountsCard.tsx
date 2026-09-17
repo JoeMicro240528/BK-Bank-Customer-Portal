@@ -16,6 +16,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import { cleanDigits } from "@/components/form/Fields";
 import styles from "./AccountsCard.module.css";
 import type { AddedAccount, BankOption, Language, WizardCopy } from "./types";
 
@@ -171,7 +172,7 @@ export default function AccountsCard({
                 value={accountNumber}
                 inputMode="numeric"
                 placeholder={t.accountNumberPlaceholder}
-                onChange={(event) => setAccountNumber(event.target.value)}
+                onChange={(event) => setAccountNumber(cleanDigits(event.target.value, false))}
               />
             </div>
           </div>

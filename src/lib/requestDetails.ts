@@ -35,8 +35,7 @@ const labels = {
     approved: "تم الاعتماد",
     action: "مرفوض من البنك",
     created: "تم إنشاء الطلب",
-    bankReview: "قيد المراجعة لدى البنوك",
-    partial: "بعض البنوك معتمد",
+    bankReview: "قيد المراجعة لدى البنك",
     complete: "اكتمل التحديث",
     updateType: "تحديث بيانات",
     mainBranch: "الفرع الرئيسي",
@@ -47,8 +46,7 @@ const labels = {
     approved: "Approved",
     action: "Rejected by the bank",
     created: "Request created",
-    bankReview: "Under review by banks",
-    partial: "Some banks approved",
+    bankReview: "Under review by the bank",
     complete: "Update complete",
     updateType: "Data update",
     mainBranch: "Main branch",
@@ -151,11 +149,6 @@ export function toRequestDetails(
               : allApproved
                 ? "done"
                 : "current",
-      },
-      {
-        key: "partial",
-        label: t.partial,
-        state: allApproved ? "done" : approved > 0 ? "current" : "pending",
       },
       { key: "complete", label: t.complete, state: allApproved ? "done" : "pending" },
     ],

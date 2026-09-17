@@ -9,6 +9,26 @@ export type Option = { value: string; label: string };
 /** Anything that can't appear in a name written in English letters. */
 export const LATIN_NAME_DISALLOWED = /[^A-Za-z '\-]/g;
 
+/** Anything that isn't an Arabic letter, Arabic diacritic, or space. */
+export const ARABIC_NAME_DISALLOWED = /[^\u0621-\u064A\u064B-\u065F\u0670\u0671-\u06D3 ]/g;
+
+/** The most digits any number field on the form accepts. */
+export const MAX_DIGITS = 14;
+
+/**
+ * Digits only, capped at MAX_DIGITS. Arabic-Indic digits (٠-٩, ۰-۹) are read
+ * as their Western equivalents, so a customer on an Arabic keyboard isn't left
+ * typing into a field that silently ignores them. A leading "+" is kept when
+ * allowed, for phone numbers.
+ */
+export function cleanDigits(raw: string, allowPlus = true): string {
+  const western = raw
+    .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+  const plus = allowPlus && western.trimStart().startsWith("+") ? "+" : "";
+  return plus + western.replace(/\D/g, "").slice(0, MAX_DIGITS);
+}
+
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
@@ -74,6 +94,7 @@ export function TextInput({
   hint,
   digitsOnly = false,
   latinOnly = false,
+  arabicOnly = false,
   ...rest
 }: {
   label: string;
@@ -89,16 +110,17 @@ export function TextInput({
    * that must be in Latin script. Arabic and digits are dropped as typed.
    */
   latinOnly?: boolean;
+  /** Keep only Arabic letters and spaces, for names written in Arabic. */
+  arabicOnly?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "type">) {
   const id = useId();
 
   // Held as text rather than a number input: leading zeros matter, and the API
   // takes these as strings.
   const clean = (raw: string) => {
-    if (digitsOnly) {
-      return raw.replace(/(?!^\+)\D/g, "").replace(/^\+?/, raw.startsWith("+") ? "+" : "");
-    }
+    if (digitsOnly) return cleanDigits(raw);
     if (latinOnly) return raw.replace(LATIN_NAME_DISALLOWED, "");
+    if (arabicOnly) return raw.replace(ARABIC_NAME_DISALLOWED, "");
     return raw;
   };
 
