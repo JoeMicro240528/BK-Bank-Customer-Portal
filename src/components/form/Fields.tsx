@@ -18,15 +18,29 @@ export const MAX_DIGITS = 14;
 /**
  * Digits only, capped at MAX_DIGITS. Arabic-Indic digits (٠-٩, ۰-۹) are read
  * as their Western equivalents, so a customer on an Arabic keyboard isn't left
- * typing into a field that silently ignores them. A leading "+" is kept when
- * allowed, for phone numbers.
+ * typing into a field that silently ignores them. A leading "+" is kept only
+ * when allowed, for phone numbers -- never for amounts or counts.
  */
-export function cleanDigits(raw: string, allowPlus = true): string {
-  const western = raw
-    .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
-    .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
+export function cleanDigits(raw: string, allowPlus = false): string {
+  const western = toWesternDigits(raw);
   const plus = allowPlus && western.trimStart().startsWith("+") ? "+" : "";
   return plus + western.replace(/\D/g, "").slice(0, MAX_DIGITS);
+}
+
+/**
+ * A whole amount: digits only, no sign, no fraction. Everything from the
+ * decimal point on is dropped rather than stripped of its dot -- otherwise
+ * "1,500.75" would become 150075, a hundred times what was meant.
+ */
+export function cleanAmount(raw: string): string {
+  const whole = toWesternDigits(raw).split(/[.\u066B]/)[0];
+  return whole.replace(/\D/g, "").slice(0, MAX_DIGITS);
+}
+
+function toWesternDigits(raw: string): string {
+  return raw
+    .replace(/[\u0660-\u0669]/g, (d) => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[\u06F0-\u06F9]/g, (d) => String(d.charCodeAt(0) - 0x06f0));
 }
 
 function formatSize(bytes: number): string {
@@ -95,6 +109,8 @@ export function TextInput({
   digitsOnly = false,
   latinOnly = false,
   arabicOnly = false,
+  allowPlus = false,
+  wholeAmount = false,
   ...rest
 }: {
   label: string;
@@ -112,13 +128,17 @@ export function TextInput({
   latinOnly?: boolean;
   /** Keep only Arabic letters and spaces, for names written in Arabic. */
   arabicOnly?: boolean;
+  /** With digitsOnly: permit a leading "+", for phone numbers. */
+  allowPlus?: boolean;
+  /** With digitsOnly: a whole amount, cut at the decimal point. */
+  wholeAmount?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "type">) {
   const id = useId();
 
   // Held as text rather than a number input: leading zeros matter, and the API
   // takes these as strings.
   const clean = (raw: string) => {
-    if (digitsOnly) return cleanDigits(raw);
+    if (digitsOnly) return wholeAmount ? cleanAmount(raw) : cleanDigits(raw, allowPlus);
     if (latinOnly) return raw.replace(LATIN_NAME_DISALLOWED, "");
     if (arabicOnly) return raw.replace(ARABIC_NAME_DISALLOWED, "");
     return raw;

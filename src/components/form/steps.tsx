@@ -97,6 +97,13 @@ export function isIncomeExempt(employmentStatus: string): boolean {
   return employmentStatus === "retired" || employmentStatus === "student";
 }
 
+/** Today as YYYY-MM-DD in local time, comparable with ISO date strings. */
+function todayIso(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
 export function missingFields(
   step: StepId,
   form: FormState,
@@ -108,8 +115,9 @@ export function missingFields(
   const text = (value: string, label: string) => {
     if (!value.trim()) missing.push(label);
   };
-  const number = (value: string, label: string) => {
-    if (value && !new RegExp(`^\\+?\\d{1,${MAX_DIGITS}}$`).test(value)) {
+  const number = (value: string, label: string, allowPlus = false) => {
+    const pattern = `^${allowPlus ? "\\+?" : ""}\\d{1,${MAX_DIGITS}}$`;
+    if (value && !new RegExp(pattern).test(value)) {
       missing.push(`${label} (${t.digitsOnlyMax})`);
     }
   };
@@ -119,6 +127,11 @@ export function missingFields(
 
   switch (step) {
     case "personal":
+      // Locked from SudaPass, so the customer can't correct it here -- but a
+      // future date is never valid and shouldn't reach the bank.
+      if (form.date_of_birth && form.date_of_birth > todayIso()) {
+        missing.push(`${t.date_of_birth} (${t.dateOfBirthFuture})`);
+      }
       text(form.name_en_first, t.nameEnFirst);
       text(form.name_en_second, t.nameEnSecond);
       text(form.name_en_third, t.nameEnThird);
@@ -160,8 +173,8 @@ export function missingFields(
 
     case "contact":
       text(form.mobile_personal, t.mobile_personal);
-      number(form.mobile_personal, t.mobile_personal);
-      number(form.mobile_additional, t.mobile_additional);
+      number(form.mobile_personal, t.mobile_personal, true);
+      number(form.mobile_additional, t.mobile_additional, true);
       text(form.city_id, t.city_id);
       text(form.district, t.district);
       text(form.street, t.street);
@@ -419,6 +432,7 @@ function ContactStep({ t, form, setField }: Props) {
         value={form.mobile_personal}
         required
         digitsOnly
+        allowPlus
         inputMode="tel"
         onChange={(value) => setField("mobile_personal", value)}
       />
@@ -426,6 +440,7 @@ function ContactStep({ t, form, setField }: Props) {
         label={t.mobile_additional}
         value={form.mobile_additional}
         digitsOnly
+        allowPlus
         inputMode="tel"
         onChange={(value) => setField("mobile_additional", value)}
       />
@@ -551,6 +566,8 @@ function WorkStep({ t, language, form, setField, setForm, files, setFile }: Prop
           value={form.monthly_income_amount}
           required
           digitsOnly
+          wholeAmount
+          hint={t.wholeAmountHint}
           inputMode="numeric"
           onChange={(value) => setField("monthly_income_amount", value)}
         />
@@ -910,6 +927,8 @@ function FinancialStep({
           value={form.expected_txn_monthly_value}
           required
           digitsOnly
+          wholeAmount
+          hint={t.wholeAmountHint}
           inputMode="numeric"
           onChange={(value) => setField("expected_txn_monthly_value", value)}
         />
@@ -918,6 +937,7 @@ function FinancialStep({
           value={form.expected_txn_monthly_count}
           required
           digitsOnly
+          wholeAmount
           inputMode="numeric"
           onChange={(value) => setField("expected_txn_monthly_count", value)}
         />

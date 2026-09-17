@@ -59,7 +59,12 @@ function NewRequestFlow() {
   const withIdentity = (incoming: FormState): FormState => {
     // A resumed draft also takes its Arabic name from SudaPass, not from what
     // was stored, since that is the identity the request is filed under.
-    const state = user?.name ? { ...incoming, name_arabic: user.name } : incoming;
+    const state = {
+      ...incoming,
+      ...(user?.name ? { name_arabic: user.name } : {}),
+      // Locked from SudaPass, so a stored value must not override it.
+      ...(user?.birthDate ? { date_of_birth: user.birthDate } : {}),
+    };
 
     return state.identity_lines.some((line) => line.is_primary && line.id_number.trim())
       ? state
