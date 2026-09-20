@@ -33,6 +33,8 @@ export const landingCopy: Record<Language, LandingCopy> = {
     step4Title: "Submit & track status",
     step4Desc: "Send your request and track its status from one place",
     footerRights: "© 2026 Omdurman National Bank Platform for updating customer data. All rights reserved.",
+    noAccount: "Don't have a SudaPass account?",
+    createAccount: "Create an account",
   },
   ar: {
     platformName: "منصة بنك أم درمان الوطني",
@@ -66,5 +68,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     step4Title: "إرسال الطلب ومتابعة الحالة",
     step4Desc: "أرسل طلبك وتابع حالة المراجعة لكل بنك من مكان واحد",
     footerRights: "جميع الحقوق محفوظة © 2026 منصة بنك أم درمان الوطني لتحديث بيانات العملاء",
+    noAccount: "ليس لديك حساب في سوداباس؟",
+    createAccount: "إنشاء حساب",
   },
 };

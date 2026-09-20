@@ -42,6 +42,13 @@ export default function LoginCard({
         {t.privacyNote}
       </p>
 
+      <p className={styles.noAccount}>
+        {t.noAccount}{" "}
+        <a href="https://sudapass.nctr.sd" target="_blank" rel="noopener noreferrer" className={styles.createLink}>
+          {t.createAccount}
+        </a>
+      </p>
+
     </div>
   );
 }

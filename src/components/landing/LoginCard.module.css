@@ -151,5 +151,20 @@
   stroke: currentColor;
 }
 
+.noAccount {
+  margin: 0;
+  font-size: 15px;
+  color: var(--muted);
+}
 
+.createLink {
+  color: var(--brand, #009341);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
 
+.createLink:hover {
+  color: var(--brand-strong, #115931);
+  text-decoration: underline;
+}

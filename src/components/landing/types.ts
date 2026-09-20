@@ -31,4 +31,6 @@ export type LandingCopy = {
   step4Title: string;
   step4Desc: string;
   footerRights: string;
+  noAccount: string;
+  createAccount: string;
 };
