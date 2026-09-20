@@ -7,12 +7,11 @@ import { dashboardCopy } from "@/components/dashboard/copy";
 import { previewUser } from "@/components/dashboard/fixtures";
 import type { Language, NavKey } from "@/components/dashboard/types";
 import NewRequestScreen from "@/components/wizard/NewRequestScreen";
-import { branchesForBank } from "@/components/wizard/banks";
 import type { AddedAccount, BankOption } from "@/components/wizard/types";
 
 /** Mirrors what /master-data/banks returns (filtered to ONB), so the preview needs no backend. */
 const previewBanks: BankOption[] = [
-  { id: "2", name: "بنك أم درمان الوطني", color: "#009341", branches: branchesForBank("ONB") },
+  { id: "2", name: "بنك أم درمان الوطني", color: "#009341", branches: [{ id: "1", name: "سوق امدرمان" }] },
 ];
 
 /** Fixture accounts so the added-accounts table is populated in the preview. */
@@ -22,6 +21,7 @@ const previewAccounts: AddedAccount[] = [
     bankId: "2",
     bankName: "بنك أم درمان الوطني",
     bankColor: "#009341",
+    branchId: "1",
     branch: "فرع السوق العربي",
     accountNumber: "1234567890123",
   },
@@ -30,6 +30,7 @@ const previewAccounts: AddedAccount[] = [
     bankId: "2",
     bankName: "بنك أم درمان الوطني",
     bankColor: "#009341",
+    branchId: "1",
     branch: "فرع أم درمان الرئيسي",
     accountNumber: "9876543210987",
   },

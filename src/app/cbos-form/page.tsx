@@ -101,6 +101,7 @@ type FormState = {
   sponsor_name: string;
   sponsor_business_sector: string;
   selected_bank_id: string;
+  branch_id: string;
   bank_account_id: string;
   cif_number: string;
   business_sector: string;
@@ -2039,6 +2040,7 @@ function initialForm(): FormState {
     sponsor_name: "",
     sponsor_business_sector: "",
     selected_bank_id: "",
+    branch_id: "",
     bank_account_id: "",
     cif_number: "",
     business_sector: "",
@@ -2191,6 +2193,7 @@ function buildCreatePayload(form: FormState, externalRef: string): AUFRequestCre
     block: optionalText(form.block),
     house_no: optionalText(form.house_no),
     bank_account_id: parseOptionalInt(form.bank_account_id),
+    branch_id: parseOptionalInt(form.branch_id) as number,
     cif_number: optionalText(form.cif_number),
     business_sector: optionalText(form.business_sector),
     business_sector_other: optionalText(form.business_sector_other),
@@ -2199,11 +2202,11 @@ function buildCreatePayload(form: FormState, externalRef: string): AUFRequestCre
     employer_name: optionalText(form.employer_name),
     employer_activity: optionalText(form.employer_activity),
     employer_address: optionalText(form.employer_address),
-    job_title: optionalText(form.job_title),
+    job_title: parseOptionalInt(form.job_title),
     employment_date: optionalText(form.employment_date),
-    primary_income_source: optionalText(form.primary_income_source),
+    primary_income_source: parseOptionalInt(form.primary_income_source),
     primary_income_other: optionalText(form.primary_income_other),
-    income_other_sources: optionalText(form.income_other_sources),
+    income_other_sources: parseOptionalInt(form.income_other_sources),
     monthly_income_range: optionalText(form.monthly_income_range),
     annual_income_range: optionalText(form.annual_income_range),
     annual_income_amount: parseOptionalFloat(form.annual_income_amount),

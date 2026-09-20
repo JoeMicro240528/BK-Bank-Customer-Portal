@@ -65,6 +65,7 @@ export default function AccountsCard({
       bankId: selectedBank.id,
       bankName: selectedBank.name,
       bankColor: selectedBank.color,
+      branchId,
       branch: branch?.name ?? "",
       accountNumber: accountNumber.trim(),
     });

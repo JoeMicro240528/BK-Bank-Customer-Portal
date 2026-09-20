@@ -54,6 +54,12 @@ export interface AUFRequestCreate {
   block?: string;
   house_no?: string;
   bank_account_id?: number;
+  bank_id?: number;
+  /**
+   * Required by the API on create: the branch the customer banks at, chosen
+   * before the form. Sent as the master-data id from /master-data/bank-branches.
+   */
+  branch_id: number;
   cif_number?: string;
   business_sector?: string;
   business_sector_other?: string;
@@ -62,11 +68,11 @@ export interface AUFRequestCreate {
   employer_name?: string;
   employer_activity?: string;
   employer_address?: string;
-  job_title?: string;
+  job_title?: number;
   employment_date?: ISODate;
-  primary_income_source?: string;
+  primary_income_source?: number;
   primary_income_other?: string;
-  income_other_sources?: string;
+  income_other_sources?: number;
   monthly_income_range?: string;
   annual_income_range?: string;
   annual_income_amount?: number;
@@ -102,6 +108,7 @@ export interface AUFRequestCreate {
 }
 
 export interface AUFRequestUpdate extends Partial<AUFRequestCreate> {
+  branch_id?: number;
   education_other?: string;
   residency_no?: string;
   residency_issue_date?: ISODate;
@@ -201,6 +208,23 @@ export interface MasterDataBank {
   id: number;
   name: string;
   bic?: string | null;
+}
+
+export interface MasterDataBranch {
+  id: number;
+  name: string;
+  code?: string | null;
+  bank_id: number;
+}
+
+/**
+ * Shape shared by /master-data/job-titles, /primary-income-sources and
+ * /other-income-sources -- fields the API turned from free text into ids.
+ */
+export interface MasterDataLookup {
+  id: number;
+  name: string;
+  code?: string | null;
 }
 
 export type ApiDetail =

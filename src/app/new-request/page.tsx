@@ -115,6 +115,10 @@ function NewRequestFlow() {
           is_primary: true,
         },
       ],
+      // The API takes a single branch on the request, so the first account's
+      // branch is the one filed against it.
+      branch_id: accounts[0]?.branchId ?? "",
+      selected_bank_id: accounts[0]?.bankId ?? "",
       selected_accounts: accounts.map((account) => ({
         bank_id: Number(account.bankId),
         account_number: account.accountNumber,

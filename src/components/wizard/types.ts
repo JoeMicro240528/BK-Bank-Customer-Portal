@@ -21,6 +21,8 @@ export type AddedAccount = {
   bankId: string;
   bankName: string;
   bankColor: string;
+  /** Master-data branch id -- the API requires it when creating the request. */
+  branchId: string;
   branch: string;
   accountNumber: string;
 };

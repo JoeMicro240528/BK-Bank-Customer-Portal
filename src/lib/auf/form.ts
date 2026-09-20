@@ -89,6 +89,12 @@ export type FormState = {
   sponsor_name: string;
   sponsor_business_sector: string;
   selected_bank_id: string;
+  /**
+   * The branch chosen on the accounts screen. The API requires it when the
+   * request is created, so it travels with the form rather than staying in
+   * the wizard.
+   */
+  branch_id: string;
   bank_account_id: string;
   /** Bank/account pairs chosen before the form; sent with every save. */
   selected_accounts: SelectedAccountLine[];
@@ -330,6 +336,7 @@ export function initialForm(): FormState {
     sponsor_name: "",
     sponsor_business_sector: "",
     selected_bank_id: "",
+    branch_id: "",
     bank_account_id: "",
     selected_accounts: [],
     cif_number: "",
@@ -477,6 +484,9 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     block: optionalText(form.block),
     house_no: optionalText(form.house_no),
     bank_account_id: parseOptionalInt(form.bank_account_id),
+    // Required by the API on create; parseOptionalInt gives undefined for an
+    // empty draft, which surfaces as a clear "Field required" rather than a 0.
+    branch_id: parseOptionalInt(form.branch_id) as number,
     selected_accounts: form.selected_accounts,
     cif_number: optionalText(form.cif_number),
     business_sector: optionalText(form.business_sector),
@@ -486,11 +496,11 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     employer_name: optionalText(form.employer_name),
     employer_activity: optionalText(form.employer_activity),
     employer_address: optionalText(form.employer_address),
-    job_title: optionalText(form.job_title),
+    job_title: parseOptionalInt(form.job_title),
     employment_date: optionalText(form.employment_date),
-    primary_income_source: optionalText(form.primary_income_source),
+    primary_income_source: parseOptionalInt(form.primary_income_source),
     primary_income_other: optionalText(form.primary_income_other),
-    income_other_sources: optionalText(form.income_other_sources),
+    income_other_sources: parseOptionalInt(form.income_other_sources),
     monthly_income_range: optionalText(form.monthly_income_range),
     annual_income_range: optionalText(form.annual_income_range),
     // The guide collects a monthly figure and the API stores an annual one.

@@ -4,6 +4,8 @@ import type {
   AUFRequestUpdate,
   AUFRequestSummary,
   MasterDataBank,
+  MasterDataBranch,
+  MasterDataLookup,
   MessageRead,
   MasterDataCity,
   MasterDataCountry,
@@ -83,6 +85,37 @@ export const frontendApi = {
 
   getBanks: (options: RequestOptions) =>
     requestJson<MasterDataBank[]>("/master-data/banks", { method: "GET" }, options),
+
+  getBankBranches: (bankId: number | undefined, options: RequestOptions) => {
+    const query = bankId ? `?bank_id=${encodeURIComponent(String(bankId))}` : "";
+    return requestJson<MasterDataBranch[]>(
+      `/master-data/bank-branches${query}`,
+      { method: "GET" },
+      options,
+    );
+  },
+
+  /**
+   * Profession and income-source lists. The API used to take these as free
+   * text and now takes master-data ids, so the form has to offer its options
+   * from here rather than from a hard-coded list.
+   */
+  getJobTitles: (options: RequestOptions) =>
+    requestJson<MasterDataLookup[]>("/master-data/job-titles", { method: "GET" }, options),
+
+  getPrimaryIncomeSources: (options: RequestOptions) =>
+    requestJson<MasterDataLookup[]>(
+      "/master-data/primary-income-sources",
+      { method: "GET" },
+      options,
+    ),
+
+  getOtherIncomeSources: (options: RequestOptions) =>
+    requestJson<MasterDataLookup[]>(
+      "/master-data/other-income-sources",
+      { method: "GET" },
+      options,
+    ),
 
   listRequests: (options: RequestOptions) =>
     requestJson<AUFRequestSummary[]>("/auf-requests", { method: "GET" }, options),

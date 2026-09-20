@@ -58,6 +58,13 @@ type Props = {
   /** States of the chosen country of birth, loaded by the form. */
   birthStates: Option[];
   birthStatesLoading: boolean;
+  /**
+   * Profession and income-source options from master-data. The API takes
+   * these as ids now, so they cannot be listed in the portal.
+   */
+  jobTitles: Option[];
+  primaryIncomeSources: Option[];
+  otherIncomeSources: Option[];
 };
 
 /**
@@ -114,6 +121,14 @@ export function missingFields(
   const missing: string[] = [];
   const text = (value: string, label: string) => {
     if (!value.trim()) missing.push(label);
+  };
+  /**
+   * A field the API takes as a master-data id. A draft saved while these were
+   * free text still holds a word like "engineer", which would pass the plain
+   * text check and then be dropped on save -- so only an id counts as answered.
+   */
+  const lookup = (value: string, label: string) => {
+    if (!/^\d+$/.test(value.trim())) missing.push(label);
   };
   const number = (value: string, label: string, allowPlus = false) => {
     const pattern = `^${allowPlus ? "\\+?" : ""}\\d{1,${MAX_DIGITS}}$`;
@@ -182,8 +197,8 @@ export function missingFields(
       break;
 
     case "work":
-      text(form.primary_income_source, t.primary_income_source);
-      text(form.job_title, t.job_title);
+      lookup(form.primary_income_source, t.primary_income_source);
+      lookup(form.job_title, t.job_title);
       text(form.employment_status, t.workType);
       if (form.employment_status === "self_employed") {
         text(form.employment_type_specify, t.workTypeSpecify);
@@ -485,7 +500,17 @@ function ContactStep({ t, form, setField }: Props) {
 }
 
 /** Step 4 of the guide: work and income. */
-function WorkStep({ t, language, form, setField, setForm, files, setFile }: Props) {
+function WorkStep({
+  t,
+  form,
+  setField,
+  setForm,
+  files,
+  setFile,
+  jobTitles,
+  primaryIncomeSources,
+  otherIncomeSources,
+}: Props) {
   const exempt = isIncomeExempt(form.employment_status);
 
   const fileLabels = {
@@ -502,20 +527,24 @@ function WorkStep({ t, language, form, setField, setForm, files, setFile }: Prop
         <SelectInput
           label={t.primary_income_source}
           value={form.primary_income_source}
-          options={localise(optionSets.incomeSourceType, language)}
+          options={primaryIncomeSources}
           placeholder={t.selectPlaceholder}
           required
           onChange={(value) => setField("primary_income_source", value)}
         />
-        <TextInput
+        <SelectInput
           label={t.job_title}
           value={form.job_title}
+          options={jobTitles}
+          placeholder={t.selectPlaceholder}
           required
           onChange={(value) => setField("job_title", value)}
         />
-        <TextInput
+        <SelectInput
           label={t.income_other_sources}
           value={form.income_other_sources}
+          options={otherIncomeSources}
+          placeholder={t.selectPlaceholder}
           onChange={(value) => setField("income_other_sources", value)}
         />
 

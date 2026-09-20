@@ -21,6 +21,7 @@ import {
 } from "./steps";
 import FormStepper from "./FormStepper";
 import { useStates } from "@/lib/useStates";
+import { useLookups } from "@/lib/useLookups";
 import styles from "./AufForm.module.css";
 import { copy } from "@/lib/auf/copy";
 import {
@@ -114,6 +115,7 @@ export default function AufForm({
     countryCodeById[form.birth_country_id],
     language,
   );
+  const { jobTitles, primaryIncomeSources, otherIncomeSources } = useLookups(language);
   /** Attachments, held outside the draft: a File cannot be serialised. */
   const [files, setFiles] = useState<Record<string, File | null>>({});
 
@@ -442,6 +444,9 @@ export default function AufForm({
             setFile={setFile}
             birthStates={birthStates}
             birthStatesLoading={birthStatesLoading}
+            jobTitles={jobTitles}
+            primaryIncomeSources={primaryIncomeSources}
+            otherIncomeSources={otherIncomeSources}
           />
         )}
       </div>
