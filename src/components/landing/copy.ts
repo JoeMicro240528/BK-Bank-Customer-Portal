@@ -51,7 +51,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     featureBankTitle: "معتمد من البنك",
     featureBankDesc: "تحديث بياناتك مباشرة لدى بنك أم درمان الوطني",
     welcomeGreeting: "مرحباً بك",
-    welcomeIntro: "للبدء في تحديث بياناتك لدى البنوك يرجى تسجيل الدخول عبر سوداباس",
+    welcomeIntro: "للبدء في تحديث بياناتك لدى بنك أم درمان الوطني يرجى تسجيل الدخول عبر سوداباس",
     trustBadges: "آمن  •  سريع  •  موثوق",
     privacyNote: "يتم استخدام سوداباس للتحقق من هويتك فقط، ولا تتم مشاركة بياناتك بدون موافقتك.",
     sudapassTitle: "تسجيل الدخول عبر سوداباس",
