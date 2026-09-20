@@ -13,6 +13,26 @@ export interface IdentitySchema {
   is_primary?: boolean;
 }
 
+export interface AttachmentRead {
+  id: number;
+  name: string;
+  mimetype: string;
+  size: number;
+  download_url: string;
+}
+
+export interface IdentityLineRead {
+  id: number;
+  id_type: string;
+  id_number: string;
+  id_type_other?: string;
+  issuance_date?: string;
+  expiry_date?: string;
+  nationality_id?: number;
+  is_primary?: boolean;
+  attachments: AttachmentRead[];
+}
+
 export interface IncomeSourceSchema {
   source_type: string;
   source_type_other?: string;
@@ -72,6 +92,12 @@ export interface AUFRequestCreate {
   annual_income_amount?: number;
   source_funds_open_account?: string;
   source_funds_fund_account?: string;
+  expected_txn_salary?: boolean;
+  expected_txn_savings?: boolean;
+  expected_txn_investment?: boolean;
+  expected_txn_international_transfers?: boolean;
+  expected_txn_domestic_transfers?: boolean;
+  expected_txn_other?: boolean;
   expected_txn_deposits?: boolean;
   expected_txn_cheques?: boolean;
   expected_txn_inward?: boolean;
@@ -170,6 +196,7 @@ export interface AUFRequestRead {
   name_english: string;
   cif_number?: string | null;
   selected_accounts: BankAccountSelection[];
+  identity_lines?: IdentityLineRead[];
   feedback: BankUpdateFeedbackStatus[];
   supporting_documents: unknown[];
   verification_state: string;

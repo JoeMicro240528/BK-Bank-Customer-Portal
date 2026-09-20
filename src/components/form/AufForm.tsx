@@ -13,6 +13,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Banner from "@/components/ui/Banner";
 import { CheckboxInput } from "./Fields";
 import {
+  FILE_ID_DOCUMENT,
   StepContent,
   missingFields,
   stepOrder,
@@ -120,6 +121,8 @@ export default function AufForm({
   // Held in a ref so the first save can create the request and later saves
   // update it, without re-rendering on every change.
   const refRef = useRef<string>(externalRef || "");
+  /** The backend-assigned id of the primary identity line, needed for the attachment upload. */
+  const identityIdRef = useRef<number | null>(null);
   const filesRef = useRef(files);
   filesRef.current = files;
   /** Keys already sent, so a later step does not upload the same file twice. */
@@ -178,13 +181,21 @@ export default function AufForm({
     try {
       const options = { language, ownerId };
       let ref = refRef.current;
+      let aufResponse;
 
       if (!ref) {
         ref = `auf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-        await frontendApi.createRequest(buildCreatePayload(form, ref), options);
+        aufResponse = await frontendApi.createRequest(buildCreatePayload(form, ref), options);
         refRef.current = ref;
       } else {
-        await frontendApi.updateRequest(ref, buildUpdatePayload(form, ref), options);
+        aufResponse = await frontendApi.updateRequest(ref, buildUpdatePayload(form, ref), options);
+      }
+
+      // Extract the primary identity line ID from the response so the
+      // identity-document upload can target the correct line.
+      const primaryLine = aufResponse.identity_lines?.find((line: any) => line.is_primary);
+      if (primaryLine) {
+        identityIdRef.current = primaryLine.id;
       }
 
       // Attachments need a request to hang off, so they go up after the save.
@@ -196,6 +207,25 @@ export default function AufForm({
 
       for (const [key, file] of pending) {
         if (!file) continue;
+
+        // Identity document goes to the dedicated identity-line endpoint,
+        // NOT the generic /documents endpoint.
+        if (key === FILE_ID_DOCUMENT) {
+          const idLineId = identityIdRef.current;
+          if (!idLineId) {
+            setError(language === "ar"
+              ? "لم يتم العثور على سطر الهوية — يرجى حفظ البيانات أولاً"
+              : "Identity line not found — please save your data first");
+            continue;
+          }
+          try {
+            await frontendApi.uploadIdentityDocument(ref, idLineId, file, options);
+            uploadedRef.current.add(key);
+          } catch (caught) {
+            setError(errorMessage(caught));
+          }
+          continue;
+        }
 
         const documentType = documentTypeFor(key);
 
@@ -277,6 +307,16 @@ export default function AufForm({
       return;
     }
 
+    if (
+      !form.expected_txn_deposits &&
+      !form.expected_txn_cheques &&
+      !form.expected_txn_inward &&
+      !form.expected_txn_outward
+    ) {
+      setError(t.expectedTxnRequired);
+      return;
+    }
+
     setSubmitting(true);
     const ref = await save();
 
@@ -286,6 +326,20 @@ export default function AufForm({
     }
 
     try {
+      // Re-fetch the AUF to verify identity attachments are in place.
+      const latest = await frontendApi.getRequest(ref, { language, ownerId });
+      const primaryLine = latest.identity_lines?.find((line: any) => line.is_primary);
+
+      if (
+        !primaryLine ||
+        !Array.isArray(primaryLine.attachments) ||
+        primaryLine.attachments.length === 0
+      ) {
+        setError(t.identityImageRequired);
+        setSubmitting(false);
+        return;
+      }
+
       await frontendApi.submitRequest(ref, { language, ownerId });
 
       try {

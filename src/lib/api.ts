@@ -3,6 +3,7 @@ import type {
   AUFRequestRead,
   AUFRequestUpdate,
   AUFRequestSummary,
+  AttachmentRead,
   MasterDataBank,
   MessageRead,
   MasterDataCity,
@@ -118,6 +119,27 @@ export const frontendApi = {
     // forever, with no way for the customer to tell what happened.
     return requestJson<unknown>(
       `/auf-requests/${encodeURIComponent(externalRef)}/documents`,
+      { method: "POST", body, signal: AbortSignal.timeout(90_000) },
+      options,
+    );
+  },
+
+  /**
+   * Uploads an identity document image to a specific identity line.
+   * This populates identity_lines[].attachments, which the backend
+   * validates on submit.
+   */
+  uploadIdentityDocument: (
+    externalRef: string,
+    identityId: number,
+    file: File,
+    options: RequestOptions,
+  ) => {
+    const body = new FormData();
+    body.append("files", file);
+
+    return requestJson<AttachmentRead[]>(
+      `/auf-requests/${encodeURIComponent(externalRef)}/identity-documents/${encodeURIComponent(String(identityId))}/attachments`,
       { method: "POST", body, signal: AbortSignal.timeout(90_000) },
       options,
     );

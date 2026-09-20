@@ -110,6 +110,12 @@ export type FormState = {
   annual_income_amount: string;
   source_funds_open_account: string;
   source_funds_fund_account: string;
+  expected_txn_salary: boolean;
+  expected_txn_savings: boolean;
+  expected_txn_investment: boolean;
+  expected_txn_international_transfers: boolean;
+  expected_txn_domestic_transfers: boolean;
+  expected_txn_other: boolean;
   expected_txn_deposits: boolean;
   expected_txn_cheques: boolean;
   expected_txn_inward: boolean;
@@ -350,6 +356,12 @@ export function initialForm(): FormState {
     annual_income_amount: "",
     source_funds_open_account: "",
     source_funds_fund_account: "",
+    expected_txn_salary: false,
+    expected_txn_savings: false,
+    expected_txn_investment: false,
+    expected_txn_international_transfers: false,
+    expected_txn_domestic_transfers: false,
+    expected_txn_other: false,
     expected_txn_deposits: false,
     expected_txn_cheques: false,
     expected_txn_inward: false,
@@ -497,6 +509,12 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     annual_income_amount: annualIncome(form),
     source_funds_open_account: optionalText(form.source_funds_open_account),
     source_funds_fund_account: optionalText(form.source_funds_fund_account),
+    expected_txn_salary: form.expected_txn_salary,
+    expected_txn_savings: form.expected_txn_savings,
+    expected_txn_investment: form.expected_txn_investment,
+    expected_txn_international_transfers: form.expected_txn_international_transfers,
+    expected_txn_domestic_transfers: form.expected_txn_domestic_transfers,
+    expected_txn_other: form.expected_txn_other,
     expected_txn_deposits: form.expected_txn_deposits,
     expected_txn_cheques: form.expected_txn_cheques,
     expected_txn_inward: form.expected_txn_inward,

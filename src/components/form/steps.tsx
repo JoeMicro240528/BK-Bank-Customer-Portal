@@ -226,6 +226,16 @@ export function missingFields(
       number(form.expected_txn_monthly_value, t.expectedTxnValue);
       number(form.expected_txn_monthly_count, t.expectedTxnCount);
       file(FILE_SIGNATURE, t.signature);
+      if (
+        !form.expected_txn_salary &&
+        !form.expected_txn_savings &&
+        !form.expected_txn_investment &&
+        !form.expected_txn_international_transfers &&
+        !form.expected_txn_domestic_transfers &&
+        !form.expected_txn_other
+      ) {
+        missing.push(t.expectedTxnRequired);
+      }
       if (!form.declaration_accepted) missing.push(t.declaration_accepted);
       break;
   }
@@ -901,23 +911,33 @@ function FinancialStep({
       <CheckboxGrid>
         <CheckboxInput
           label={t.txnSalary}
-          checked={form.expected_txn_deposits}
-          onChange={(value) => setField("expected_txn_deposits", value)}
+          checked={form.expected_txn_salary}
+          onChange={(value) => setField("expected_txn_salary", value)}
         />
         <CheckboxInput
-          label={t.txnInward}
-          checked={form.expected_txn_inward}
-          onChange={(value) => setField("expected_txn_inward", value)}
+          label={t.txnSaving}
+          checked={form.expected_txn_savings}
+          onChange={(value) => setField("expected_txn_savings", value)}
         />
         <CheckboxInput
-          label={t.txnOutward}
-          checked={form.expected_txn_outward}
-          onChange={(value) => setField("expected_txn_outward", value)}
+          label={t.txnInvestment}
+          checked={form.expected_txn_investment}
+          onChange={(value) => setField("expected_txn_investment", value)}
+        />
+        <CheckboxInput
+          label={t.txnInternationalTransfers}
+          checked={form.expected_txn_international_transfers}
+          onChange={(value) => setField("expected_txn_international_transfers", value)}
+        />
+        <CheckboxInput
+          label={t.txnDomesticTransfers}
+          checked={form.expected_txn_domestic_transfers}
+          onChange={(value) => setField("expected_txn_domestic_transfers", value)}
         />
         <CheckboxInput
           label={t.txnOther}
-          checked={form.expected_txn_cheques}
-          onChange={(value) => setField("expected_txn_cheques", value)}
+          checked={form.expected_txn_other}
+          onChange={(value) => setField("expected_txn_other", value)}
         />
       </CheckboxGrid>
 
