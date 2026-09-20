@@ -13,6 +13,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Banner from "@/components/ui/Banner";
 import { CheckboxInput } from "./Fields";
 import {
+  FILE_ID_DOCUMENT,
+  FILE_PERSONAL_PHOTO,
+  FILE_SIGNATURE,
   StepContent,
   missingFields,
   stepOrder,
@@ -22,6 +25,7 @@ import {
 import FormStepper from "./FormStepper";
 import { useStates } from "@/lib/useStates";
 import { useLookups } from "@/lib/useLookups";
+import { useCities } from "@/lib/useCities";
 import styles from "./AufForm.module.css";
 import { copy } from "@/lib/auf/copy";
 import {
@@ -116,6 +120,14 @@ export default function AufForm({
     language,
   );
   const { jobTitles, primaryIncomeSources, otherIncomeSources } = useLookups(language);
+  const { states: residenceStates, loading: residenceStatesLoading } = useStates(
+    countryCodeById[form.res_country_id],
+    language,
+  );
+  const { cities: residenceCities, loading: residenceCitiesLoading } = useCities(
+    form.res_country_state_id,
+    language,
+  );
   /** Attachments, held outside the draft: a File cannot be serialised. */
   const [files, setFiles] = useState<Record<string, File | null>>({});
 
@@ -181,13 +193,20 @@ export default function AufForm({
       const options = { language, ownerId };
       let ref = refRef.current;
 
+      let saved;
       if (!ref) {
         ref = `auf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-        await frontendApi.createRequest(buildCreatePayload(form, ref), options);
+        saved = await frontendApi.createRequest(buildCreatePayload(form, ref), options);
         refRef.current = ref;
       } else {
-        await frontendApi.updateRequest(ref, buildUpdatePayload(form, ref), options);
+        saved = await frontendApi.updateRequest(ref, buildUpdatePayload(form, ref), options);
       }
+
+      // The identity images hang off a saved identity line, so its server-side
+      // id is only known once the request has been written.
+      const identityId =
+        saved?.identity_lines?.find((line) => line.is_primary)?.id ??
+        saved?.identity_lines?.[0]?.id;
 
       // Attachments need a request to hang off, so they go up after the save.
       // A failed upload must not lose the step's typed answers, so it only
@@ -198,6 +217,27 @@ export default function AufForm({
 
       for (const [key, file] of pending) {
         if (!file) continue;
+
+        // Three of the four attachments have their own endpoint; only the
+        // supporting documents still go up with a document_type.
+        if (key === FILE_PERSONAL_PHOTO || key === FILE_SIGNATURE || key === FILE_ID_DOCUMENT) {
+          try {
+            if (key === FILE_PERSONAL_PHOTO) {
+              await frontendApi.uploadPersonalPhoto(ref, file, options);
+            } else if (key === FILE_SIGNATURE) {
+              await frontendApi.uploadSignature(ref, file, options);
+            } else {
+              // Without an identity line there is nothing to attach the image
+              // to; leaving it pending means the next save retries it.
+              if (!identityId) continue;
+              await frontendApi.uploadIdentityDocument(ref, identityId, file, options);
+            }
+            uploadedRef.current.add(key);
+          } catch (caught) {
+            setError(errorMessage(caught));
+          }
+          continue;
+        }
 
         const documentType = documentTypeFor(key);
 
@@ -246,10 +286,14 @@ export default function AufForm({
     // and the customer should be told what is missing rather than moving on.
     const missing = isReview
       ? []
-      : missingFields(step as StepId, form, files, t, {
-          statesLoading: birthStatesLoading,
-          stateCount: birthStates.length,
-        });
+      : missingFields(
+          step as StepId,
+          form,
+          files,
+          t,
+          { statesLoading: birthStatesLoading, stateCount: birthStates.length },
+          { stateCount: residenceStates.length, cityCount: residenceCities.length },
+        );
 
     if (missing.length > 0) {
       setError(`${t.missingRequired}: ${missing.join("، ")}`);
@@ -444,6 +488,10 @@ export default function AufForm({
             setFile={setFile}
             birthStates={birthStates}
             birthStatesLoading={birthStatesLoading}
+            residenceStates={residenceStates}
+            residenceStatesLoading={residenceStatesLoading}
+            residenceCities={residenceCities}
+            residenceCitiesLoading={residenceCitiesLoading}
             jobTitles={jobTitles}
             primaryIncomeSources={primaryIncomeSources}
             otherIncomeSources={otherIncomeSources}

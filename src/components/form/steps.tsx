@@ -65,6 +65,11 @@ type Props = {
   jobTitles: Option[];
   primaryIncomeSources: Option[];
   otherIncomeSources: Option[];
+  /** Address cascade: states of the country of residence, then its cities. */
+  residenceStates: Option[];
+  residenceStatesLoading: boolean;
+  residenceCities: Option[];
+  residenceCitiesLoading: boolean;
 };
 
 /**
@@ -117,6 +122,7 @@ export function missingFields(
   files: Record<string, File | null>,
   t: AufCopy,
   birthPlace: { statesLoading: boolean; stateCount: number },
+  residence: { stateCount: number; cityCount: number },
 ): string[] {
   const missing: string[] = [];
   const text = (value: string, label: string) => {
@@ -190,7 +196,11 @@ export function missingFields(
       text(form.mobile_personal, t.mobile_personal);
       number(form.mobile_personal, t.mobile_personal, true);
       number(form.mobile_additional, t.mobile_additional, true);
-      text(form.city_id, t.city_id);
+      lookup(form.res_country_id, t.res_country_id);
+      // A country with no states in master-data cannot have one chosen, so it
+      // is only required where there is something to choose.
+      if (residence.stateCount > 0) lookup(form.res_country_state_id, t.res_country_state_id);
+      if (residence.cityCount > 0) lookup(form.city_id, t.city_id);
       text(form.district, t.district);
       text(form.street, t.street);
       text(form.house_no, t.house_no);
@@ -238,6 +248,14 @@ export function missingFields(
       text(form.account_purpose, t.accountPurpose);
       text(form.expected_txn_monthly_value, t.expectedTxnValue);
       text(form.expected_txn_monthly_count, t.expectedTxnCount);
+      if (
+        !form.expected_txn_deposits &&
+        !form.expected_txn_cheques &&
+        !form.expected_txn_inward &&
+        !form.expected_txn_outward
+      ) {
+        missing.push(t.expectedTxnTypes);
+      }
       number(form.expected_txn_monthly_value, t.expectedTxnValue);
       number(form.expected_txn_monthly_count, t.expectedTxnCount);
       file(FILE_SIGNATURE, t.signature);
@@ -439,7 +457,17 @@ function PersonalStep({
 }
 
 /** Step 3 of the guide: contact details and current address. */
-function ContactStep({ t, form, setField }: Props) {
+function ContactStep({
+  t,
+  form,
+  setField,
+  setForm,
+  countryOptions,
+  residenceStates,
+  residenceStatesLoading,
+  residenceCities,
+  residenceCitiesLoading,
+}: Props) {
   return (
     <FieldGrid>
       <TextInput
@@ -466,10 +494,41 @@ function ContactStep({ t, form, setField }: Props) {
         onChange={(value) => setField("email", value)}
       />
 
-      <TextInput
+      <SelectInput
+        label={t.res_country_id}
+        value={form.res_country_id}
+        options={countryOptions}
+        placeholder={t.selectPlaceholder}
+        required
+        // A new country invalidates the state and the city under it, so they
+        // are cleared rather than left pointing at the previous country.
+        onChange={(value) =>
+          setForm((previous) => ({
+            ...previous,
+            res_country_id: value,
+            res_country_state_id: "",
+            city_id: "",
+          }))
+        }
+      />
+      <SelectInput
+        label={t.res_country_state_id}
+        value={form.res_country_state_id}
+        options={residenceStates}
+        placeholder={residenceStatesLoading ? t.loading : t.selectPlaceholder}
+        disabled={!form.res_country_id || residenceStatesLoading}
+        required={residenceStates.length > 0}
+        onChange={(value) =>
+          setForm((previous) => ({ ...previous, res_country_state_id: value, city_id: "" }))
+        }
+      />
+      <SelectInput
         label={t.city_id}
         value={form.city_id}
-        required
+        options={residenceCities}
+        placeholder={residenceCitiesLoading ? t.loading : t.selectPlaceholder}
+        disabled={!form.res_country_state_id || residenceCitiesLoading}
+        required={residenceCities.length > 0}
         onChange={(value) => setField("city_id", value)}
       />
       <TextInput

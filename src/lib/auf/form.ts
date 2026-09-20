@@ -76,6 +76,7 @@ export type FormState = {
   education_level: string;
   education_other: string;
   email: string;
+  res_country_id: string;
   res_country_state_id: string;
   city_id: string;
   area: string;
@@ -323,6 +324,7 @@ export function initialForm(): FormState {
     education_level: "",
     education_other: "",
     email: "",
+    res_country_id: "",
     res_country_state_id: "",
     city_id: "",
     area: "",
@@ -459,13 +461,41 @@ function annualIncome(form: FormState): number | undefined {
   return typeof annual === "number" ? annual : undefined;
 }
 
+/**
+ * The beneficial owner is collected as five separate answers because the guide
+ * asks for them that way; the API keeps one free-text field, so they are
+ * labelled and joined rather than lost.
+ */
+function beneficialOwnerDetails(form: FormState): string {
+  if (form.is_beneficial_owner) return "";
+
+  return [
+    ["Name", form.bo_full_name],
+    ["Relationship", form.bo_relationship],
+    ["ID number", form.bo_id_number],
+    ["Nationality", form.bo_nationality_id],
+    ["Address", form.bo_address],
+  ]
+    .filter(([, value]) => value.trim())
+    .map(([label, value]) => `${label}: ${value.trim()}`)
+    .join(" | ");
+}
+
 export function buildCreatePayload(form: FormState, externalRef: string): AUFRequestCreate {
   return {
     external_ref: optionalText(externalRef),
     info_type: form.info_type,
     name_arabic: form.name_arabic.trim(),
-    name_english: englishName(form),
-    mother_maiden_name: optionalText(motherName(form)),
+    // Four parts each, as the API now stores them -- it no longer has the
+    // single name_english and mother_maiden_name fields these were joined into.
+    english_first_name: optionalText(form.name_en_first),
+    english_second_name: optionalText(form.name_en_second),
+    english_third_name: optionalText(form.name_en_third),
+    english_fourth_name: optionalText(form.name_en_fourth),
+    mother_first_name: optionalText(form.mother_name_first),
+    mother_second_name: optionalText(form.mother_name_second),
+    mother_third_name: optionalText(form.mother_name_third),
+    mother_fourth_name: optionalText(form.mother_name_fourth),
     gender: optionalText(form.gender),
     date_of_birth: optionalText(form.date_of_birth),
     birth_country_id: parseOptionalInt(form.birth_country_id),
@@ -476,8 +506,11 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     mobile_additional: optionalText(form.mobile_additional),
     education_level: optionalText(form.education_level),
     email: optionalText(form.email),
+    birth_state_id: parseOptionalInt(form.birth_state_id),
+    res_country_id: parseOptionalInt(form.res_country_id),
     res_country_state_id: parseOptionalInt(form.res_country_state_id),
     city_id: parseOptionalInt(form.city_id),
+    nearest_landmark: optionalText(form.area),
     area: optionalText(form.area),
     district: optionalText(form.district),
     street: optionalText(form.street),
@@ -501,7 +534,13 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     primary_income_source: parseOptionalInt(form.primary_income_source),
     primary_income_other: optionalText(form.primary_income_other),
     income_other_sources: parseOptionalInt(form.income_other_sources),
+    monthly_income_amount: parseOptionalFloat(form.monthly_income_amount),
     monthly_income_range: optionalText(form.monthly_income_range),
+    account_purpose: optionalText(form.account_purpose),
+    expected_monthly_transaction_amount: parseOptionalFloat(form.expected_txn_monthly_value),
+    expected_monthly_transaction_count: parseOptionalInt(form.expected_txn_monthly_count),
+    is_beneficial_owner: form.is_beneficial_owner,
+    beneficial_owner_details: optionalText(beneficialOwnerDetails(form)),
     annual_income_range: optionalText(form.annual_income_range),
     // The guide collects a monthly figure and the API stores an annual one.
     annual_income_amount: annualIncome(form),

@@ -2173,8 +2173,10 @@ function buildCreatePayload(form: FormState, externalRef: string): AUFRequestCre
     external_ref: optionalText(externalRef),
     info_type: form.info_type,
     name_arabic: form.name_arabic.trim(),
-    name_english: form.name_english.trim(),
-    mother_maiden_name: optionalText(form.mother_maiden_name),
+    // This page predates the API's split of these into four parts each; it is
+    // no longer reachable, so its single fields map onto the first part only.
+    english_first_name: optionalText(form.name_english),
+    mother_first_name: optionalText(form.mother_maiden_name),
     gender: optionalText(form.gender),
     date_of_birth: optionalText(form.date_of_birth),
     birth_country_id: parseOptionalInt(form.birth_country_id),

@@ -4,6 +4,8 @@ export type ISODateTime = string;
 export type InfoType = "new" | "update";
 
 export interface IdentitySchema {
+  /** Set by the server on save; attachments are posted against it. */
+  id?: number;
   id_type: string;
   id_number: string;
   id_type_other?: string;
@@ -34,8 +36,19 @@ export interface AUFRequestCreate {
   external_ref?: string;
   info_type?: InfoType;
   name_arabic: string;
-  name_english: string;
-  mother_maiden_name?: string;
+  /**
+   * The English name and the mother's name are held in four parts each. The
+   * API used to take them as one joined string (name_english,
+   * mother_maiden_name); those fields are gone.
+   */
+  english_first_name?: string;
+  english_second_name?: string;
+  english_third_name?: string;
+  english_fourth_name?: string;
+  mother_first_name?: string;
+  mother_second_name?: string;
+  mother_third_name?: string;
+  mother_fourth_name?: string;
   gender?: string;
   date_of_birth?: ISODate;
   birth_country_id?: number;
@@ -46,8 +59,11 @@ export interface AUFRequestCreate {
   mobile_additional?: string;
   education_level?: string;
   email?: string;
+  birth_state_id?: number;
+  res_country_id?: number;
   res_country_state_id?: number;
   city_id?: number;
+  nearest_landmark?: string;
   area?: string;
   district?: string;
   street?: string;
@@ -55,6 +71,7 @@ export interface AUFRequestCreate {
   house_no?: string;
   bank_account_id?: number;
   bank_id?: number;
+  account_number?: string;
   /**
    * Required by the API on create: the branch the customer banks at, chosen
    * before the form. Sent as the master-data id from /master-data/bank-branches.
@@ -73,7 +90,19 @@ export interface AUFRequestCreate {
   primary_income_source?: number;
   primary_income_other?: string;
   income_other_sources?: number;
+  monthly_income_amount?: number;
   monthly_income_range?: string;
+  account_purpose?: string;
+  expected_monthly_transaction_amount?: number;
+  expected_monthly_transaction_count?: number;
+  expected_txn_salary?: boolean;
+  expected_txn_savings?: boolean;
+  expected_txn_investment?: boolean;
+  expected_txn_international_transfers?: boolean;
+  expected_txn_domestic_transfers?: boolean;
+  expected_txn_other?: boolean;
+  is_beneficial_owner?: boolean;
+  beneficial_owner_details?: string;
   annual_income_range?: string;
   annual_income_amount?: number;
   source_funds_open_account?: string;
@@ -179,6 +208,8 @@ export interface AUFRequestRead {
   selected_accounts: BankAccountSelection[];
   feedback: BankUpdateFeedbackStatus[];
   supporting_documents: unknown[];
+  /** Saved identity lines, each with the id its attachments hang off. */
+  identity_lines?: IdentitySchema[];
   verification_state: string;
   verification_message?: string | null;
   verified_on?: ISODateTime | null;

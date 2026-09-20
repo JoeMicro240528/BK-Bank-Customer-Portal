@@ -67,6 +67,20 @@ async function requestJson<T>(
   return parsed as T;
 }
 
+/** The three dedicated attachment endpoints take just the file, under "files". */
+function uploadFiles(path: string, file: File, options: RequestOptions) {
+  const body = new FormData();
+  body.append("files", file);
+
+  // Without a deadline a stalled upload leaves the form saying "saving"
+  // forever, with no way for the customer to tell what happened.
+  return requestJson<unknown>(
+    path,
+    { method: "POST", body, signal: AbortSignal.timeout(90_000) },
+    options,
+  );
+}
+
 export const frontendApi = {
   getCountries: (options: RequestOptions) =>
     requestJson<MasterDataCountry[]>("/master-data/countries", { method: "GET" }, options),
@@ -155,6 +169,32 @@ export const frontendApi = {
       options,
     );
   },
+
+  /**
+   * The personal photo, the signature and the identity images each have their
+   * own endpoint. They used to go up through /documents with a document_type,
+   * which the bank no longer reads them from -- that path is now only for
+   * supporting documents such as proof of income.
+   */
+  uploadPersonalPhoto: (externalRef: string, file: File, options: RequestOptions) =>
+    uploadFiles(`/auf-requests/${encodeURIComponent(externalRef)}/personal-photo/attachments`, file, options),
+
+  uploadSignature: (externalRef: string, file: File, options: RequestOptions) =>
+    uploadFiles(`/auf-requests/${encodeURIComponent(externalRef)}/signature/attachments`, file, options),
+
+  uploadIdentityDocument: (
+    externalRef: string,
+    identityId: number,
+    file: File,
+    options: RequestOptions,
+  ) =>
+    uploadFiles(
+      `/auf-requests/${encodeURIComponent(externalRef)}/identity-documents/${encodeURIComponent(
+        String(identityId),
+      )}/attachments`,
+      file,
+      options,
+    ),
 
   /** Chatter on a request. Keyed on the human reference, not external_ref. */
   listMessages: (reference: string, options: RequestOptions) =>
