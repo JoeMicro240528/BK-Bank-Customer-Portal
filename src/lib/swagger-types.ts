@@ -15,6 +15,26 @@ export interface IdentitySchema {
   is_primary?: boolean;
 }
 
+export interface AttachmentRead {
+  id: number;
+  name: string;
+  mimetype: string;
+  size: number;
+  download_url: string;
+}
+
+export interface IdentityLineRead {
+  id: number;
+  id_type: string;
+  id_number: string;
+  id_type_other?: string;
+  issuance_date?: string;
+  expiry_date?: string;
+  nationality_id?: number;
+  is_primary?: boolean;
+  attachments: AttachmentRead[];
+}
+
 export interface IncomeSourceSchema {
   source_type: string;
   source_type_other?: string;
@@ -206,10 +226,10 @@ export interface AUFRequestRead {
   name_english: string;
   cif_number?: string | null;
   selected_accounts: BankAccountSelection[];
+  /** Saved identity lines, each with the id its attachments hang off. */
+  identity_lines?: IdentityLineRead[];
   feedback: BankUpdateFeedbackStatus[];
   supporting_documents: unknown[];
-  /** Saved identity lines, each with the id its attachments hang off. */
-  identity_lines?: IdentitySchema[];
   verification_state: string;
   verification_message?: string | null;
   verified_on?: ISODateTime | null;

@@ -3,6 +3,7 @@ import type {
   AUFRequestRead,
   AUFRequestUpdate,
   AUFRequestSummary,
+  AttachmentRead,
   MasterDataBank,
   MasterDataBranch,
   MasterDataLookup,
@@ -74,7 +75,7 @@ function uploadFiles(path: string, file: File, options: RequestOptions) {
 
   // Without a deadline a stalled upload leaves the form saying "saving"
   // forever, with no way for the customer to tell what happened.
-  return requestJson<unknown>(
+  return requestJson<AttachmentRead[]>(
     path,
     { method: "POST", body, signal: AbortSignal.timeout(90_000) },
     options,
@@ -175,6 +176,9 @@ export const frontendApi = {
    * own endpoint. They used to go up through /documents with a document_type,
    * which the bank no longer reads them from -- that path is now only for
    * supporting documents such as proof of income.
+   *
+   * The identity images land in identity_lines[].attachments, which the
+   * backend checks on submit.
    */
   uploadPersonalPhoto: (externalRef: string, file: File, options: RequestOptions) =>
     uploadFiles(`/auf-requests/${encodeURIComponent(externalRef)}/personal-photo/attachments`, file, options),

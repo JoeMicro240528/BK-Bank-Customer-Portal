@@ -192,7 +192,6 @@ export default function AufForm({
     try {
       const options = { language, ownerId };
       let ref = refRef.current;
-
       let saved;
       if (!ref) {
         ref = `auf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
@@ -323,6 +322,16 @@ export default function AufForm({
       return;
     }
 
+    if (
+      !form.expected_txn_deposits &&
+      !form.expected_txn_cheques &&
+      !form.expected_txn_inward &&
+      !form.expected_txn_outward
+    ) {
+      setError(t.expectedTxnRequired);
+      return;
+    }
+
     setSubmitting(true);
     const ref = await save();
 
@@ -332,6 +341,20 @@ export default function AufForm({
     }
 
     try {
+      // Re-fetch the AUF to verify identity attachments are in place.
+      const latest = await frontendApi.getRequest(ref, { language, ownerId });
+      const primaryLine = latest.identity_lines?.find((line) => line.is_primary);
+
+      if (
+        !primaryLine ||
+        !Array.isArray(primaryLine.attachments) ||
+        primaryLine.attachments.length === 0
+      ) {
+        setError(t.identityImageRequired);
+        setSubmitting(false);
+        return;
+      }
+
       await frontendApi.submitRequest(ref, { language, ownerId });
 
       try {
