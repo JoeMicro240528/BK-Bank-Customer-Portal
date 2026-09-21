@@ -322,16 +322,6 @@ export default function AufForm({
       return;
     }
 
-    if (
-      !form.expected_txn_deposits &&
-      !form.expected_txn_cheques &&
-      !form.expected_txn_inward &&
-      !form.expected_txn_outward
-    ) {
-      setError(t.expectedTxnRequired);
-      return;
-    }
-
     setSubmitting(true);
     const ref = await save();
 

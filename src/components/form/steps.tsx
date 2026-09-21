@@ -136,6 +136,14 @@ export function missingFields(
   const lookup = (value: string, label: string) => {
     if (!/^\d+$/.test(value.trim())) missing.push(label);
   };
+  /**
+   * An amount or count the backend only accepts above zero. "0" passes the
+   * digits check, so without this it would clear the step and then be
+   * rejected at submit, far from the field.
+   */
+  const positive = (value: string, label: string) => {
+    if (value.trim() && !(Number(value) > 0) && !missing.includes(label)) missing.push(label);
+  };
   const number = (value: string, label: string, allowPlus = false) => {
     const pattern = `^${allowPlus ? "\\+?" : ""}\\d{1,${MAX_DIGITS}}$`;
     if (value && !new RegExp(pattern).test(value)) {
@@ -216,6 +224,7 @@ export function missingFields(
       if (!isIncomeExempt(form.employment_status)) text(form.employer_name, t.employer_name);
       text(form.monthly_income_amount, t.monthlyIncomeAmount);
       number(form.monthly_income_amount, t.monthlyIncomeAmount);
+      positive(form.monthly_income_amount, t.monthlyIncomeAmount);
       if (!isIncomeExempt(form.employment_status)) file(FILE_INCOME_PROOF, t.incomeProof);
       break;
 
@@ -250,17 +259,12 @@ export function missingFields(
       text(form.expected_txn_monthly_count, t.expectedTxnCount);
       number(form.expected_txn_monthly_value, t.expectedTxnValue);
       number(form.expected_txn_monthly_count, t.expectedTxnCount);
+      positive(form.expected_txn_monthly_value, t.expectedTxnValue);
+      positive(form.expected_txn_monthly_count, t.expectedTxnCount);
       file(FILE_SIGNATURE, t.signature);
-      if (
-        !form.expected_txn_salary &&
-        !form.expected_txn_savings &&
-        !form.expected_txn_investment &&
-        !form.expected_txn_international_transfers &&
-        !form.expected_txn_domestic_transfers &&
-        !form.expected_txn_other
-      ) {
-        missing.push(t.expectedTxnRequired);
-      }
+      // The transaction types are optional: the backend disabled its
+      // "at least one" rule on submit (bank_customer_info.py), so requiring
+      // one here would block requests the bank accepts.
       if (!form.declaration_accepted) missing.push(t.declaration_accepted);
       break;
   }
