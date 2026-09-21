@@ -3,6 +3,12 @@ export type ISODateTime = string;
 
 export type InfoType = "new" | "update";
 
+/** Generic option returned by /master-data/selection-options/{key}. */
+export interface SelectionOption {
+  value: string;
+  label: string;
+}
+
 export interface IdentitySchema {
   id_type: string;
   id_number: string;

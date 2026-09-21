@@ -167,6 +167,11 @@ export type FormState = {
   /** Monthly figure from the guide; sent as annual_income_amount x 12. */
   monthly_income_amount: string;
 
+  /** Document type selected for the income proof upload. */
+  income_proof_document_type: string;
+  /** Free-text description when income_proof_document_type is "other". */
+  income_proof_document_type_other: string;
+
   identity_lines: IdentityFormLine[];
   income_source_lines: IncomeSourceFormLine[];
   minor_lines: MinorFormLine[];
@@ -398,6 +403,8 @@ export function initialForm(): FormState {
     expected_txn_monthly_value: "",
     expected_txn_monthly_count: "",
     monthly_income_amount: "",
+    income_proof_document_type: "",
+    income_proof_document_type_other: "",
     identity_lines: [emptyIdentityLine()],
     income_source_lines: [],
     minor_lines: [],

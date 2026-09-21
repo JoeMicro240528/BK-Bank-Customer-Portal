@@ -14,6 +14,7 @@ import Banner from "@/components/ui/Banner";
 import { CheckboxInput } from "./Fields";
 import {
   FILE_ID_DOCUMENT,
+  FILE_INCOME_PROOF,
   StepContent,
   missingFields,
   stepOrder,
@@ -22,6 +23,7 @@ import {
 } from "./steps";
 import FormStepper from "./FormStepper";
 import { useStates } from "@/lib/useStates";
+import { useDocumentTypes } from "@/lib/useDocumentTypes";
 import styles from "./AufForm.module.css";
 import { copy } from "@/lib/auf/copy";
 import {
@@ -117,6 +119,9 @@ export default function AufForm({
   );
   /** Attachments, held outside the draft: a File cannot be serialised. */
   const [files, setFiles] = useState<Record<string, File | null>>({});
+
+  const { options: documentTypeOptions, loading: documentTypeOptionsLoading } =
+    useDocumentTypes(language);
 
   // Held in a ref so the first save can create the request and later saves
   // update it, without re-rendering on every change.
@@ -220,6 +225,29 @@ export default function AufForm({
           }
           try {
             await frontendApi.uploadIdentityDocument(ref, idLineId, file, options);
+            uploadedRef.current.add(key);
+          } catch (caught) {
+            setError(errorMessage(caught));
+          }
+          continue;
+        }
+
+        // Income proof uses the user-selected document type from the dropdown,
+        // NOT the generic file key.
+        if (key === FILE_INCOME_PROOF) {
+          const docType = form.income_proof_document_type || "income_proof";
+          const docTypeOther = docType === "other" ? form.income_proof_document_type_other : undefined;
+          try {
+            await frontendApi.uploadDocument(
+              ref,
+              {
+                documentType: docType,
+                file,
+                description: key,
+                ...(docTypeOther ? { documentTypeOther: docTypeOther } : {}),
+              },
+              options,
+            );
             uploadedRef.current.add(key);
           } catch (caught) {
             setError(errorMessage(caught));
@@ -496,6 +524,8 @@ export default function AufForm({
             setFile={setFile}
             birthStates={birthStates}
             birthStatesLoading={birthStatesLoading}
+            documentTypeOptions={documentTypeOptions}
+            documentTypeOptionsLoading={documentTypeOptionsLoading}
           />
         )}
       </div>

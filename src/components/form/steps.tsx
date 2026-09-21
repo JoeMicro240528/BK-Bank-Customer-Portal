@@ -58,6 +58,9 @@ type Props = {
   /** States of the chosen country of birth, loaded by the form. */
   birthStates: Option[];
   birthStatesLoading: boolean;
+  /** Document-type options loaded from master-data/selection-options. */
+  documentTypeOptions?: Option[];
+  documentTypeOptionsLoading?: boolean;
 };
 
 /**
@@ -191,7 +194,13 @@ export function missingFields(
       if (!isIncomeExempt(form.employment_status)) text(form.employer_name, t.employer_name);
       text(form.monthly_income_amount, t.monthlyIncomeAmount);
       number(form.monthly_income_amount, t.monthlyIncomeAmount);
-      if (!isIncomeExempt(form.employment_status)) file(FILE_INCOME_PROOF, t.incomeProof);
+      if (!isIncomeExempt(form.employment_status)) {
+        file(FILE_INCOME_PROOF, t.incomeProof);
+        text(form.income_proof_document_type, t.incomeProofDocType);
+        if (form.income_proof_document_type === "other") {
+          text(form.income_proof_document_type_other, t.incomeProofDocTypeOther);
+        }
+      }
       break;
 
     case "financial":
@@ -495,7 +504,7 @@ function ContactStep({ t, form, setField }: Props) {
 }
 
 /** Step 4 of the guide: work and income. */
-function WorkStep({ t, language, form, setField, setForm, files, setFile }: Props) {
+function WorkStep({ t, language, form, setField, setForm, files, setFile, documentTypeOptions = [], documentTypeOptionsLoading }: Props) {
   const exempt = isIncomeExempt(form.employment_status);
 
   const fileLabels = {
@@ -508,11 +517,12 @@ function WorkStep({ t, language, form, setField, setForm, files, setFile }: Prop
 
   return (
     <>
+      <FormSection title={t.primary_income_source} />
       <FieldGrid>
         <SelectInput
           label={t.primary_income_source}
           value={form.primary_income_source}
-          options={localise(optionSets.incomeSourceType, language)}
+          options={localise(optionSets.primaryIncomeSource, language)}
           placeholder={t.selectPlaceholder}
           required
           onChange={(value) => setField("primary_income_source", value)}
@@ -523,20 +533,14 @@ function WorkStep({ t, language, form, setField, setForm, files, setFile }: Prop
           required
           onChange={(value) => setField("job_title", value)}
         />
-        <TextInput
-          label={t.income_other_sources}
-          value={form.income_other_sources}
-          onChange={(value) => setField("income_other_sources", value)}
-        />
-
         <SelectInput
           label={t.workType}
           value={form.employment_status}
           options={[
-            { value: "salaried", label: t.workTypeEmployee },
-            { value: "self_employed", label: t.workTypeSelfEmployed },
-            { value: "retired", label: t.workTypeRetired },
-            { value: "student", label: t.workTypeStudent },
+            { value: "self_employed", label: language === "ar" ? t.workTypeSelfEmployed : "Self-employed" },
+            { value: "salaried", label: language === "ar" ? t.workTypeEmployee : "Employee / worker" },
+            { value: "retired", label: language === "ar" ? t.workTypeRetired : "Retired" },
+            { value: "student", label: language === "ar" ? t.workTypeStudent : "Student" },
           ]}
           placeholder={t.selectPlaceholder}
           required
@@ -583,17 +587,60 @@ function WorkStep({ t, language, form, setField, setForm, files, setFile }: Prop
         />
       </FieldGrid>
 
-      <FieldGrid>
-        <FileInput
-          {...fileLabels}
-          label={t.incomeProof}
-          required={!exempt}
-          disabled={exempt}
-          hint={exempt ? t.incomeProofExempt : fileLabels.hint}
-          file={files[FILE_INCOME_PROOF] ?? null}
-          onChange={(file) => setFile(FILE_INCOME_PROOF, file)}
-        />
-      </FieldGrid>
+      {!exempt && (
+        <>
+          <FormSection title={t.incomeProof} />
+          <FieldGrid>
+            <SelectInput
+              label={t.incomeProofDocType}
+              value={form.income_proof_document_type}
+              options={documentTypeOptions}
+              placeholder={documentTypeOptionsLoading ? t.loading : t.selectPlaceholder}
+              required
+              disabled={documentTypeOptionsLoading}
+              onChange={(value) =>
+                setForm((previous) => ({
+                  ...previous,
+                  income_proof_document_type: value,
+                  income_proof_document_type_other:
+                    value === "other" ? previous.income_proof_document_type_other : "",
+                }))
+              }
+            />
+            {form.income_proof_document_type === "other" && (
+              <TextInput
+                label={t.incomeProofDocTypeOther}
+                value={form.income_proof_document_type_other}
+                required
+                onChange={(value) => setField("income_proof_document_type_other", value)}
+              />
+            )}
+          </FieldGrid>
+          <FieldGrid>
+            <FileInput
+              {...fileLabels}
+              label={t.incomeProof}
+              required
+              file={files[FILE_INCOME_PROOF] ?? null}
+              onChange={(file) => setFile(FILE_INCOME_PROOF, file)}
+            />
+          </FieldGrid>
+        </>
+      )}
+
+      {exempt && (
+        <FieldGrid>
+          <FileInput
+            {...fileLabels}
+            label={t.incomeProof}
+            required={false}
+            disabled
+            hint={t.incomeProofExempt}
+            file={files[FILE_INCOME_PROOF] ?? null}
+            onChange={(file) => setFile(FILE_INCOME_PROOF, file)}
+          />
+        </FieldGrid>
+      )}
 
     </>
   );

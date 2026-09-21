@@ -4,6 +4,7 @@ import type {
   AUFRequestUpdate,
   AUFRequestSummary,
   AttachmentRead,
+  SelectionOption,
   MasterDataBank,
   MessageRead,
   MasterDataCity,
@@ -178,6 +179,14 @@ export const frontendApi = {
     requestJson<AUFRequestRead>(
       `/auf-requests/${encodeURIComponent(externalRef)}/submit`,
       { method: "POST" },
+      options,
+    ),
+
+  /** Dropdown options from master data (e.g. document_type). */
+  getSelectionOptions: (selectionKey: string, options: RequestOptions) =>
+    requestJson<SelectionOption[]>(
+      `/master-data/selection-options/${encodeURIComponent(selectionKey)}`,
+      { method: "GET" },
       options,
     ),
 };
