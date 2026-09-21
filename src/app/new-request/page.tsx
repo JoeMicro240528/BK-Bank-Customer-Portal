@@ -152,6 +152,7 @@ function NewRequestFlow() {
           externalRef={formState ? undefined : draft?.externalRef}
           initialState={withIdentity(formState ?? draft!.state)}
           bankNames={Object.fromEntries(banks.map((b) => [b.id, b.name]))}
+          existingUploads={formState ? undefined : draft?.uploads}
           countryOptions={countries}
           countryCodeById={idToCode}
           locked={{

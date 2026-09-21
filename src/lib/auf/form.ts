@@ -167,6 +167,8 @@ export type FormState = {
   bo_relationship: string;
   bo_id_number: string;
   bo_nationality_id: string;
+  /** Display name of that country, so the details the bank reads say "Sudan", not "195". */
+  bo_nationality_name: string;
   bo_address: string;
   account_purpose: string;
   expected_txn_monthly_value: string;
@@ -402,6 +404,7 @@ export function initialForm(): FormState {
     bo_relationship: "",
     bo_id_number: "",
     bo_nationality_id: "",
+    bo_nationality_name: "",
     bo_address: "",
     account_purpose: "",
     expected_txn_monthly_value: "",
@@ -478,19 +481,60 @@ function annualIncome(form: FormState): number | undefined {
  * asks for them that way; the API keeps one free-text field, so they are
  * labelled and joined rather than lost.
  */
+const BO_LABELS = {
+  name: "Name",
+  relationship: "Relationship",
+  idNumber: "ID number",
+  nationality: "Nationality",
+  address: "Address",
+} as const;
+
 function beneficialOwnerDetails(form: FormState): string {
   if (form.is_beneficial_owner) return "";
 
+  // The country id rides along in brackets so a resumed draft can put the
+  // select back; the name before it is what the bank reads.
+  const nationality = form.bo_nationality_id
+    ? form.bo_nationality_name
+      ? `${form.bo_nationality_name} (${form.bo_nationality_id})`
+      : form.bo_nationality_id
+    : "";
+
   return [
-    ["Name", form.bo_full_name],
-    ["Relationship", form.bo_relationship],
-    ["ID number", form.bo_id_number],
-    ["Nationality", form.bo_nationality_id],
-    ["Address", form.bo_address],
+    [BO_LABELS.name, form.bo_full_name],
+    [BO_LABELS.relationship, form.bo_relationship],
+    [BO_LABELS.idNumber, form.bo_id_number],
+    [BO_LABELS.nationality, nationality],
+    [BO_LABELS.address, form.bo_address],
   ]
     .filter(([, value]) => value.trim())
     .map(([label, value]) => `${label}: ${value.trim()}`)
     .join(" | ");
+}
+
+/**
+ * Reads the joined beneficial-owner text back into its five answers. The API
+ * keeps them as one string, so without this a resumed draft shows the owner
+ * questions empty and the next save sends them that way.
+ */
+export function parseBeneficialOwnerDetails(details: string) {
+  const parts: Record<string, string> = {};
+  for (const segment of details.split(" | ")) {
+    const at = segment.indexOf(": ");
+    if (at > 0) parts[segment.slice(0, at)] = segment.slice(at + 2).trim();
+  }
+
+  const nationality = parts[BO_LABELS.nationality] ?? "";
+  const withId = /^(.*)\s\((\d+)\)$/.exec(nationality);
+
+  return {
+    bo_full_name: parts[BO_LABELS.name] ?? "",
+    bo_relationship: parts[BO_LABELS.relationship] ?? "",
+    bo_id_number: parts[BO_LABELS.idNumber] ?? "",
+    bo_nationality_id: withId ? withId[2] : /^\d+$/.test(nationality) ? nationality : "",
+    bo_nationality_name: withId ? withId[1] : "",
+    bo_address: parts[BO_LABELS.address] ?? "",
+  };
 }
 
 export function buildCreatePayload(form: FormState, externalRef: string): AUFRequestCreate {

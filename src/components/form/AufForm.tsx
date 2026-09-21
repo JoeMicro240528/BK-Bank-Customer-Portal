@@ -37,6 +37,7 @@ import {
   type FormState,
 } from "@/lib/auf/form";
 import { frontendApi, errorMessage } from "@/lib/api";
+import type { ExistingUpload } from "@/lib/auf/draft";
 import type { Option } from "./Fields";
 
 type Language = "en" | "ar";
@@ -91,6 +92,7 @@ export default function AufForm({
   countryCodeById = {},
   locked = {},
   bankNames = {},
+  existingUploads = {},
   onSubmitted,
 }: {
   language: Language;
@@ -105,6 +107,8 @@ export default function AufForm({
   countryCodeById?: Record<string, string>;
   /** Bank id -> display name, for the review step. */
   bankNames?: Record<string, string>;
+  /** Attachments a resumed draft already holds on the server. */
+  existingUploads?: Record<string, ExistingUpload>;
   onSubmitted?: (externalRef: string) => void;
 }) {
   const t = copy[language];
@@ -176,6 +180,9 @@ export default function AufForm({
       }
 
       setError("");
+      // A new pick replaces whatever went up before, so it has to be sent;
+      // left marked as sent, a replacement was silently never uploaded.
+      if (file) uploadedRef.current.delete(key);
       setFiles((previous) => ({ ...previous, [key]: file }));
     },
     [t],
@@ -292,6 +299,7 @@ export default function AufForm({
           t,
           { statesLoading: birthStatesLoading, stateCount: birthStates.length },
           { stateCount: residenceStates.length, cityCount: residenceCities.length },
+          existingUploads,
         );
 
     if (missing.length > 0) {
@@ -501,6 +509,7 @@ export default function AufForm({
             setFile={setFile}
             birthStates={birthStates}
             birthStatesLoading={birthStatesLoading}
+            uploads={existingUploads}
             residenceStates={residenceStates}
             residenceStatesLoading={residenceStatesLoading}
             residenceCities={residenceCities}

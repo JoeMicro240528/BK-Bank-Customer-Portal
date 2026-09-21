@@ -180,6 +180,8 @@ export function FileInput({
   emptyLabel,
   clearLabel,
   disabled = false,
+  uploaded,
+  uploadedLabel,
 }: {
   label: string;
   file: File | null;
@@ -191,7 +193,15 @@ export function FileInput({
   clearLabel: string;
   /** Shown but not usable, for an attachment that doesn't apply to this customer. */
   disabled?: boolean;
+  /**
+   * A file the saved request already holds. A browser cannot put it back into
+   * the input, so it is shown here instead; picking a new file replaces it.
+   */
+  uploaded?: { name: string; size: number };
+  uploadedLabel?: string;
 }) {
+  const saved = !file && uploaded ? uploaded : null;
+
   const id = useId();
 
   return (
@@ -206,7 +216,7 @@ export function FileInput({
         <label
           className={[
             styles.fileBox,
-            file && !disabled ? styles.fileBoxFilled : "",
+            (file || saved) && !disabled ? styles.fileBoxFilled : "",
             disabled ? styles.fileBoxDisabled : "",
           ]
             .filter(Boolean)
@@ -215,11 +225,21 @@ export function FileInput({
           aria-disabled={disabled || undefined}
         >
           <span className={styles.fileIcon}>
-            {file ? <FileCheck aria-hidden="true" size={18} /> : <Upload aria-hidden="true" size={18} />}
+            {file || saved ? (
+              <FileCheck aria-hidden="true" size={18} />
+            ) : (
+              <Upload aria-hidden="true" size={18} />
+            )}
           </span>
           <span className={styles.fileText}>
-            <strong>{file ? file.name : chooseLabel}</strong>
-            <span>{file ? formatSize(file.size) : emptyLabel}</span>
+            <strong>{file ? file.name : saved ? saved.name : chooseLabel}</strong>
+            <span>
+              {file
+                ? formatSize(file.size)
+                : saved
+                  ? [uploadedLabel, formatSize(saved.size)].filter(Boolean).join(" · ")
+                  : emptyLabel}
+            </span>
           </span>
           <input
             id={id}

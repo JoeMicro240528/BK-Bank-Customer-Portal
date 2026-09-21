@@ -16,6 +16,7 @@ import {
   type Option,
 } from "./Fields";
 import { optionSets, type FormState } from "@/lib/auf/form";
+import type { ExistingUpload } from "@/lib/auf/draft";
 import { formatNationality } from "@/lib/format";
 import type { AufCopy } from "@/lib/auf/copy";
 
@@ -39,11 +40,14 @@ export type StepId = "personal" | "contact" | "work" | "financial";
 
 export const stepOrder: StepId[] = ["personal", "contact", "work", "financial"];
 
-/** Keys for the attachments the guide requires. */
-export const FILE_ID_DOCUMENT = "id_document";
-export const FILE_PERSONAL_PHOTO = "personal_photo";
-export const FILE_INCOME_PROOF = "income_proof";
-export const FILE_SIGNATURE = "signature";
+import {
+  FILE_ID_DOCUMENT,
+  FILE_INCOME_PROOF,
+  FILE_PERSONAL_PHOTO,
+  FILE_SIGNATURE,
+} from "@/lib/auf/files";
+
+export { FILE_ID_DOCUMENT, FILE_INCOME_PROOF, FILE_PERSONAL_PHOTO, FILE_SIGNATURE };
 
 type Props = {
   t: AufCopy;
@@ -70,6 +74,8 @@ type Props = {
   residenceStatesLoading: boolean;
   residenceCities: Option[];
   residenceCitiesLoading: boolean;
+  /** Attachments the saved request already holds, keyed like `files`. */
+  uploads: Record<string, ExistingUpload>;
 };
 
 /**
@@ -123,6 +129,7 @@ export function missingFields(
   t: AufCopy,
   birthPlace: { statesLoading: boolean; stateCount: number },
   residence: { stateCount: number; cityCount: number },
+  uploads: Record<string, ExistingUpload> = {},
 ): string[] {
   const missing: string[] = [];
   const text = (value: string, label: string) => {
@@ -150,8 +157,10 @@ export function missingFields(
       missing.push(`${label} (${t.digitsOnlyMax})`);
     }
   };
+  // A resumed draft cannot refill its file inputs, so an attachment the
+  // server already holds satisfies the check as well as a newly picked one.
   const file = (key: string, label: string) => {
-    if (!files[key]) missing.push(label);
+    if (!files[key] && !uploads[key]) missing.push(label);
   };
 
   switch (step) {
@@ -298,6 +307,7 @@ function PersonalStep({
   setFile,
   birthStates,
   birthStatesLoading,
+  uploads,
 }: Props) {
   const note = language === "ar" ? "من سوداباس" : "From SudaPass";
   const empty = language === "ar" ? "غير متوفر" : "Not provided";
@@ -306,6 +316,7 @@ function PersonalStep({
     emptyLabel: t.noFileChosen,
     clearLabel: t.clearFile,
     hint: t.fileSizeHint,
+    uploadedLabel: t.alreadyUploaded,
   };
 
   return (
@@ -447,6 +458,7 @@ function PersonalStep({
           label={t.idDocument}
           required
           file={files[FILE_ID_DOCUMENT] ?? null}
+          uploaded={uploads[FILE_ID_DOCUMENT]}
           onChange={(file) => setFile(FILE_ID_DOCUMENT, file)}
           {...fileLabels}
         />
@@ -454,6 +466,7 @@ function PersonalStep({
           label={t.personalPhoto}
           required
           file={files[FILE_PERSONAL_PHOTO] ?? null}
+          uploaded={uploads[FILE_PERSONAL_PHOTO]}
           onChange={(file) => setFile(FILE_PERSONAL_PHOTO, file)}
           {...fileLabels}
         />
@@ -575,6 +588,7 @@ function WorkStep({
   jobTitles,
   primaryIncomeSources,
   otherIncomeSources,
+  uploads,
 }: Props) {
   const exempt = isIncomeExempt(form.employment_status);
 
@@ -583,6 +597,7 @@ function WorkStep({
     emptyLabel: t.noFileChosen,
     clearLabel: t.clearFile,
     hint: t.fileSizeHint,
+    uploadedLabel: t.alreadyUploaded,
   };
 
 
@@ -675,6 +690,7 @@ function WorkStep({
           disabled={exempt}
           hint={exempt ? t.incomeProofExempt : fileLabels.hint}
           file={files[FILE_INCOME_PROOF] ?? null}
+          uploaded={uploads[FILE_INCOME_PROOF]}
           onChange={(file) => setFile(FILE_INCOME_PROOF, file)}
         />
       </FieldGrid>
@@ -693,12 +709,14 @@ function FinancialStep({
   countryOptions,
   files,
   setFile,
+  uploads,
 }: Props) {
   const fileLabels = {
     chooseLabel: t.chooseFile,
     emptyLabel: t.noFileChosen,
     clearLabel: t.clearFile,
     hint: t.fileSizeHint,
+    uploadedLabel: t.alreadyUploaded,
   };
 
   return (
@@ -723,6 +741,7 @@ function FinancialStep({
                     bo_relationship: "",
                     bo_id_number: "",
                     bo_nationality_id: "",
+                    bo_nationality_name: "",
                     bo_address: "",
                   }
                 : { ...previous, is_beneficial_owner: false },
@@ -758,7 +777,14 @@ function FinancialStep({
             options={countryOptions}
             placeholder={t.selectPlaceholder}
             required
-            onChange={(value) => setField("bo_nationality_id", value)}
+            onChange={(value) =>
+              setForm((previous) => ({
+                ...previous,
+                bo_nationality_id: value,
+                bo_nationality_name:
+                  countryOptions.find((option) => option.value === value)?.label ?? "",
+              }))
+            }
           />
           <TextInput
             label={t.boAddress}
@@ -1052,6 +1078,7 @@ function FinancialStep({
           label={t.signature}
           required
           file={files[FILE_SIGNATURE] ?? null}
+          uploaded={uploads[FILE_SIGNATURE]}
           onChange={(file) => setFile(FILE_SIGNATURE, file)}
           {...fileLabels}
         />

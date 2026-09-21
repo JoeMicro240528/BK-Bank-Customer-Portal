@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { frontendApi } from "@/lib/api";
-import { toFormState } from "./draft";
+import { existingUploads, toFormState, type ExistingUpload } from "./draft";
 import type { FormState } from "./form";
 
 type Language = "en" | "ar";
 
-export type Draft = { externalRef: string; state: FormState };
+export type Draft = {
+  externalRef: string;
+  state: FormState;
+  /** Attachments the server already holds for this request. */
+  uploads: Record<string, ExistingUpload>;
+};
 
 /**
  * Loads one saved draft by its external_ref so the form can pick up where the
@@ -36,7 +41,9 @@ export function useDraft(
     frontendApi
       .getRequest(externalRef, { language, ownerId })
       .then((full) => {
-        if (!cancelled) setDraft({ externalRef, state: toFormState(full) });
+        if (!cancelled) {
+          setDraft({ externalRef, state: toFormState(full), uploads: existingUploads(full) });
+        }
       })
       .catch(() => {
         // A failed lookup should not block starting a new request.
