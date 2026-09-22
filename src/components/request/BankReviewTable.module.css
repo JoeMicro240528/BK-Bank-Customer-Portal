@@ -4,7 +4,7 @@
 
 .table {
   width: 100%;
-  min-width: 720px;
+  min-width: 640px;
   border-collapse: collapse;
 }
 
@@ -63,10 +63,11 @@
   font-weight: 700;
 }
 
+/* Bank and branch names are several words and may take two lines, so the
+   six columns fit beside the sidebar on a tablet; numbers and dates may not. */
 .bankName {
   display: block;
   font-weight: 700;
-  white-space: nowrap;
 }
 
 .bankNote {
@@ -76,7 +77,6 @@
   color: var(--muted, #64748b);
 }
 
-.branch,
 .account {
   white-space: nowrap;
 }
@@ -216,4 +216,16 @@
 .tDate {
   font-size: 12.5px;
   color: var(--muted, #64748b);
+}
+
+/* In the card layout the timeline gets the card's width, which three or four
+   100px steps overrun; let them share it instead. */
+@container (max-width: 640px) {
+  .tStep {
+    min-width: 0;
+  }
+
+  .timelineCell {
+    padding: 4px 0 8px;
+  }
 }

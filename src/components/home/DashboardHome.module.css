@@ -360,7 +360,7 @@
   }
 
   .lower {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -380,8 +380,26 @@
   }
 }
 
+/* Two counters per row on a phone: one per row filled the first screen before
+   any request showed. The tiles tighten to make the room. */
 @media (max-width: 560px) {
   .stats {
-    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .tile {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .tileIcon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+
+  /* The fifth counter would sit alone at half width. */
+  .tile:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }

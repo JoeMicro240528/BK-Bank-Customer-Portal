@@ -13,7 +13,7 @@
 }
 
 .gridWide {
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .field {
@@ -242,7 +242,7 @@
 @media (max-width: 720px) {
   .grid,
   .checkboxGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

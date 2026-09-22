@@ -106,3 +106,28 @@
     top: 14px;
   }
 }
+
+/* Five steps at 74px each need 370px -- more than a phone has inside the card,
+   so the last step was cut off. Below this width they split the row evenly;
+   the labels are single words and wrap if they must. */
+@media (max-width: 480px) {
+  .step {
+    min-width: 0;
+    gap: 6px;
+  }
+
+  .label {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+
+  .node {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .step:not(:first-child)::before {
+    top: 13px;
+  }
+}

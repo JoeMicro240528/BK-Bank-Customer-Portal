@@ -198,8 +198,8 @@ export default function AccountsCard({
         {accounts.length === 0 ? (
           <p className={styles.empty}>{t.emptyAccounts}</p>
         ) : (
-          <div className={styles.tableWrap}>
-            <table className={styles.table}>
+          <div className={`${styles.tableWrap} stack-table-wrap`}>
+            <table className={`${styles.table} stack-table`}>
               <thead>
                 <tr>
                   <th>{t.colBank}</th>
@@ -212,7 +212,7 @@ export default function AccountsCard({
               <tbody>
                 {accounts.map((account) => (
                   <tr key={account.id}>
-                    <td>
+                    <td data-label={t.colBank}>
                       <span className={styles.bankCell}>
                         <span className={styles.logo} style={{ background: account.bankColor }}>
                           {account.bankName.charAt(0)}
@@ -220,12 +220,14 @@ export default function AccountsCard({
                         {account.bankName}
                       </span>
                     </td>
-                    <td>{account.branch}</td>
-                    <td dir="ltr">{account.accountNumber}</td>
-                    <td>
+                    <td data-label={t.colBranch}>{account.branch}</td>
+                    <td data-label={t.colAccount}>
+                      <span dir="ltr">{account.accountNumber}</span>
+                    </td>
+                    <td data-label={t.colStatus}>
                       <span className={styles.addedPill}>{t.statusAdded}</span>
                     </td>
-                    <td>
+                    <td data-label={t.colActions}>
                       <button
                         type="button"
                         className={styles.removeButton}

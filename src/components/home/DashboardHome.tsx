@@ -80,8 +80,8 @@ export default function DashboardHome({
               <p>{t.emptyBody}</p>
             </div>
           ) : (
-            <div className={styles.tableWrap}>
-              <table className={styles.table}>
+            <div className={`${styles.tableWrap} stack-table-wrap`}>
+              <table className={`${styles.table} stack-table`}>
                 <thead>
                   <tr>
                     <th>{t.colReference}</th>
@@ -94,17 +94,17 @@ export default function DashboardHome({
                 <tbody>
                   {requests.map((request) => (
                     <tr key={request.id}>
-                      <td className={styles.reference} dir="ltr">
-                        {request.reference}
+                      <td className={styles.reference} data-label={t.colReference}>
+                        <span dir="ltr">{request.reference}</span>
                       </td>
-                      <td>{request.date}</td>
-                      <td>
+                      <td data-label={t.colDate}>{request.date}</td>
+                      <td data-label={t.colBanks}>
                         <BankNames request={request} banksUnit={t.banksUnit} />
                       </td>
-                      <td>
+                      <td data-label={t.colStatus}>
                         <StatusPill status={request.status} label={t.status[request.status]} />
                       </td>
-                      <td>
+                      <td data-label={t.colAction}>
                         <RowActions
                           request={request}
                           viewLabel={t.viewDetails}

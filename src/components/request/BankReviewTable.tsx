@@ -36,8 +36,8 @@ export default function BankReviewTable({
   };
 
   return (
-    <div className={styles.wrap}>
-      <table className={styles.table}>
+    <div className={`${styles.wrap} stack-table-wrap`}>
+      <table className={`${styles.table} stack-table`}>
         <thead>
           <tr>
             <th>{t.colBank}</th>
@@ -55,7 +55,7 @@ export default function BankReviewTable({
             return (
               <Fragment key={bank.id}>
                 <tr className={styles.rowMain}>
-                  <td>
+                  <td data-label={t.colBank}>
                     <span className={styles.bankCell}>
                       <span className={styles.logo} style={{ background: bank.bankColor }}>
                         {bank.bankName.charAt(0)}
@@ -66,20 +66,22 @@ export default function BankReviewTable({
                       </span>
                     </span>
                   </td>
-                  <td className={styles.branch}>{bank.branch}</td>
-                  <td className={styles.account} dir="ltr">
-                    {bank.accountNumber}
+                  <td className={styles.branch} data-label={t.colBranch}>
+                    {bank.branch}
                   </td>
-                  <td>
+                  <td className={styles.account} data-label={t.colAccount}>
+                    <span dir="ltr">{bank.accountNumber}</span>
+                  </td>
+                  <td data-label={t.colStatus}>
                     <StatusPill status={bank.status} label={t.status[bank.status]} />
                   </td>
-                  <td>
+                  <td data-label={t.colLastUpdate}>
                     <span className={styles.dateStack}>
                       <strong>{bank.lastUpdate}</strong>
                       <span>{bank.lastUpdateTime}</span>
                     </span>
                   </td>
-                  <td>
+                  <td data-label={t.colAction}>
                     <button
                       type="button"
                       className={styles.detailsButton}

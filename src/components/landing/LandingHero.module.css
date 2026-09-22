@@ -99,12 +99,16 @@
 
 @media (max-width: 860px) {
   .hero {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .illustration {
     height: 240px;
     order: -1;
+    /* The glow overhangs the box by 10% each side; on one column that reaches
+       past the screen edge and scrolls the page sideways. It has faded out by
+       then, so clipping it changes nothing visible. */
+    overflow-x: clip;
   }
 
   .orbitRing {
@@ -124,6 +128,6 @@
 
 @media (max-width: 520px) {
   .features {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -776,7 +776,7 @@ button:disabled {
   .portal-header,
   .request-strip,
   .workspace {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .portal-header {
@@ -794,7 +794,7 @@ button:disabled {
 
   .login-shell,
   .mock-user-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .stepper {
@@ -851,7 +851,7 @@ button:disabled {
   .field-grid.compact,
   .checkbox-grid,
   .review-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .field-grid,
@@ -872,7 +872,7 @@ button:disabled {
   }
 
   .review-panel dl {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -1153,7 +1153,7 @@ body {
 
 .profile-details-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
   text-align: right;
   margin-bottom: 2.5rem;
@@ -1441,4 +1441,73 @@ body {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+/*
+ * Tables that turn into one card per row when there is no room for columns. A
+ * scrolling table hid its status and action columns off-screen, so each cell
+ * carries its column name in data-label and prints it beside the value once
+ * the header row is gone.
+ *
+ * Keyed to the table's own box, not the screen: beside the sidebar on a
+ * tablet a table can be as cramped as on a phone. Browsers without container
+ * queries keep the scrolling table. Qualified with the element so it outranks
+ * each table's own module styles.
+ */
+.stack-table-wrap {
+  container-type: inline-size;
+}
+
+@container (max-width: 640px) {
+  table.stack-table {
+    min-width: 0;
+  }
+
+  table.stack-table,
+  table.stack-table tbody,
+  table.stack-table tr,
+  table.stack-table td {
+    display: block;
+    width: 100%;
+  }
+
+  /* Hidden from sight but kept for screen readers. */
+  table.stack-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  table.stack-table tr {
+    padding: 10px 14px;
+    border-top: 1px solid var(--line-soft, #eef2f7);
+  }
+
+  table.stack-table tbody tr:first-child {
+    border-top: 0;
+  }
+
+  table.stack-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border: 0;
+    text-align: end;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  table.stack-table td[data-label]::before {
+    content: attr(data-label);
+    flex: none;
+    color: var(--muted, #64748b);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: start;
+  }
 }
