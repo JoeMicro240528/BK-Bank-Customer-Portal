@@ -5,6 +5,7 @@ import { frontendApi, errorMessage } from "@/lib/api";
 import type { BankOption } from "@/components/wizard/types";
 
 type Language = "en" | "ar";
+import { localBankName } from "@/lib/bankNames";
 
 /** Colours for the bank chips, assigned by position since the API sends none. */
 const chipColors = ["#283f76", "#0f7a4d", "#b45309", "#7c3aed", "#0891b2", "#be123c"];
@@ -50,7 +51,7 @@ export function useBanks(language: Language) {
         setBanks(
           withBranches.map(({ row, branches }, index) => ({
             id: String(row.id),
-            name: row.name,
+            name: localBankName(row.name, language, row.bic),
             color: chipColors[index % chipColors.length],
             branches: branches.map((branch) => ({
               id: String(branch.id),

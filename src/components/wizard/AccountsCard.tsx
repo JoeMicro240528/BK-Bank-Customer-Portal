@@ -210,14 +210,20 @@ export default function AccountsCard({
                 </tr>
               </thead>
               <tbody>
-                {accounts.map((account) => (
+                {accounts.map((account) => {
+                  // Stored when the account was added; read the current one so
+                  // a language switch afterwards renames it too.
+                  const bankName =
+                    banks.find((bank) => bank.id === account.bankId)?.name ?? account.bankName;
+
+                  return (
                   <tr key={account.id}>
                     <td data-label={t.colBank}>
                       <span className={styles.bankCell}>
                         <span className={styles.logo} style={{ background: account.bankColor }}>
-                          {account.bankName.charAt(0)}
+                          {bankName.charAt(0)}
                         </span>
-                        {account.bankName}
+                        {bankName}
                       </span>
                     </td>
                     <td data-label={t.colBranch}>{account.branch}</td>
@@ -238,7 +244,8 @@ export default function AccountsCard({
                       </button>
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

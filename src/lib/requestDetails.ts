@@ -3,6 +3,7 @@ import type { AUFRequestRead } from "./swagger-types";
 import { mapBankState, overallStatus } from "./requests";
 
 type Language = "en" | "ar";
+import { localBankName } from "@/lib/bankNames";
 
 const chipColors = ["#283f76", "#0f7a4d", "#b45309", "#7c3aed", "#0891b2", "#be123c"];
 
@@ -96,7 +97,7 @@ export function toRequestDetails(
 
     return {
       id: String(entry.bank_id),
-      bankName: entry.bank_name,
+      bankName: localBankName(entry.bank_name, language),
       bankColor: chipColors[index % chipColors.length],
       // The API has no branch field yet, so show a neutral placeholder.
       branch: t.mainBranch,

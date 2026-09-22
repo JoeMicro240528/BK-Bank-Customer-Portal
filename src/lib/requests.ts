@@ -3,6 +3,7 @@ import type { BankStatus } from "@/components/request/types";
 import type { AUFRequestSummary } from "./swagger-types";
 
 type Language = "en" | "ar";
+import { localBankName } from "@/lib/bankNames";
 
 /**
  * Odoo request states mapped onto the statuses the UI shows.
@@ -98,13 +99,15 @@ function formatDate(value: string | undefined, language: Language): string {
  * which stays empty until the request is submitted -- a draft resolves its
  * banks from the detail endpoint instead (see useRequests).
  */
-function banksOf(request: AUFRequestSummary): string[] {
-  const names = (request.feedback || []).map((entry) => entry.bank_name).filter(Boolean);
+function banksOf(request: AUFRequestSummary, language: Language): string[] {
+  const names = (request.feedback || [])
+    .map((entry) => localBankName(entry.bank_name, language))
+    .filter(Boolean);
   return [...new Set(names)];
 }
 
 export function toRequestSummary(request: AUFRequestSummary, language: Language): RequestSummary {
-  const bankNames = banksOf(request);
+  const bankNames = banksOf(request, language);
 
   return {
     // external_ref is what the detail endpoint is keyed on; fall back to the

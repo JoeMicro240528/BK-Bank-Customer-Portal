@@ -5,6 +5,7 @@ import { frontendApi, errorMessage } from "@/lib/api";
 import { mapBankState } from "@/lib/requests";
 
 type Language = "en" | "ar";
+import { localBankName } from "@/lib/bankNames";
 
 type Kind = "message" | "decision";
 
@@ -100,8 +101,8 @@ export function useNotifications(ownerId: string | undefined, language: Language
                   id,
                   requestReference: request.reference,
                   requestId,
-                  body: decisionText[status](entry.bank_name),
-                  author: entry.bank_name,
+                  body: decisionText[status](localBankName(entry.bank_name, language)),
+                  author: localBankName(entry.bank_name, language),
                   rejected: status === "rejected",
                   date: entry.processed_at as string,
                   read: read.has(id),

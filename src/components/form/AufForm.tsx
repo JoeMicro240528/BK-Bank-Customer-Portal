@@ -73,7 +73,7 @@ function isInvalidDocumentType(caught: unknown): boolean {
 }
 
 /** The limit shown to customers on every attachment field. */
-const MAX_UPLOAD_BYTES = 1024 * 1024;
+const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 function documentTypeFor(key: string): string {
   return key;

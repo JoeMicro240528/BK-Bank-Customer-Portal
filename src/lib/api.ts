@@ -68,6 +68,13 @@ async function requestJson<T>(
   return parsed as T;
 }
 
+/**
+ * How long an upload may take. Files are allowed up to 20 MB, and on a slow
+ * mobile link that needs minutes -- 90 seconds failed any 20 MB file below
+ * about 1.8 Mbps. Five minutes still ends a stalled upload.
+ */
+const UPLOAD_TIMEOUT_MS = 5 * 60_000;
+
 /** The three dedicated attachment endpoints take just the file, under "files". */
 function uploadFiles(path: string, file: File, options: RequestOptions) {
   const body = new FormData();
@@ -77,7 +84,7 @@ function uploadFiles(path: string, file: File, options: RequestOptions) {
   // forever, with no way for the customer to tell what happened.
   return requestJson<AttachmentRead[]>(
     path,
-    { method: "POST", body, signal: AbortSignal.timeout(90_000) },
+    { method: "POST", body, signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS) },
     options,
   );
 }
@@ -166,7 +173,7 @@ export const frontendApi = {
     // forever, with no way for the customer to tell what happened.
     return requestJson<unknown>(
       `/auf-requests/${encodeURIComponent(externalRef)}/documents`,
-      { method: "POST", body, signal: AbortSignal.timeout(90_000) },
+      { method: "POST", body, signal: AbortSignal.timeout(UPLOAD_TIMEOUT_MS) },
       options,
     );
   },
