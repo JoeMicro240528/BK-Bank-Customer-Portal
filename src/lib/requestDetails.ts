@@ -39,7 +39,6 @@ const labels = {
     bankReview: "قيد المراجعة لدى البنك",
     complete: "اكتمل التحديث",
     updateType: "تحديث بيانات",
-    mainBranch: "الفرع الرئيسي",
   },
   en: {
     received: "Received",
@@ -50,7 +49,6 @@ const labels = {
     bankReview: "Under review by the bank",
     complete: "Update complete",
     updateType: "Data update",
-    mainBranch: "Main branch",
   },
 } as const;
 
@@ -99,8 +97,10 @@ export function toRequestDetails(
       id: String(entry.bank_id),
       bankName: localBankName(entry.bank_name, language),
       bankColor: chipColors[index % chipColors.length],
-      // The API has no branch field yet, so show a neutral placeholder.
-      branch: t.mainBranch,
+      // The request carries one branch; the portal files it with one bank, so
+      // it is that bank's branch. A dash, not an invented "main branch", when
+      // an older request has none.
+      branch: request.branch_name || "-",
       accountNumber: account ? `**** ${account.account_number.slice(-4)}` : "",
       status: mapBankState(entry.state),
       lastUpdate: formatDateTime(entry.processed_at, language),

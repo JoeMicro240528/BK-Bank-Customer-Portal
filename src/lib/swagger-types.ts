@@ -217,6 +217,9 @@ export interface AUFRequestSummary {
 
 export interface AUFRequestRead {
   reference: string;
+  /** The branch the request is filed against, as chosen on the accounts screen. */
+  branch_id?: number | null;
+  branch_name?: string | null;
   external_ref?: string | null;
   external_owner_id?: string | null;
   info_type: string;
