@@ -8,7 +8,7 @@ export const previewRequest: RequestDetailsData = {
   externalRef: "auf-preview-001",
   accountCount: 2,
   requestType: "تحديث بيانات شخصية",
-  supportPhone: "+249 123 456 789",
+  supportPhone: "5656",
   updatedFields: ["الاسم الكامل", "رقم الهاتف", "عنوان السكن", "المهنة", "الدخل الشهري"],
   stepper: [
     { key: "created", label: "تم إنشاء الطلب", date: "30 أغسطس 2026", state: "done" },

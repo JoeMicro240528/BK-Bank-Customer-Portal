@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 44" width="200" height="44">
+    <defs>
+        <linearGradient id="a" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0" stop-color="#298aff"/>
+            <stop offset="1" stop-color="#2049f9"/>
+        </linearGradient>
+    </defs>
+    <rect width="200" height="44" rx="8" ry="8" fill="#fff" stroke="#e5e7eb"/>
+    <g transform="matrix(.13 0 0 .13 32 6)">
+        <path fill="#1138a5" d="m136.5 139.8-14.56 8.41-14.35-8.29q.885-.18 1.83-.18h26.07c.34 0 .68.02 1.01.06"/>
+        <path fill="url(#a)" d="M121.94 104.35v43.86l-14.36-8.29-23.6-13.64z"/>
+        <path fill="url(#a)" opacity=".89"
+              d="M212.86 156.88v48.46L144.77 166v51.5c0 5.13-4.15 9.28-9.28 9.28h-26.07c-5.13 0-9.28-4.15-9.28-9.28v-52.09l-69.11 39.94v-48.46l52.95-30.6 23.6 13.64 14.35 8.29 14.56-8.41 23.4-13.52 52.96 30.6Z"/>
+        <path fill="url(#a)" d="m159.9 126.28-23.4 13.52-14.56 8.41v-43.86z"/>
+        <path fill="#1ad353"
+              d="M212.86 47.23v48.45l-52.96 30.6-23.4 13.52-14.56 8.41-14.36-8.29-23.6-13.64-52.95-30.6V47.23l90.91 52.52z"/>
+        <rect fill="url(#a)" x="100.14" y="22.18" width="44.63" height="44.63" rx="8.37" ry="8.37"
+              transform="rotate(135 122.452 44.494)"/>
+    </g>
+    <text x="44" y="18" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="10"
+          fill="#6b7280" transform="translate(32)">تسجيل الدخول عبر
+    </text>
+    <text x="44" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13"
+          font-weight="600" fill="#1138a5" transform="translate(32)">سوداباس
+    </text>
+</svg>

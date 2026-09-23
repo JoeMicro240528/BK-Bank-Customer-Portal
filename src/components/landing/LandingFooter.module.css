@@ -1,11 +1,54 @@
 .footer {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 18px 4px 6px;
+  gap: 10px;
+  padding: 20px 4px 10px;
   font-size: 14.5px;
   color: var(--muted);
   text-align: center;
+}
+
+.rights {
+  font-size: 13.5px;
+}
+
+.contact {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 999px;
+  background: var(--surface, #fff);
+}
+
+.contact svg {
+  flex: none;
+  stroke: currentColor;
+  color: var(--brand, #009341);
+}
+
+.contact a:hover {
+  border-color: var(--brand-tint, #b8ddc6);
+  background: var(--brand-wash, #f0f9f4);
+  text-decoration: none;
+}
+
+.contact a {
+  color: var(--brand-strong, #115931);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.contact a:hover {
+  text-decoration: underline;
 }

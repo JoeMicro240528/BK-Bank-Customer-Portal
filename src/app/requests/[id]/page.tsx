@@ -12,8 +12,8 @@ import RequestDetails from "@/components/request/RequestDetails";
 import type { RequestDetailsData } from "@/components/request/types";
 import { frontendApi, errorMessage } from "@/lib/api";
 import { toRequestDetails } from "@/lib/requestDetails";
+import { SUPPORT_PHONE } from "@/lib/contact";
 
-const SUPPORT_PHONE = "+249 123 456 789";
 
 export default function RequestDetailsPage() {
   const { data: session, status } = useSession();

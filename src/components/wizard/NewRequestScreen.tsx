@@ -8,8 +8,8 @@ import WizardStepBar from "./WizardStepBar";
 import { wizardCopy } from "./copy";
 import styles from "./NewRequestScreen.module.css";
 import type { AddedAccount, BankOption, Language, WizardStep } from "./types";
+import { SUPPORT_PHONE } from "@/lib/contact";
 
-const SUPPORT_PHONE = "+249 123 456 789";
 
 /**
  * The "new update request" wizard step. Renders content only -- the page

@@ -31,7 +31,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     step3Title: "Choose branch & accounts",
     step3Desc: "Pick your branch and add your accounts to update",
     step4Title: "Submit & track status",
-    step4Desc: "Send your request and track its status from one place",
+    step4Desc: "Send your request and follow its review with Omdurman National Bank",
     footerRights: "© 2026 Omdurman National Bank Platform for updating customer data. All rights reserved.",
   },
   ar: {
@@ -64,7 +64,7 @@ export const landingCopy: Record<Language, LandingCopy> = {
     step3Title: "اختيار الفرع والحسابات",
     step3Desc: "اختر فرعك وأضف حساباتك لتحديثها",
     step4Title: "إرسال الطلب ومتابعة الحالة",
-    step4Desc: "أرسل طلبك وتابع حالة المراجعة لكل بنك من مكان واحد",
+    step4Desc: "أرسل طلبك وتابع حالة المراجعة لدى بنك أم درمان الوطني",
     footerRights: "جميع الحقوق محفوظة © 2026 منصة بنك أم درمان الوطني لتحديث بيانات العملاء",
   },
 };

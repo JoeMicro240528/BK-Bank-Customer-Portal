@@ -31,7 +31,7 @@ export default function LandingPage({
         <div className={styles.heroPanel}>
           <LandingHero t={t} />
         </div>
-        <LoginCard t={t} loginError={loginError} onLogin={onLogin} />
+        <LoginCard t={t} language={language} loginError={loginError} onLogin={onLogin} />
       </section>
 
       <HowItWorks t={t} />

@@ -77,8 +77,8 @@
 
 .orbitRing {
   position: absolute;
-  width: 310px;
-  height: 310px;
+  width: 320px;
+  height: 320px;
   border-radius: 50%;
   border: 1.5px dashed rgba(17, 89, 49, 0.28);
 }
@@ -88,9 +88,9 @@
 .core {
   position: relative;
   z-index: 1;
-  width: 190px;
-  height: 190px;
-  padding: 26px;
+  width: 232px;
+  height: 232px;
+  padding: 30px;
   border-radius: 50%;
   background: var(--surface, #ffffff);
   box-shadow: 0 14px 40px rgba(15, 23, 42, 0.12);
@@ -112,13 +112,14 @@
   }
 
   .orbitRing {
-    width: 220px;
-    height: 220px;
+    width: 234px;
+    height: 234px;
   }
 
   .core {
-    width: 130px;
-    height: 130px;
+    width: 164px;
+    height: 164px;
+    padding: 22px;
   }
 
   .podium {
@@ -129,5 +130,16 @@
 @media (max-width: 520px) {
   .features {
     grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  /* One per row, centred: left-aligned items used only half the width and
+     left the rest of the row blank. */
+  .feature {
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    max-width: 340px;
+    margin-inline: auto;
   }
 }

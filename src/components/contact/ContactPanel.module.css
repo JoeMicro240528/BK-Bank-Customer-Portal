@@ -240,3 +240,33 @@ a.channel:hover .channelText dd {
     justify-content: center;
   }
 }
+
+/* Six icons rarely fit one row of the narrow aside, so the row is centred
+   and what wraps sits centred under it rather than adrift at one edge. */
+.social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line-soft, #eef2f7);
+  border-radius: 50%;
+  background: var(--surface, #fff);
+  color: var(--brand-strong, #115931);
+}
+
+.socialLink svg {
+  stroke: currentColor;
+}
+
+.socialLink:hover {
+  border-color: var(--brand-tint, #b8ddc6);
+  background: var(--brand-wash, #f0f9f4);
+}

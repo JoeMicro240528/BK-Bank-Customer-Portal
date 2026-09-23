@@ -1,17 +1,24 @@
 import { AlertCircle, Check, Lock, ShieldUser } from "lucide-react";
+import Image from "next/image";
 import Banner from "@/components/ui/Banner";
 import styles from "./LoginCard.module.css";
-import type { LandingCopy } from "./types";
+import type { LandingCopy, Language } from "./types";
 
 export default function LoginCard({
   t,
+  language,
   loginError,
   onLogin,
 }: {
   t: LandingCopy;
+  language: Language;
   loginError: string;
   onLogin: () => void;
 }) {
+  // SudaPass publishes its own sign-in button in each language; using it keeps
+  // their mark, wording and colours exactly as specified, as Kafaa does.
+  const buttonImage = `/sudapass/signin-light-${language === "ar" ? "ar" : "en"}.svg`;
+
   return (
     <div className={styles.card}>
       <span className={styles.avatarWrap}>
@@ -21,7 +28,7 @@ export default function LoginCard({
         </span>
       </span>
 
-      <h2>{t.welcomeGreeting} 👋</h2>
+      <h2>{t.welcomeGreeting}</h2>
       <p>{t.welcomeIntro}</p>
 
       <div className={styles.divider} />
@@ -30,11 +37,7 @@ export default function LoginCard({
       {loginError && <Banner tone="danger" icon={AlertCircle} text={loginError} />}
 
       <button type="button" className={styles.loginButton} aria-label={t.sudapassLogin} onClick={onLogin}>
-        <span className={styles.loginBadge}>S</span>
-        <span className={styles.loginText}>
-          <strong>{t.sudapassTitle}</strong>
-          <span>SudaPass</span>
-        </span>
+        <Image src={buttonImage} alt={t.sudapassLogin} width={300} height={66} priority />
       </button>
 
       <p className={styles.privacyNote}>

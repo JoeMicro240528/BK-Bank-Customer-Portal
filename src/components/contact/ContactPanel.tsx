@@ -1,13 +1,41 @@
 "use client";
 
-import { CheckCircle2, Clock, Mail, MapPin, Phone, Send } from "lucide-react";
+import {
+  CheckCircle2,
+  Clock,
+  Facebook,
+  Globe,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+  Twitter,
+  Youtube,
+} from "lucide-react";
 import { useState, type FormEvent } from "react";
 import styles from "./ContactPanel.module.css";
 
 type Language = "en" | "ar";
 
-const SUPPORT_PHONE = "+249 123 456 789";
-const SUPPORT_EMAIL = "support@cbos.gov.sd";
+import {
+  SOCIAL_LINKS,
+  SUPPORT_EMAIL,
+  SUPPORT_PHONE,
+  SUPPORT_WEBSITE,
+  SUPPORT_WEBSITE_URL,
+} from "@/lib/contact";
+
+const socialIcons = {
+  facebook: Facebook,
+  twitter: Twitter,
+  youtube: Youtube,
+  linkedin: Linkedin,
+  // The icon set has no WhatsApp or Telegram mark; these read closest.
+  whatsapp: MessageCircle,
+  telegram: Send,
+} as const;
 
 const copy = {
   ar: {
@@ -24,8 +52,10 @@ const copy = {
     channelsTitle: "قنوات التواصل",
     phone: "الهاتف",
     email: "البريد الإلكتروني",
+    website: "الموقع الإلكتروني",
     address: "العنوان",
-    addressValue: "بنك السودان المركزي، شارع الجامعة، الخرطوم",
+    addressValue: "الخرطوم - شارع القصر",
+    followTitle: "تابعنا",
     hoursTitle: "ساعات العمل",
     weekdays: "الأحد - الخميس",
     weekdaysValue: "8:30 ص - 3:30 م",
@@ -46,8 +76,10 @@ const copy = {
     channelsTitle: "Contact channels",
     phone: "Phone",
     email: "Email",
+    website: "Website",
     address: "Address",
-    addressValue: "Central Bank of Sudan, University Street, Khartoum",
+    addressValue: "Khartoum - Palace Street",
+    followTitle: "Follow us",
     hoursTitle: "Working hours",
     weekdays: "Sunday - Thursday",
     weekdaysValue: "8:30 AM - 3:30 PM",
@@ -159,6 +191,21 @@ export default function ContactPanel({ language }: { language: Language }) {
               </span>
             </a>
 
+            <a
+              className={styles.channel}
+              href={SUPPORT_WEBSITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className={styles.channelIcon}>
+                <Globe aria-hidden="true" size={18} />
+              </span>
+              <span className={styles.channelText}>
+                <dt>{t.website}</dt>
+                <dd dir="ltr">{SUPPORT_WEBSITE}</dd>
+              </span>
+            </a>
+
             <div className={styles.channel}>
               <span className={styles.channelIcon}>
                 <MapPin aria-hidden="true" size={18} />
@@ -169,6 +216,29 @@ export default function ContactPanel({ language }: { language: Language }) {
               </span>
             </div>
           </dl>
+        </section>
+
+        <section className={styles.card}>
+          <h2 className={styles.cardTitle}>{t.followTitle}</h2>
+          <div className={styles.social}>
+            {SOCIAL_LINKS.map((link) => {
+              const Icon = socialIcons[link.icon];
+
+              return (
+                <a
+                  key={link.id}
+                  className={styles.socialLink}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={link.label}
+                  aria-label={link.label}
+                >
+                  <Icon aria-hidden="true" size={19} />
+                </a>
+              );
+            })}
+          </div>
         </section>
 
         <section className={styles.hours}>
