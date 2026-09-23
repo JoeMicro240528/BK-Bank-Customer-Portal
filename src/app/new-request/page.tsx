@@ -99,7 +99,7 @@ function NewRequestFlow() {
       // in Arabic, so prefilling "English" boxes from it would be wrong.
       name_arabic: user?.name || "",
       name_english: "",
-      nationality_id: resolveNationalityId(user?.nationality, codeToId),
+      nationality_id: resolveNationalityId(user?.nationality, codeToId) || "195",
       email: user?.email || "",
       gender: user?.gender || "",
       date_of_birth: user?.birthDate || "",

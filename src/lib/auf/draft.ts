@@ -90,9 +90,9 @@ export function toFormState(request: AUFRequestRead): FormState {
     })(),
     gender: text("gender"),
     date_of_birth: text("date_of_birth"),
-    birth_country_id: number("birth_country_id"),
+    birth_country_id: number("birth_country_id") || base.birth_country_id,
     birth_state_id: number("birth_state_id"),
-    nationality_id: number("nationality_id"),
+    nationality_id: number("nationality_id") || base.nationality_id,
     marital_status: text("marital_status"),
     spouse_name: text("spouse_name"),
     mobile_personal: text("mobile_personal"),
@@ -101,7 +101,7 @@ export function toFormState(request: AUFRequestRead): FormState {
     education_other: text("education_other"),
     email: text("email"),
 
-    res_country_id: number("res_country_id"),
+    res_country_id: number("res_country_id") || base.res_country_id,
     res_country_state_id: number("res_country_state_id"),
     city_id: number("city_id"),
     // The form's landmark box writes both; either brings it back.
