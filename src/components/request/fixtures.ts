@@ -18,7 +18,7 @@ export const previewRequest: RequestDetailsData = {
   banks: [
     {
       id: "omdurman-1",
-      bankName: "بنك أم درمان الوطني",
+      bankName: "بنك أمدرمان الوطني",
       bankColor: "#009341",
       branch: "فرع السوق العربي",
       accountNumber: "**** 9012",
@@ -33,9 +33,9 @@ export const previewRequest: RequestDetailsData = {
     },
     {
       id: "omdurman-2",
-      bankName: "بنك أم درمان الوطني",
+      bankName: "بنك أمدرمان الوطني",
       bankColor: "#009341",
-      branch: "فرع أم درمان الرئيسي",
+      branch: "فرع أمدرمان الرئيسي",
       accountNumber: "**** 3445",
       status: "rejected",
       lastUpdate: "30 أغسطس 2026",

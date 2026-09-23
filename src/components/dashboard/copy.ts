@@ -2,7 +2,7 @@ import type { DashboardCopy, Language } from "./types";
 
 export const dashboardCopy: Record<Language, DashboardCopy> = {
   ar: {
-    platformName: "منصة بنك أم درمان الوطني",
+    platformName: "منصة بنك أمدرمان الوطني",
     platformTagline: "لتحديث بيانات العملاء",
     nav: {
       home: "الرئيسية",

@@ -3,7 +3,7 @@ import type { Language, RequestCopy } from "./types";
 export const requestCopy: Record<Language, RequestCopy> = {
   ar: {
     pageTitle: "تفاصيل طلب التحديث",
-    pageSubtitle: "متابعة حالة طلبك لدى بنك أم درمان الوطني",
+    pageSubtitle: "متابعة حالة طلبك لدى بنك أمدرمان الوطني",
     referenceLabel: "رقم طلب التحديث",
     createdLabel: "تاريخ إنشاء الطلب",
     copyReference: "نسخ رقم الطلب",

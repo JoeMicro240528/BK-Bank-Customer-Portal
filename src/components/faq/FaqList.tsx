@@ -15,9 +15,9 @@ const copy = {
 const faqs: { id: string; q: { ar: string; en: string }; a: { ar: string; en: string } }[] = [
   {
     id: "what",
-    q: { ar: "ما هي منصة بنك أم درمان الوطني؟", en: "What is the Omdurman National Bank Platform?" },
+    q: { ar: "ما هي منصة بنك أمدرمان الوطني؟", en: "What is the Omdurman National Bank Platform?" },
     a: {
-      ar: "منصة تتيح لك تحديث بياناتك الشخصية والمالية لدى بنك أم درمان الوطني بخطوات بسيطة، بدلاً من زيارة الفرع.",
+      ar: "منصة تتيح لك تحديث بياناتك الشخصية والمالية لدى بنك أمدرمان الوطني بخطوات بسيطة، بدلاً من زيارة الفرع.",
       en: "A platform that lets you update your personal and financial data at Omdurman National Bank in a few simple steps, instead of visiting the branch.",
     },
   },
@@ -25,7 +25,7 @@ const faqs: { id: string; q: { ar: string; en: string }; a: { ar: string; en: st
     id: "who",
     q: { ar: "من يمكنه استخدام المنصة؟", en: "Who can use the platform?" },
     a: {
-      ar: "كل من يملك حساباً لدى بنك أم درمان الوطني وحساباً موثقاً في منصة سوداباس.",
+      ar: "كل من يملك حساباً لدى بنك أمدرمان الوطني وحساباً موثقاً في منصة سوداباس.",
       en: "Anyone who holds an account at Omdurman National Bank and has a verified SudaPass account.",
     },
   },
@@ -49,7 +49,7 @@ const faqs: { id: string; q: { ar: string; en: string }; a: { ar: string; en: st
     id: "multiple",
     q: { ar: "هل يمكنني إضافة أكثر من حساب في الطلب؟", en: "Can I add more than one account to a request?" },
     a: {
-      ar: "نعم. يمكنك إضافة عدة حسابات في فروع مختلفة لبنك أم درمان الوطني، وسيتم إنشاء طلب تحديث واحد شامل لجميعها.",
+      ar: "نعم. يمكنك إضافة عدة حسابات في فروع مختلفة لبنك أمدرمان الوطني، وسيتم إنشاء طلب تحديث واحد شامل لجميعها.",
       en: "Yes. You can add several accounts across different branches of Omdurman National Bank, and a single update request will be created covering all of them.",
     },
   },

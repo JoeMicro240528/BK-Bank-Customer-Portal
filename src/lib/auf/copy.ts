@@ -310,7 +310,7 @@ export const copy = {
     stepContact: "اتصال",
     stepWork: "العمل",
     stepFinancial: "مالية",
-    appName: "تحديث بيانات العملاء - بنك أم درمان الوطني",
+    appName: "تحديث بيانات العملاء - بنك أمدرمان الوطني",
     appSubtitle: "بوابة عامة لنموذج AUF",
     language: "اللغة",
     english: "English",

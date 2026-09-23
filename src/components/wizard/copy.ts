@@ -2,7 +2,7 @@ import type { Language, WizardCopy } from "./types";
 
 export const wizardCopy: Record<Language, WizardCopy> = {
   ar: {
-    platformName: "منصة بنك أم درمان الوطني",
+    platformName: "منصة بنك أمدرمان الوطني",
     platformTagline: "لتحديث بيانات العملاء",
     logout: "تسجيل خروج",
     language: "اللغة",
@@ -75,7 +75,7 @@ export const wizardCopy: Record<Language, WizardCopy> = {
     secureTitle: "بياناتك آمنة ومحمية",
     secureBody: "جميع بياناتك مشفرة وآمنة وفق أعلى معايير الحماية.",
 
-    footerRights: "جميع الحقوق محفوظة © 2026 منصة بنك أم درمان الوطني لتحديث بيانات العملاء",
+    footerRights: "جميع الحقوق محفوظة © 2026 منصة بنك أمدرمان الوطني لتحديث بيانات العملاء",
     footerFaq: "الأسئلة الشائعة",
   },
 

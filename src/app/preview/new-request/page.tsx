@@ -11,7 +11,7 @@ import type { AddedAccount, BankOption } from "@/components/wizard/types";
 
 /** Mirrors what /master-data/banks returns (filtered to ONB), so the preview needs no backend. */
 const previewBanks: BankOption[] = [
-  { id: "2", name: "بنك أم درمان الوطني", color: "#009341", branches: [{ id: "1", name: "سوق امدرمان" }] },
+  { id: "2", name: "بنك أمدرمان الوطني", color: "#009341", branches: [{ id: "1", name: "سوق امدرمان" }] },
 ];
 
 /** Fixture accounts so the added-accounts table is populated in the preview. */
@@ -19,7 +19,7 @@ const previewAccounts: AddedAccount[] = [
   {
     id: "1",
     bankId: "2",
-    bankName: "بنك أم درمان الوطني",
+    bankName: "بنك أمدرمان الوطني",
     bankColor: "#009341",
     branchId: "1",
     branch: "فرع السوق العربي",
@@ -28,10 +28,10 @@ const previewAccounts: AddedAccount[] = [
   {
     id: "2",
     bankId: "2",
-    bankName: "بنك أم درمان الوطني",
+    bankName: "بنك أمدرمان الوطني",
     bankColor: "#009341",
     branchId: "1",
-    branch: "فرع أم درمان الرئيسي",
+    branch: "فرع أمدرمان الرئيسي",
     accountNumber: "9876543210987",
   },
 ];

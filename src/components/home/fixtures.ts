@@ -14,7 +14,7 @@ export const previewRequests: RequestSummary[] = [
     reference: "CU-2026-001245",
     date: "30 أغسطس 2026",
     bankCount: 1,
-    bankNames: ["بنك أم درمان الوطني"],
+    bankNames: ["بنك أمدرمان الوطني"],
     status: "under_review",
   },
   {
@@ -22,7 +22,7 @@ export const previewRequests: RequestSummary[] = [
     reference: "CU-2026-001102",
     date: "12 أغسطس 2026",
     bankCount: 1,
-    bankNames: ["بنك أم درمان الوطني"],
+    bankNames: ["بنك أمدرمان الوطني"],
     status: "rejected",
   },
   {
@@ -30,7 +30,7 @@ export const previewRequests: RequestSummary[] = [
     reference: "CU-2026-000871",
     date: "28 يوليو 2026",
     bankCount: 1,
-    bankNames: ["بنك أم درمان الوطني"],
+    bankNames: ["بنك أمدرمان الوطني"],
     status: "approved",
   },
   {
@@ -38,7 +38,7 @@ export const previewRequests: RequestSummary[] = [
     reference: "CU-2026-000804",
     date: "19 يوليو 2026",
     bankCount: 1,
-    bankNames: ["بنك أم درمان الوطني"],
+    bankNames: ["بنك أمدرمان الوطني"],
     status: "draft",
   },
 ];

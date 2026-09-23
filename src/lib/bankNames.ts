@@ -19,7 +19,7 @@ const BIC_BY_NAME: Record<string, string> = {
 };
 
 /**
- * Collapses spacing, tatweel and the alef forms, so "بنك أم درمان الوطني" and
+ * Collapses spacing, tatweel and the alef forms, so "بنك أمدرمان الوطني" and
  * "بنك امدرمان الوطني" -- both in use -- are recognised as one name.
  */
 function normalise(name: string): string {

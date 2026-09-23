@@ -80,7 +80,7 @@ export default function FormPreview() {
         ownerId=""
         initialState={seeded}
         locked={lockedIdentity}
-        bankNames={{ "2": "بنك أم درمان الوطني" }}
+        bankNames={{ "2": "بنك أمدرمان الوطني" }}
         countryOptions={[
           { value: "205", label: "Sudan" },
           { value: "65", label: "Egypt" },
