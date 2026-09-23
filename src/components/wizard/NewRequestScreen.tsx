@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import DocumentsModal from "./DocumentsModal";
 import StepsAside from "./StepsAside";
 import AccountsCard from "./AccountsCard";
 import SummaryAside from "./SummaryAside";
@@ -32,6 +33,9 @@ export default function NewRequestScreen({
   onContinue?: (accounts: AddedAccount[]) => void;
 }) {
   const [accounts, setAccounts] = useState<AddedAccount[]>(initialAccounts);
+  // The attachments are asked for across four later steps, so they are listed
+  // up front while the customer can still go and find them.
+  const [showDocuments, setShowDocuments] = useState(true);
 
   const t = wizardCopy[language];
   const locale = language === "ar" ? "ar-EG" : "en-GB";
@@ -63,6 +67,10 @@ export default function NewRequestScreen({
 
   return (
     <>
+      {showDocuments && (
+        <DocumentsModal language={language} onClose={() => setShowDocuments(false)} />
+      )}
+
       <WizardStepBar steps={steps} />
 
       <div className={styles.grid}>
