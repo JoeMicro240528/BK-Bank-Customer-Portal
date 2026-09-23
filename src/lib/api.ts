@@ -69,11 +69,11 @@ async function requestJson<T>(
 }
 
 /**
- * How long an upload may take. Files are allowed up to 20 MB, and on a slow
- * mobile link that needs minutes -- 90 seconds failed any 20 MB file below
- * about 1.8 Mbps. Five minutes still ends a stalled upload.
+ * How long an upload may take. Attachments are capped at 1 MB, which even a
+ * weak mobile link sends well within this, so a longer deadline would only
+ * delay telling the customer that an upload has stalled.
  */
-const UPLOAD_TIMEOUT_MS = 5 * 60_000;
+const UPLOAD_TIMEOUT_MS = 90_000;
 
 /** The three dedicated attachment endpoints take just the file, under "files". */
 function uploadFiles(path: string, file: File, options: RequestOptions) {
