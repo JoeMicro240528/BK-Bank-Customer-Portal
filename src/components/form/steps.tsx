@@ -16,7 +16,7 @@ import {
   type Option,
 } from "./Fields";
 import { optionSets, type FormState } from "@/lib/auf/form";
-import { isValidPhone, normalisePhone } from "@/lib/auf/phone";
+import { isValidPhone, tidyPhone } from "@/lib/auf/phone";
 import type { ExistingUpload } from "@/lib/auf/draft";
 import { formatNationality } from "@/lib/format";
 import type { AufCopy } from "@/lib/auf/copy";
@@ -666,7 +666,7 @@ function ContactStep({
         hint={t.phoneHint}
         placeholder="+249912345678"
         onChange={(value) => setField("mobile_personal", value)}
-        onBlur={() => setField("mobile_personal", normalisePhone(form.mobile_personal))}
+        onBlur={() => setField("mobile_personal", tidyPhone(form.mobile_personal))}
       />
       <TextInput
         label={t.mobile_additional}
@@ -677,7 +677,7 @@ function ContactStep({
         hint={t.phoneHint}
         placeholder="+249912345678"
         onChange={(value) => setField("mobile_additional", value)}
-        onBlur={() => setField("mobile_additional", normalisePhone(form.mobile_additional))}
+        onBlur={() => setField("mobile_additional", tidyPhone(form.mobile_additional))}
       />
       <TextInput
         label={t.email}

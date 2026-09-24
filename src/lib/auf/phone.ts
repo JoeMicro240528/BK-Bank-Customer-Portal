@@ -44,3 +44,19 @@ export function isValidPhone(value: string): boolean {
   if (!normalised) return true; // Emptiness is the required check's business.
   return /^\+\d{9,15}$/.test(normalised);
 }
+
+/**
+ * The number tidied, but only when tidying produces something dialable.
+ *
+ * A half-typed number must be left alone: "0" would otherwise become the bare
+ * country code "+249", which reads as though the field had been filled in when
+ * it has not. What is still incomplete stays as typed, for validation to
+ * report.
+ */
+export function tidyPhone(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  const normalised = normalisePhone(trimmed);
+  return /^\+\d{9,15}$/.test(normalised) ? normalised : trimmed;
+}
