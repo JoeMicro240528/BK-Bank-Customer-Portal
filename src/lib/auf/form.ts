@@ -1,3 +1,4 @@
+import { normalisePhone } from "@/lib/auf/phone";
 import type {
   AUFRequestCreate,
   AUFRequestUpdate,
@@ -584,8 +585,10 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     wife_2_name: clearableText(form.wife_2_name),
     wife_3_name: clearableText(form.wife_3_name),
     wife_4_name: clearableText(form.wife_4_name),
-    mobile_personal: optionalText(form.mobile_personal),
-    mobile_additional: optionalText(form.mobile_additional),
+    // Normalised on the way out too: a draft saved before this existed, or a
+    // value pasted past the field, should still reach the bank in one shape.
+    mobile_personal: optionalText(normalisePhone(form.mobile_personal)),
+    mobile_additional: optionalText(normalisePhone(form.mobile_additional)),
     education_level: optionalText(form.education_level),
     email: optionalText(form.email),
     birth_state_id: parseOptionalInt(form.birth_state_id),

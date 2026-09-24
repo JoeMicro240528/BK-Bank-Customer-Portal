@@ -16,6 +16,7 @@ import {
   type Option,
 } from "./Fields";
 import { optionSets, type FormState } from "@/lib/auf/form";
+import { isValidPhone, normalisePhone } from "@/lib/auf/phone";
 import type { ExistingUpload } from "@/lib/auf/draft";
 import { formatNationality } from "@/lib/format";
 import type { AufCopy } from "@/lib/auf/copy";
@@ -187,6 +188,9 @@ export function missingFields(
   const positive = (value: string, label: string) => {
     if (value.trim() && !(Number(value) > 0) && !missing.includes(label)) missing.push(label);
   };
+  const phone = (value: string, label: string) => {
+    if (value && !isValidPhone(value)) missing.push(`${label} (${t.phoneInvalid})`);
+  };
   const number = (value: string, label: string, allowPlus = false) => {
     const pattern = `^${allowPlus ? "\\+?" : ""}\\d{1,${MAX_DIGITS}}$`;
     if (value && !new RegExp(pattern).test(value)) {
@@ -255,8 +259,8 @@ export function missingFields(
 
     case "contact":
       text(form.mobile_personal, t.mobile_personal);
-      number(form.mobile_personal, t.mobile_personal, true);
-      number(form.mobile_additional, t.mobile_additional, true);
+      phone(form.mobile_personal, t.mobile_personal);
+      phone(form.mobile_additional, t.mobile_additional);
       lookup(form.res_country_id, t.res_country_id);
       // A country with no states in master-data cannot have one chosen, so it
       // is only required where there is something to choose.
@@ -650,6 +654,8 @@ function ContactStep({
 }: Props) {
   return (
     <FieldGrid>
+      {/* Tidied when the customer leaves the field rather than as they type,
+          which would fight them: a lone "0" would become +249 mid-number. */}
       <TextInput
         label={t.mobile_personal}
         value={form.mobile_personal}
@@ -657,7 +663,10 @@ function ContactStep({
         digitsOnly
         allowPlus
         inputMode="tel"
+        hint={t.phoneHint}
+        placeholder="+249912345678"
         onChange={(value) => setField("mobile_personal", value)}
+        onBlur={() => setField("mobile_personal", normalisePhone(form.mobile_personal))}
       />
       <TextInput
         label={t.mobile_additional}
@@ -665,7 +674,10 @@ function ContactStep({
         digitsOnly
         allowPlus
         inputMode="tel"
+        hint={t.phoneHint}
+        placeholder="+249912345678"
         onChange={(value) => setField("mobile_additional", value)}
+        onBlur={() => setField("mobile_additional", normalisePhone(form.mobile_additional))}
       />
       <TextInput
         label={t.email}
