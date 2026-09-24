@@ -423,8 +423,10 @@ export const copy = {
     wife2Name: "اسم الزوجة الثانية",
     wife3Name: "اسم الزوجة الثالثة",
     wife4Name: "اسم الزوجة الرابعة",
-    phoneHint: "يبدأ بـ ‎+249، مثال: ‎+249912345678",
-    phoneInvalid: "أدخل الرقم مع رمز الدولة، مثال: ‎+249912345678",
+    // One example, at the end of the line: a "+249" in the middle of Arabic
+    // text is laid out as "249+", which is exactly the confusion being fixed.
+    phoneHint: "مثال: \u2066+249912345678\u2069",
+    phoneInvalid: "أدخل الرقم مع رمز الدولة، مثال: \u2066+249912345678\u2069",
     mobile_personal: "رقم الهاتف الشخصي",
     mobile_additional: "رقم هاتف إضافي",
     education_level: "المستوى التعليمي",

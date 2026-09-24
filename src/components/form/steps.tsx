@@ -663,6 +663,7 @@ function ContactStep({
         digitsOnly
         allowPlus
         inputMode="tel"
+        ltrValue
         hint={t.phoneHint}
         placeholder="+249912345678"
         onChange={(value) => setField("mobile_personal", value)}
@@ -674,6 +675,7 @@ function ContactStep({
         digitsOnly
         allowPlus
         inputMode="tel"
+        ltrValue
         hint={t.phoneHint}
         placeholder="+249912345678"
         onChange={(value) => setField("mobile_additional", value)}

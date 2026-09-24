@@ -111,6 +111,7 @@ export function TextInput({
   arabicOnly = false,
   allowPlus = false,
   wholeAmount = false,
+  ltrValue = false,
   ...rest
 }: {
   label: string;
@@ -132,6 +133,8 @@ export function TextInput({
   allowPlus?: boolean;
   /** With digitsOnly: a whole amount, cut at the decimal point. */
   wholeAmount?: boolean;
+  /** Lay the value out left-to-right, for phone numbers on an Arabic page. */
+  ltrValue?: boolean;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, "onChange" | "value" | "type">) {
   const id = useId();
 
@@ -153,7 +156,7 @@ export function TextInput({
       <div className={styles.control}>
         <input
           id={id}
-          className={styles.input}
+          className={`${styles.input}${ltrValue ? ` ${styles.ltrValue}` : ""}`}
           value={value}
           type={type}
           onChange={(event) => onChange(clean(event.target.value))}

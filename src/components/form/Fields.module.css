@@ -428,3 +428,18 @@
   line-height: 1.55;
   color: var(--muted, #64748b);
 }
+
+/*
+ * A phone number is left-to-right even on an Arabic page. Without an explicit
+ * direction the leading "+" is laid out at the right-hand end, so
+ * "+249905015553" reads as "249905015553+". The value keeps the page's
+ * alignment so the field still looks like the ones around it.
+ */
+.ltrValue {
+  direction: ltr;
+  text-align: left;
+}
+
+:global(html[dir="rtl"]) .ltrValue {
+  text-align: right;
+}
