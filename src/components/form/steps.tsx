@@ -69,6 +69,10 @@ type Props = {
   jobTitles: Option[];
   primaryIncomeSources: Option[];
   otherIncomeSources: Option[];
+  /** Option id -> master-data code, which decides which detail box is shown. */
+  jobTitleCodes: Record<string, string>;
+  primaryIncomeCodes: Record<string, string>;
+  otherIncomeCodes: Record<string, string>;
   /** Address cascade: states of the country of residence, then its cities. */
   residenceStates: Option[];
   residenceStatesLoading: boolean;
@@ -111,6 +115,12 @@ function localise(
  * stopping a customer skipping a step.
  */
 /** Retirees and students have no employer or income proof to give. */
+/** Income sources that leave the bank asking what the work actually is. */
+const NEEDS_PRIMARY_INCOME_DETAILS = new Set(["self_employed", "other"]);
+
+/** Job titles that do the same: business owner, freelance, other. */
+const NEEDS_JOB_TITLE_DETAILS = new Set(["BIZ", "FREE", "OTH"]);
+
 export function isIncomeExempt(employmentStatus: string): boolean {
   return employmentStatus === "retired" || employmentStatus === "student";
 }
@@ -130,6 +140,12 @@ export function missingFields(
   birthPlace: { statesLoading: boolean; stateCount: number },
   residence: { stateCount: number; cityCount: number },
   uploads: Record<string, ExistingUpload> = {},
+  /** Master-data codes, so a required detail box is judged by code, not label. */
+  codes: {
+    jobTitle?: Record<string, string>;
+    primaryIncome?: Record<string, string>;
+    otherIncome?: Record<string, string>;
+  } = {},
 ): string[] {
   const missing: string[] = [];
   const text = (value: string, label: string) => {
@@ -226,6 +242,20 @@ export function missingFields(
     case "work":
       lookup(form.primary_income_source, t.primary_income_source);
       lookup(form.job_title, t.job_title);
+      // Shown only for the catch-all options, and required wherever shown.
+      if (
+        NEEDS_PRIMARY_INCOME_DETAILS.has(
+          codes.primaryIncome?.[form.primary_income_source] ?? "",
+        )
+      ) {
+        text(form.primary_income_details, t.primary_income_details);
+      }
+      if (NEEDS_JOB_TITLE_DETAILS.has(codes.jobTitle?.[form.job_title] ?? "")) {
+        text(form.job_title_details, t.job_title_details);
+      }
+      if ((codes.otherIncome?.[form.income_other_sources] ?? "") === "other") {
+        text(form.other_income_details, t.other_income_details);
+      }
       text(form.employment_status, t.workType);
       if (form.employment_status === "self_employed") {
         text(form.employment_type_specify, t.workTypeSpecify);
@@ -588,9 +618,24 @@ function WorkStep({
   jobTitles,
   primaryIncomeSources,
   otherIncomeSources,
+  jobTitleCodes,
+  primaryIncomeCodes,
+  otherIncomeCodes,
   uploads,
 }: Props) {
   const exempt = isIncomeExempt(form.employment_status);
+
+  // The bank asks what the work or the income actually is whenever the chosen
+  // option is a catch-all. Which options those are is decided by the
+  // master-data code, so a renamed or translated label cannot break it.
+  const needsPrimaryIncomeDetails = NEEDS_PRIMARY_INCOME_DETAILS.has(
+    primaryIncomeCodes[form.primary_income_source] ?? "",
+  );
+  const needsOtherIncomeDetails =
+    (otherIncomeCodes[form.income_other_sources] ?? "") === "other";
+  const needsJobTitleDetails = NEEDS_JOB_TITLE_DETAILS.has(
+    jobTitleCodes[form.job_title] ?? "",
+  );
 
   const fileLabels = {
     chooseLabel: t.chooseFile,
@@ -610,23 +655,76 @@ function WorkStep({
           options={primaryIncomeSources}
           placeholder={t.selectPlaceholder}
           required
-          onChange={(value) => setField("primary_income_source", value)}
+          onChange={(value) =>
+            setForm((previous) => ({
+              ...previous,
+              primary_income_source: value,
+              // Answered about the old source, so it must not survive a change.
+              primary_income_details: NEEDS_PRIMARY_INCOME_DETAILS.has(
+                primaryIncomeCodes[value] ?? "",
+              )
+                ? previous.primary_income_details
+                : "",
+            }))
+          }
         />
+        {needsPrimaryIncomeDetails && (
+          <TextInput
+            label={t.primary_income_details}
+            value={form.primary_income_details}
+            hint={t.primary_income_detailsHint}
+            required
+            onChange={(value) => setField("primary_income_details", value)}
+          />
+        )}
         <SelectInput
           label={t.job_title}
           value={form.job_title}
           options={jobTitles}
           placeholder={t.selectPlaceholder}
           required
-          onChange={(value) => setField("job_title", value)}
+          onChange={(value) =>
+            setForm((previous) => ({
+              ...previous,
+              job_title: value,
+              job_title_details: NEEDS_JOB_TITLE_DETAILS.has(jobTitleCodes[value] ?? "")
+                ? previous.job_title_details
+                : "",
+            }))
+          }
         />
+        {needsJobTitleDetails && (
+          <TextInput
+            label={t.job_title_details}
+            value={form.job_title_details}
+            hint={t.job_title_detailsHint}
+            required
+            onChange={(value) => setField("job_title_details", value)}
+          />
+        )}
         <SelectInput
           label={t.income_other_sources}
           value={form.income_other_sources}
           options={otherIncomeSources}
           placeholder={t.selectPlaceholder}
-          onChange={(value) => setField("income_other_sources", value)}
+          onChange={(value) =>
+            setForm((previous) => ({
+              ...previous,
+              income_other_sources: value,
+              other_income_details:
+                (otherIncomeCodes[value] ?? "") === "other" ? previous.other_income_details : "",
+            }))
+          }
         />
+        {needsOtherIncomeDetails && (
+          <TextInput
+            label={t.other_income_details}
+            value={form.other_income_details}
+            hint={t.other_income_detailsHint}
+            required
+            onChange={(value) => setField("other_income_details", value)}
+          />
+        )}
 
         <SelectInput
           label={t.workType}

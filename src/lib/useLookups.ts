@@ -14,15 +14,26 @@ type Language = "en" | "ar";
  * many2one ids and rejects a string outright, so their options have to come
  * from master-data rather than from a list held in the portal.
  */
+/** Option id -> the master-data code the backend's rules are written against. */
+export type CodeMap = Record<string, string>;
+
 export function useLookups(language: Language) {
   const [jobTitles, setJobTitles] = useState<Option[]>([]);
   const [primaryIncomeSources, setPrimaryIncomeSources] = useState<Option[]>([]);
   const [otherIncomeSources, setOtherIncomeSources] = useState<Option[]>([]);
+  const [jobTitleCodes, setJobTitleCodes] = useState<CodeMap>({});
+  const [primaryIncomeCodes, setPrimaryIncomeCodes] = useState<CodeMap>({});
+  const [otherIncomeCodes, setOtherIncomeCodes] = useState<CodeMap>({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+
+    const toCodes = (rows: MasterDataLookup[]): CodeMap =>
+      Object.fromEntries(
+        rows.filter((row) => row.code).map((row) => [String(row.id), String(row.code)]),
+      );
 
     const toOptions = (rows: MasterDataLookup[]): Option[] =>
       rows
@@ -39,6 +50,9 @@ export function useLookups(language: Language) {
         setJobTitles(toOptions(jobs));
         setPrimaryIncomeSources(toOptions(primary));
         setOtherIncomeSources(toOptions(other));
+        setJobTitleCodes(toCodes(jobs));
+        setPrimaryIncomeCodes(toCodes(primary));
+        setOtherIncomeCodes(toCodes(other));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -49,5 +63,13 @@ export function useLookups(language: Language) {
     };
   }, [language]);
 
-  return { jobTitles, primaryIncomeSources, otherIncomeSources, loading };
+  return {
+    jobTitles,
+    primaryIncomeSources,
+    otherIncomeSources,
+    jobTitleCodes,
+    primaryIncomeCodes,
+    otherIncomeCodes,
+    loading,
+  };
 }

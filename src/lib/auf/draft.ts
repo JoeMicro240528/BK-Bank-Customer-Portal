@@ -130,7 +130,9 @@ export function toFormState(request: AUFRequestRead): FormState {
     employment_date: text("employment_date"),
 
     primary_income_source: number("primary_income_source"),
-    primary_income_other: text("primary_income_other"),
+    primary_income_details: text("primary_income_details"),
+    other_income_details: text("other_income_details"),
+    job_title_details: text("job_title_details"),
     income_other_sources: number("income_other_sources"),
     monthly_income_range: text("monthly_income_range"),
     annual_income_range: text("annual_income_range"),

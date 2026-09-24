@@ -110,7 +110,9 @@ export type FormState = {
   job_title: string;
   employment_date: string;
   primary_income_source: string;
-  primary_income_other: string;
+  primary_income_details: string;
+  other_income_details: string;
+  job_title_details: string;
   income_other_sources: string;
   monthly_income_range: string;
   annual_income_range: string;
@@ -360,7 +362,9 @@ export function initialForm(): FormState {
     job_title: "",
     employment_date: "",
     primary_income_source: "",
-    primary_income_other: "",
+    primary_income_details: "",
+    other_income_details: "",
+    job_title_details: "",
     income_other_sources: "",
     monthly_income_range: "",
     annual_income_range: "",
@@ -588,7 +592,12 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     job_title: parseOptionalInt(form.job_title),
     employment_date: optionalText(form.employment_date),
     primary_income_source: parseOptionalInt(form.primary_income_source),
-    primary_income_other: optionalText(form.primary_income_other),
+    // Sent even when empty: a customer who switches away from "other" must
+    // have the explanation they typed cleared on the server, and an omitted
+    // key would leave the old text in place.
+    primary_income_details: clearableText(form.primary_income_details),
+    other_income_details: clearableText(form.other_income_details),
+    job_title_details: clearableText(form.job_title_details),
     income_other_sources: parseOptionalInt(form.income_other_sources),
     monthly_income_amount: parseOptionalFloat(form.monthly_income_amount),
     monthly_income_range: optionalText(form.monthly_income_range),
@@ -688,6 +697,12 @@ function buildMinorLines(form: FormState) {
 
 export function isCompleteIdentity(line: IdentityFormLine): boolean {
   return Boolean(line.id_type && line.id_number.trim());
+}
+
+/** Empty becomes null, so the field is cleared rather than left untouched. */
+function clearableText(value: string): string | null {
+  const trimmed = value.trim();
+  return trimmed ? trimmed : null;
 }
 
 function optionalText(value: string): string | undefined {

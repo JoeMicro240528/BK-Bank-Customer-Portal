@@ -2207,7 +2207,9 @@ function buildCreatePayload(form: FormState, externalRef: string): AUFRequestCre
     job_title: parseOptionalInt(form.job_title),
     employment_date: optionalText(form.employment_date),
     primary_income_source: parseOptionalInt(form.primary_income_source),
-    primary_income_other: optionalText(form.primary_income_other),
+    // The API merged this into primary_income_details; this page keeps its own
+    // field name, only what it is sent as changed.
+    primary_income_details: optionalText(form.primary_income_other),
     income_other_sources: parseOptionalInt(form.income_other_sources),
     monthly_income_range: optionalText(form.monthly_income_range),
     annual_income_range: optionalText(form.annual_income_range),

@@ -124,7 +124,14 @@ export default function AufForm({
     countryCodeById[form.birth_country_id],
     language,
   );
-  const { jobTitles, primaryIncomeSources, otherIncomeSources } = useLookups(language);
+  const {
+    jobTitles,
+    primaryIncomeSources,
+    otherIncomeSources,
+    jobTitleCodes,
+    primaryIncomeCodes,
+    otherIncomeCodes,
+  } = useLookups(language);
   const { states: residenceStates, loading: residenceStatesLoading } = useStates(
     countryCodeById[form.res_country_id],
     language,
@@ -310,6 +317,11 @@ export default function AufForm({
           { statesLoading: birthStatesLoading, stateCount: birthStates.length },
           { stateCount: residenceStates.length, cityCount: residenceCities.length },
           existingUploads,
+          {
+            jobTitle: jobTitleCodes,
+            primaryIncome: primaryIncomeCodes,
+            otherIncome: otherIncomeCodes,
+          },
         );
 
     if (missing.length > 0) {
@@ -527,6 +539,9 @@ export default function AufForm({
             jobTitles={jobTitles}
             primaryIncomeSources={primaryIncomeSources}
             otherIncomeSources={otherIncomeSources}
+            jobTitleCodes={jobTitleCodes}
+            primaryIncomeCodes={primaryIncomeCodes}
+            otherIncomeCodes={otherIncomeCodes}
           />
         )}
       </div>

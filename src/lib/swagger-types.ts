@@ -108,7 +108,12 @@ export interface AUFRequestCreate {
   job_title?: number;
   employment_date?: ISODate;
   primary_income_source?: number;
-  primary_income_other?: string;
+  /** Why this income source: required by the bank for self-employed and "other". */
+  primary_income_details?: string | null;
+  /** Why this other income source: required when the source is "other". */
+  other_income_details?: string | null;
+  /** What the job actually is: required for business owner, freelance and "other". */
+  job_title_details?: string | null;
   income_other_sources?: number;
   monthly_income_amount?: number;
   monthly_income_range?: string;
