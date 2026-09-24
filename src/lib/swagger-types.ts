@@ -143,9 +143,16 @@ export interface AUFRequestCreate {
   expected_txn_inward?: boolean;
   expected_txn_outward?: boolean;
   pep_is_pep?: boolean;
-  pep_position?: string;
+  pep_position?: string | null;
+  /** How long the customer has held, or held, that position. */
+  pep_work_period?: string | null;
   pep_relative_pep?: boolean;
-  pep_relative_details?: string;
+  /** The relative's name. */
+  pep_relative_details?: string | null;
+  /** How they are related, e.g. a brother or a parent. */
+  pep_relative_degree?: string | null;
+  pep_relative_position?: string | null;
+  pep_relative_work_period?: string | null;
   fatca_us_citizen?: boolean;
   fatca_born_usa?: boolean;
   fatca_dual_citizenship?: boolean;

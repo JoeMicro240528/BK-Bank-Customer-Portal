@@ -177,6 +177,10 @@ export function toFormState(request: AUFRequestRead): FormState {
             ? "relative"
             : "",
     pep_is_pep: flag("pep_is_pep"),
+    pep_work_period: text("pep_work_period"),
+    pep_relative_degree: text("pep_relative_degree"),
+    pep_relative_position: text("pep_relative_position"),
+    pep_relative_work_period: text("pep_relative_work_period"),
     pep_position: text("pep_position"),
     pep_relative_pep: flag("pep_relative_pep"),
     pep_relative_details: text("pep_relative_details"),

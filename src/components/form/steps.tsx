@@ -307,9 +307,13 @@ export function missingFields(
         text(form.pep_holder, t.pepHolder);
         if (form.pep_holder === "self" || form.pep_holder === "both") {
           text(form.pep_position, t.pepPosition);
+          text(form.pep_work_period, t.pepWorkPeriod);
         }
         if (form.pep_holder === "relative" || form.pep_holder === "both") {
-          text(form.pep_relative_details, t.pepRelativeDetails);
+          text(form.pep_relative_details, t.pepRelativeName);
+          text(form.pep_relative_degree, t.pepRelativeDegree);
+          text(form.pep_relative_position, t.pepRelativePosition);
+          text(form.pep_relative_work_period, t.pepRelativeWorkPeriod);
         }
       }
       if (form.fatca_other_citizenship) {
@@ -1040,7 +1044,11 @@ function FinancialStep({
                     pep_is_pep: false,
                     pep_relative_pep: false,
                     pep_position: "",
+                    pep_work_period: "",
                     pep_relative_details: "",
+                    pep_relative_degree: "",
+                    pep_relative_position: "",
+                    pep_relative_work_period: "",
                   },
             )
           }
@@ -1071,25 +1079,60 @@ function FinancialStep({
                 pep_is_pep: self,
                 pep_relative_pep: relative,
                 pep_position: self ? previous.pep_position : "",
+                pep_work_period: self ? previous.pep_work_period : "",
                 pep_relative_details: relative ? previous.pep_relative_details : "",
+                pep_relative_degree: relative ? previous.pep_relative_degree : "",
+                pep_relative_position: relative ? previous.pep_relative_position : "",
+                pep_relative_work_period: relative ? previous.pep_relative_work_period : "",
               }));
             }}
           />
           {(form.pep_holder === "self" || form.pep_holder === "both") && (
-            <TextInput
-              label={t.pepPosition}
-              value={form.pep_position}
-              required
-              onChange={(value) => setField("pep_position", value)}
-            />
+            <>
+              <TextInput
+                label={t.pepPosition}
+                value={form.pep_position}
+                required
+                onChange={(value) => setField("pep_position", value)}
+              />
+              <TextInput
+                label={t.pepWorkPeriod}
+                value={form.pep_work_period}
+                hint={t.pepPeriodHint}
+                required
+                onChange={(value) => setField("pep_work_period", value)}
+              />
+            </>
           )}
           {(form.pep_holder === "relative" || form.pep_holder === "both") && (
-            <TextInput
-              label={t.pepRelativeDetails}
-              value={form.pep_relative_details}
-              required
-              onChange={(value) => setField("pep_relative_details", value)}
-            />
+            <>
+              <TextInput
+                label={t.pepRelativeName}
+                value={form.pep_relative_details}
+                required
+                onChange={(value) => setField("pep_relative_details", value)}
+              />
+              <TextInput
+                label={t.pepRelativeDegree}
+                value={form.pep_relative_degree}
+                hint={t.pepRelativeDegreeHint}
+                required
+                onChange={(value) => setField("pep_relative_degree", value)}
+              />
+              <TextInput
+                label={t.pepRelativePosition}
+                value={form.pep_relative_position}
+                required
+                onChange={(value) => setField("pep_relative_position", value)}
+              />
+              <TextInput
+                label={t.pepRelativeWorkPeriod}
+                value={form.pep_relative_work_period}
+                hint={t.pepPeriodHint}
+                required
+                onChange={(value) => setField("pep_relative_work_period", value)}
+              />
+            </>
           )}
         </FieldGrid>
       )}

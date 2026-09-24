@@ -142,8 +142,12 @@ export type FormState = {
   pep_holder: "" | "self" | "relative" | "both";
   pep_is_pep: boolean;
   pep_position: string;
+  pep_work_period: string;
   pep_relative_pep: boolean;
   pep_relative_details: string;
+  pep_relative_degree: string;
+  pep_relative_position: string;
+  pep_relative_work_period: string;
   fatca_us_citizen: boolean;
   fatca_born_usa: boolean;
   fatca_dual_citizenship: boolean;
@@ -393,8 +397,12 @@ export function initialForm(): FormState {
     pep_holder: "",
     pep_is_pep: false,
     pep_position: "",
+    pep_work_period: "",
     pep_relative_pep: false,
     pep_relative_details: "",
+    pep_relative_degree: "",
+    pep_relative_position: "",
+    pep_relative_work_period: "",
     fatca_us_citizen: false,
     fatca_born_usa: false,
     fatca_dual_citizenship: false,
@@ -636,9 +644,14 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     expected_txn_inward: form.expected_txn_inward,
     expected_txn_outward: form.expected_txn_outward,
     pep_is_pep: form.pep_is_pep,
-    pep_position: optionalText(form.pep_position),
+    // Cleared, not omitted: answering "no" later must remove what was said.
+    pep_position: clearableText(form.pep_position),
+    pep_work_period: clearableText(form.pep_work_period),
     pep_relative_pep: form.pep_relative_pep,
-    pep_relative_details: optionalText(form.pep_relative_details),
+    pep_relative_details: clearableText(form.pep_relative_details),
+    pep_relative_degree: clearableText(form.pep_relative_degree),
+    pep_relative_position: clearableText(form.pep_relative_position),
+    pep_relative_work_period: clearableText(form.pep_relative_work_period),
     fatca_us_citizen: form.fatca_us_citizen,
     fatca_born_usa: form.fatca_born_usa,
     fatca_dual_citizenship: form.fatca_dual_citizenship,
