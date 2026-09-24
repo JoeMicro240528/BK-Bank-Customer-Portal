@@ -110,6 +110,10 @@ export type FormState = {
   job_title: string;
   employment_date: string;
   primary_income_source: string;
+  wives_count: string;
+  wife_2_name: string;
+  wife_3_name: string;
+  wife_4_name: string;
   primary_income_details: string;
   other_income_details: string;
   job_title_details: string;
@@ -362,6 +366,10 @@ export function initialForm(): FormState {
     job_title: "",
     employment_date: "",
     primary_income_source: "",
+    wives_count: "",
+    wife_2_name: "",
+    wife_3_name: "",
+    wife_4_name: "",
     primary_income_details: "",
     other_income_details: "",
     job_title_details: "",
@@ -561,7 +569,13 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     birth_country_id: parseOptionalInt(form.birth_country_id),
     nationality_id: parseOptionalInt(form.nationality_id),
     marital_status: optionalText(form.marital_status),
-    spouse_name: optionalText(form.spouse_name),
+    // Cleared rather than omitted: someone who marks themselves single after
+    // being married must not leave a spouse behind on the server.
+    spouse_name: clearableText(form.spouse_name),
+    wives_count: clearableText(form.wives_count),
+    wife_2_name: clearableText(form.wife_2_name),
+    wife_3_name: clearableText(form.wife_3_name),
+    wife_4_name: clearableText(form.wife_4_name),
     mobile_personal: optionalText(form.mobile_personal),
     mobile_additional: optionalText(form.mobile_additional),
     education_level: optionalText(form.education_level),

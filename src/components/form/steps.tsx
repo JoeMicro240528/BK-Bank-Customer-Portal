@@ -115,6 +115,25 @@ function localise(
  * stopping a customer skipping a step.
  */
 /** Retirees and students have no employer or income proof to give. */
+/**
+ * Spouse questions follow the bank's rule: a married man is asked how many
+ * wives and then that many names; a married woman is asked her husband's name;
+ * anyone else is asked nothing and has the answers cleared.
+ */
+export function spouseFields(form: { gender: string; marital_status: string; wives_count: string }) {
+  const married = form.marital_status === "married";
+  const male = form.gender === "male";
+  const count = Number.parseInt(form.wives_count || "0", 10) || 0;
+
+  return {
+    married,
+    showWivesCount: married && male,
+    // A woman gives one name -- her husband's -- under the same field.
+    showSpouseName: married,
+    wivesShown: married && male ? Math.min(Math.max(count, 0), 4) : 0,
+  };
+}
+
 /** Income sources that leave the bank asking what the work actually is. */
 const NEEDS_PRIMARY_INCOME_DETAILS = new Set(["self_employed", "other"]);
 
@@ -148,6 +167,7 @@ export function missingFields(
   } = {},
 ): string[] {
   const missing: string[] = [];
+  const spouseRules = spouseFields(form);
   const text = (value: string, label: string) => {
     if (!value.trim()) missing.push(label);
   };
@@ -211,6 +231,14 @@ export function missingFields(
         }
       }
       text(form.nationality_id, t.nationality_id);
+      text(form.marital_status, t.marital_status);
+      if (spouseRules.showSpouseName) {
+        text(form.spouse_name, spouseRules.showWivesCount ? t.wife1Name : t.husbandName);
+      }
+      if (spouseRules.showWivesCount) text(form.wives_count, t.wivesCount);
+      if (spouseRules.wivesShown >= 2) text(form.wife_2_name, t.wife2Name);
+      if (spouseRules.wivesShown >= 3) text(form.wife_3_name, t.wife3Name);
+      if (spouseRules.wivesShown >= 4) text(form.wife_4_name, t.wife4Name);
       text(form.mother_name_first, t.motherNameFirst);
       text(form.mother_name_second, t.motherNameSecond);
       text(form.mother_name_third, t.motherNameThird);
@@ -339,6 +367,8 @@ function PersonalStep({
   birthStatesLoading,
   uploads,
 }: Props) {
+  const spouse = spouseFields(form);
+
   const note = language === "ar" ? "من سوداباس" : "From SudaPass";
   const empty = language === "ar" ? "غير متوفر" : "Not provided";
   const fileLabels = {
@@ -423,6 +453,103 @@ function PersonalStep({
           hint={t.arabicLettersOnly}
           onChange={(value) => setField("mother_name_fourth", value)}
         />
+      </FieldGrid>
+
+      <FieldGrid>
+        <SelectInput
+          label={t.marital_status}
+          value={form.marital_status}
+          options={[
+            { value: "single", label: t.maritalSingle },
+            { value: "married", label: t.maritalMarried },
+            { value: "divorced", label: t.maritalDivorced },
+            { value: "widowed", label: t.maritalWidowed },
+          ]}
+          placeholder={t.selectPlaceholder}
+          required
+          onChange={(value) =>
+            setForm((previous) => ({
+              ...previous,
+              marital_status: value,
+              // Anything asked of a married customer goes when they are not.
+              ...(value === "married"
+                ? {}
+                : { wives_count: "", spouse_name: "", wife_2_name: "", wife_3_name: "", wife_4_name: "" }),
+            }))
+          }
+        />
+
+        {spouse.showWivesCount && (
+          <SelectInput
+            label={t.wivesCount}
+            value={form.wives_count}
+            options={[
+              { value: "1", label: "1" },
+              { value: "2", label: "2" },
+              { value: "3", label: "3" },
+              { value: "4", label: "4" },
+            ]}
+            placeholder={t.selectPlaceholder}
+            required
+            onChange={(value) =>
+              setForm((previous) => {
+                const count = Number.parseInt(value || "0", 10) || 0;
+
+                // Fewer wives than before: the names beyond the new count were
+                // answered about marriages the form no longer asks about.
+                return {
+                  ...previous,
+                  wives_count: value,
+                  wife_2_name: count >= 2 ? previous.wife_2_name : "",
+                  wife_3_name: count >= 3 ? previous.wife_3_name : "",
+                  wife_4_name: count >= 4 ? previous.wife_4_name : "",
+                };
+              })
+            }
+          />
+        )}
+
+        {spouse.showSpouseName && (
+          <TextInput
+            label={spouse.showWivesCount ? t.wife1Name : t.husbandName}
+            value={form.spouse_name}
+            required
+            arabicOnly
+            hint={t.arabicLettersOnly}
+            onChange={(value) => setField("spouse_name", value)}
+          />
+        )}
+
+        {spouse.wivesShown >= 2 && (
+          <TextInput
+            label={t.wife2Name}
+            value={form.wife_2_name}
+            required
+            arabicOnly
+            hint={t.arabicLettersOnly}
+            onChange={(value) => setField("wife_2_name", value)}
+          />
+        )}
+        {spouse.wivesShown >= 3 && (
+          <TextInput
+            label={t.wife3Name}
+            value={form.wife_3_name}
+            required
+            arabicOnly
+            hint={t.arabicLettersOnly}
+            onChange={(value) => setField("wife_3_name", value)}
+          />
+        )}
+        {spouse.wivesShown >= 4 && (
+          <TextInput
+            label={t.wife4Name}
+            value={form.wife_4_name}
+            required
+            arabicOnly
+            hint={t.arabicLettersOnly}
+            onChange={(value) => setField("wife_4_name", value)}
+          />
+        )}
       </FieldGrid>
 
       <FieldGrid>

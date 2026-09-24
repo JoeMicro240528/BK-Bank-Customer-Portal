@@ -74,7 +74,7 @@ export interface AUFRequestCreate {
   birth_country_id?: number;
   nationality_id?: number;
   marital_status?: string;
-  spouse_name?: string;
+  spouse_name?: string | null;
   mobile_personal?: string;
   mobile_additional?: string;
   education_level?: string;
@@ -108,6 +108,12 @@ export interface AUFRequestCreate {
   job_title?: number;
   employment_date?: ISODate;
   primary_income_source?: number;
+  /** "1".."4", for a married man; the wife names below follow it. */
+  wives_count?: string | null;
+  /** First wife for a man, husband for a woman. */
+  wife_2_name?: string | null;
+  wife_3_name?: string | null;
+  wife_4_name?: string | null;
   /** Why this income source: required by the bank for self-employed and "other". */
   primary_income_details?: string | null;
   /** Why this other income source: required when the source is "other". */
