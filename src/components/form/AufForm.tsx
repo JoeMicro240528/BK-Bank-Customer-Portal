@@ -27,6 +27,7 @@ import { useStates } from "@/lib/useStates";
 import { useLookups } from "@/lib/useLookups";
 import { useCities } from "@/lib/useCities";
 import styles from "./AufForm.module.css";
+import { compressImage } from "@/lib/auf/compressImage";
 import { copy } from "@/lib/auf/copy";
 import {
   buildCreatePayload,
@@ -171,7 +172,12 @@ export default function AufForm({
 
   /** Creates the request on first call, updates it thereafter. */
   const setFile = useCallback(
-    (key: string, file: File | null) => {
+    async (key: string, picked: File | null) => {
+      // Shrunk before the size check: a camera photo that would have been
+      // refused usually fits once it is re-encoded, and the upload -- the part
+      // the customer waits for -- becomes several times shorter.
+      const file = picked ? await compressImage(picked) : null;
+
       // Rejected here rather than after a long upload that the server would
       // refuse anyway -- nginx accepts 25MB, and this stays well inside it.
       if (file && file.size > MAX_UPLOAD_BYTES) {
@@ -221,8 +227,11 @@ export default function AufForm({
         ([key, file]) => file && !uploadedRef.current.has(key),
       );
 
-      for (const [key, file] of pending) {
-        if (!file) continue;
+      // In parallel: the identity step sends two images, and one waiting for
+      // the other doubled a wait that is already the slowest part of the form.
+      await Promise.all(
+        pending.map(async ([key, file]) => {
+        if (!file) return;
 
         // Three of the four attachments have their own endpoint; only the
         // supporting documents still go up with a document_type.
@@ -235,14 +244,14 @@ export default function AufForm({
             } else {
               // Without an identity line there is nothing to attach the image
               // to; leaving it pending means the next save retries it.
-              if (!identityId) continue;
+              if (!identityId) return;
               await frontendApi.uploadIdentityDocument(ref, identityId, file, options);
             }
             uploadedRef.current.add(key);
           } catch (caught) {
             setError(errorMessage(caught));
           }
-          continue;
+          return;
         }
 
         const documentType = documentTypeFor(key);
@@ -267,16 +276,17 @@ export default function AufForm({
                 options,
               );
               uploadedRef.current.add(key);
-              continue;
+              return;
             } catch (fallbackFailed) {
               setError(errorMessage(fallbackFailed));
-              continue;
+              return;
             }
           }
 
           setError(errorMessage(caught));
         }
-      }
+        }),
+      );
 
       setSaveState("saved");
       return ref;
