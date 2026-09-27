@@ -19,6 +19,8 @@ export type LandingCopy = {
   welcomeIntro: string;
   trustBadges: string;
   privacyNote: string;
+  installAppMessage: string;
+  downloadAppLink: string;
   sudapassTitle: string;
   sudapassLogin: string;
   howItWorks: string;

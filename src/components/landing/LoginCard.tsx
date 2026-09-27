@@ -1,4 +1,4 @@
-import { AlertCircle, Check, Lock, ShieldUser } from "lucide-react";
+import { AlertCircle, Check, Download, Lock, ShieldUser } from "lucide-react";
 import Image from "next/image";
 import Banner from "@/components/ui/Banner";
 import styles from "./LoginCard.module.css";
@@ -39,6 +39,22 @@ export default function LoginCard({
       <button type="button" className={styles.loginButton} aria-label={t.sudapassLogin} onClick={onLogin}>
         <Image src={buttonImage} alt={t.sudapassLogin} width={300} height={66} priority />
       </button>
+
+      {/* Signing in needs the national identity app on the customer's phone;
+          Kafaa says the same before its SudaPass button. */}
+      <p className={styles.installNote}>
+        <Download aria-hidden="true" size={14} />
+        <span>
+          {t.installAppMessage}{" "}
+          <a
+            href="https://play.google.com/store/apps/details?id=sd.gov.sudapass"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t.downloadAppLink}
+          </a>
+        </span>
+      </p>
 
       <p className={styles.privacyNote}>
         <Lock aria-hidden="true" size={14} />
