@@ -141,8 +141,38 @@ const NEEDS_PRIMARY_INCOME_DETAILS = new Set(["self_employed", "other"]);
 /** Job titles that do the same: business owner, freelance, other. */
 const NEEDS_JOB_TITLE_DETAILS = new Set(["BIZ", "FREE", "OTH"]);
 
-export function isIncomeExempt(employmentStatus: string): boolean {
-  return employmentStatus === "retired" || employmentStatus === "student";
+/**
+ * Job titles with nobody to name as an employer and no income to prove: a
+ * student, a pensioner, a housewife, and someone working for themselves.
+ */
+const NO_EMPLOYER_JOB_CODES = new Set(["STU", "RET", "HW", "FREE"]);
+
+/**
+ * The API still requires an employment type, but ONB dropped the question:
+ * it repeated the job title the customer had already chosen. It is derived
+ * from that answer instead.
+ */
+export function employmentStatusForJobCode(code: string): string {
+  switch (code) {
+    case "RET":
+      return "retired";
+    case "STU":
+      return "student";
+    case "HW":
+      return "housewife";
+    case "BIZ":
+    case "FREE":
+      return "self_employed";
+    case "OTH":
+      return "other";
+    default:
+      return "salaried";
+  }
+}
+
+/** Whether this job title excuses the employer's name and the income proof. */
+export function isIncomeExempt(jobTitleCode: string): boolean {
+  return NO_EMPLOYER_JOB_CODES.has(jobTitleCode);
 }
 
 /** Today as YYYY-MM-DD in local time, comparable with ISO date strings. */
@@ -169,6 +199,7 @@ export function missingFields(
 ): string[] {
   const missing: string[] = [];
   const spouseRules = spouseFields(form);
+  const jobExempt = isIncomeExempt(codes.jobTitle?.[form.job_title] ?? "");
   const text = (value: string, label: string) => {
     if (!value.trim()) missing.push(label);
   };
@@ -288,15 +319,11 @@ export function missingFields(
       if ((codes.otherIncome?.[form.income_other_sources] ?? "") === "other") {
         text(form.other_income_details, t.other_income_details);
       }
-      text(form.employment_status, t.workType);
-      if (form.employment_status === "self_employed") {
-        text(form.employment_type_specify, t.workTypeSpecify);
-      }
-      if (!isIncomeExempt(form.employment_status)) text(form.employer_name, t.employer_name);
+      if (!jobExempt) text(form.employer_name, t.employer_name);
       text(form.monthly_income_amount, t.monthlyIncomeAmount);
       number(form.monthly_income_amount, t.monthlyIncomeAmount);
       positive(form.monthly_income_amount, t.monthlyIncomeAmount);
-      if (!isIncomeExempt(form.employment_status)) file(FILE_INCOME_PROOF, t.incomeProof);
+      if (!jobExempt) file(FILE_INCOME_PROOF, t.incomeProof);
       break;
 
     case "financial":
@@ -768,7 +795,7 @@ function WorkStep({
   otherIncomeCodes,
   uploads,
 }: Props) {
-  const exempt = isIncomeExempt(form.employment_status);
+  const exempt = isIncomeExempt(jobTitleCodes[form.job_title] ?? "");
 
   // The bank asks what the work or the income actually is whenever the chosen
   // option is a catch-all. Which options those are is decided by the
@@ -828,15 +855,25 @@ function WorkStep({
           options={jobTitles}
           placeholder={t.selectPlaceholder}
           required
-          onChange={(value) =>
+          onChange={(value) => {
+            const code = jobTitleCodes[value] ?? "";
+            const nowExempt = isIncomeExempt(code);
+
             setForm((previous) => ({
               ...previous,
               job_title: value,
-              job_title_details: NEEDS_JOB_TITLE_DETAILS.has(jobTitleCodes[value] ?? "")
+              job_title_details: NEEDS_JOB_TITLE_DETAILS.has(code)
                 ? previous.job_title_details
                 : "",
-            }))
-          }
+              // The API still wants an employment type; it follows the title.
+              employment_status: employmentStatusForJobCode(code),
+              employment_type_specify: "",
+              // No employer to name, so nothing stale is sent for one.
+              employer_name: nowExempt ? "" : previous.employer_name,
+            }));
+            // An income proof picked earlier would otherwise still upload.
+            if (nowExempt) setFile(FILE_INCOME_PROOF, null);
+          }}
         />
         {needsJobTitleDetails && (
           <TextInput
@@ -871,40 +908,6 @@ function WorkStep({
           />
         )}
 
-        <SelectInput
-          label={t.workType}
-          value={form.employment_status}
-          options={[
-            { value: "salaried", label: t.workTypeEmployee },
-            { value: "self_employed", label: t.workTypeSelfEmployed },
-            { value: "retired", label: t.workTypeRetired },
-            { value: "student", label: t.workTypeStudent },
-          ]}
-          placeholder={t.selectPlaceholder}
-          required
-          // Leaving self-employment drops its description, so a stale one
-          // isn't sent under a different work type.
-          onChange={(value) => {
-            setForm((previous) => ({
-              ...previous,
-              employment_status: value,
-              employment_type_specify:
-                value === "self_employed" ? previous.employment_type_specify : "",
-              // No employer to name, so nothing stale is sent for one.
-              employer_name: isIncomeExempt(value) ? "" : previous.employer_name,
-            }));
-            // An income proof picked earlier would otherwise still upload.
-            if (isIncomeExempt(value)) setFile(FILE_INCOME_PROOF, null);
-          }}
-        />
-        {form.employment_status === "self_employed" && (
-          <TextInput
-            label={t.workTypeSpecify}
-            value={form.employment_type_specify}
-            required
-            onChange={(value) => setField("employment_type_specify", value)}
-          />
-        )}
         {!exempt && (
           <TextInput
             label={t.employer_name}
