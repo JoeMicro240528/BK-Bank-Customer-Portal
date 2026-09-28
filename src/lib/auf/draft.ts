@@ -143,6 +143,7 @@ export function toFormState(request: AUFRequestRead): FormState {
     annual_income_amount: number("annual_income_amount"),
     monthly_income_amount: number("monthly_income_amount"),
     account_purpose: text("account_purpose"),
+    expected_txn_other_details: text("expected_txn_other_details"),
     expected_txn_monthly_value: number("expected_monthly_transaction_amount"),
     expected_txn_monthly_count: number("expected_monthly_transaction_count"),
     source_funds_open_account: text("source_funds_open_account"),

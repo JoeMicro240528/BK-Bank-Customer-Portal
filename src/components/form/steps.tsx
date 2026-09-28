@@ -356,7 +356,21 @@ export function missingFields(
           text(form.fatca_stay_reason_specify, t.fatca_stay_reason_specify);
         }
       }
-      text(form.account_purpose, t.accountPurpose);
+      // The purpose is the checklist now; one tick at least, and a word about
+      // "other" when that is what was ticked.
+      if (
+        ![
+          form.expected_txn_salary,
+          form.expected_txn_savings,
+          form.expected_txn_investment,
+          form.expected_txn_international_transfers,
+          form.expected_txn_domestic_transfers,
+          form.expected_txn_other,
+        ].some(Boolean)
+      ) {
+        missing.push(`${t.accountPurpose} (${t.accountPurposeChoose})`);
+      }
+      if (form.expected_txn_other) text(form.expected_txn_other_details, t.txnOtherDetails);
       text(form.expected_txn_monthly_value, t.expectedTxnValue);
       text(form.expected_txn_monthly_count, t.expectedTxnCount);
       number(form.expected_txn_monthly_value, t.expectedTxnValue);
@@ -1294,15 +1308,6 @@ function FinancialStep({
 
       <FormSection title={t.accountActivitySection} />
 
-      <FieldGrid wide>
-        <TextInput
-          label={t.accountPurpose}
-          value={form.account_purpose}
-          required
-          onChange={(value) => setField("account_purpose", value)}
-        />
-      </FieldGrid>
-
       <CheckboxGrid>
         <CheckboxInput
           label={t.txnSalary}
@@ -1332,9 +1337,26 @@ function FinancialStep({
         <CheckboxInput
           label={t.txnOther}
           checked={form.expected_txn_other}
-          onChange={(value) => setField("expected_txn_other", value)}
+          onChange={(value) =>
+            setForm((previous) => ({
+              ...previous,
+              expected_txn_other: value,
+              expected_txn_other_details: value ? previous.expected_txn_other_details : "",
+            }))
+          }
         />
       </CheckboxGrid>
+
+      {form.expected_txn_other && (
+        <FieldGrid wide>
+          <TextInput
+            label={t.txnOtherDetails}
+            value={form.expected_txn_other_details}
+            required
+            onChange={(value) => setField("expected_txn_other_details", value)}
+          />
+        </FieldGrid>
+      )}
 
       <FieldGrid>
         <TextInput

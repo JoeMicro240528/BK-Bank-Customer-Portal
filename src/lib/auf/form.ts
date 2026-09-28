@@ -130,6 +130,7 @@ export type FormState = {
   expected_txn_international_transfers: boolean;
   expected_txn_domestic_transfers: boolean;
   expected_txn_other: boolean;
+  expected_txn_other_details: string;
   expected_txn_deposits: boolean;
   expected_txn_cheques: boolean;
   expected_txn_inward: boolean;
@@ -390,6 +391,7 @@ export function initialForm(): FormState {
     expected_txn_international_transfers: false,
     expected_txn_domestic_transfers: false,
     expected_txn_other: false,
+    expected_txn_other_details: "",
     expected_txn_deposits: false,
     expected_txn_cheques: false,
     expected_txn_inward: false,
@@ -626,7 +628,8 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     income_other_sources: parseOptionalInt(form.income_other_sources),
     monthly_income_amount: parseOptionalFloat(form.monthly_income_amount),
     monthly_income_range: optionalText(form.monthly_income_range),
-    account_purpose: optionalText(form.account_purpose),
+    account_purpose: optionalText(accountPurposeFrom(form)),
+    expected_txn_other_details: clearableText(form.expected_txn_other_details),
     expected_monthly_transaction_amount: parseOptionalFloat(form.expected_txn_monthly_value),
     expected_monthly_transaction_count: parseOptionalInt(form.expected_txn_monthly_count),
     is_beneficial_owner: form.is_beneficial_owner,
@@ -727,6 +730,31 @@ function buildMinorLines(form: FormState) {
 
 export function isCompleteIdentity(line: IdentityFormLine): boolean {
   return Boolean(line.id_type && line.id_number.trim());
+}
+
+/**
+ * The account's purpose, written out from the boxes the customer ticked.
+ *
+ * ONB replaced the free-text question with a checklist, but the older backend
+ * still requires the single field and the bank's screens still read it. The
+ * labels are fixed Arabic so the stored value does not change with whichever
+ * language the customer happened to be using.
+ */
+const PURPOSE_LABELS: [keyof FormState, string][] = [
+  ["expected_txn_salary", "راتب"],
+  ["expected_txn_savings", "ادخار"],
+  ["expected_txn_investment", "استثمار"],
+  ["expected_txn_international_transfers", "تحويلات دولية"],
+  ["expected_txn_domestic_transfers", "تحويلات محلية"],
+];
+
+function accountPurposeFrom(form: FormState): string {
+  const chosen = PURPOSE_LABELS.filter(([key]) => form[key] === true).map(([, label]) => label);
+  if (form.expected_txn_other) {
+    chosen.push(form.expected_txn_other_details.trim() || "أخرى");
+  }
+
+  return chosen.join("، ");
 }
 
 /** Empty becomes null, so the field is cleared rather than left untouched. */

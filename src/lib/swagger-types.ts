@@ -132,6 +132,8 @@ export interface AUFRequestCreate {
   expected_txn_international_transfers?: boolean;
   expected_txn_domestic_transfers?: boolean;
   expected_txn_other?: boolean;
+  /** What that other activity is; the backend requires it once "other" is ticked. */
+  expected_txn_other_details?: string | null;
   is_beneficial_owner?: boolean;
   beneficial_owner_details?: string;
   annual_income_range?: string;
