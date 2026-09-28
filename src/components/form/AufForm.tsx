@@ -216,8 +216,17 @@ export default function AufForm({
       // follows the chosen job title -- including for a resumed draft, whose
       // stored value may predate that change.
       const jobCode = jobTitleCodes[form.job_title] ?? "";
+      const employmentStatus = employmentStatusForJobCode(jobCode);
       const payloadForm = form.job_title
-        ? { ...form, employment_status: employmentStatusForJobCode(jobCode) }
+        ? {
+            ...form,
+            employment_status: employmentStatus,
+            // An "other" employment type has to say what it is. The customer
+            // already wrote that against the job title, which is required for
+            // "أخرى", so it answers both.
+            employment_type_specify:
+              employmentStatus === "other" ? form.job_title_details : "",
+          }
         : form;
       let ref = refRef.current;
       let saved;

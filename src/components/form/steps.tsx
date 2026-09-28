@@ -142,10 +142,17 @@ const NEEDS_PRIMARY_INCOME_DETAILS = new Set(["self_employed", "other"]);
 const NEEDS_JOB_TITLE_DETAILS = new Set(["BIZ", "FREE", "OTH"]);
 
 /**
- * Job titles with nobody to name as an employer and no income to prove: a
- * student, a pensioner, a housewife, and someone working for themselves.
+ * Job titles with nobody to name as an employer: a student, a pensioner, a
+ * housewife. The backend requires the name from everyone else -- a freelancer
+ * included -- so this list matches it exactly.
  */
-const NO_EMPLOYER_JOB_CODES = new Set(["STU", "RET", "HW", "FREE"]);
+const NO_EMPLOYER_JOB_CODES = new Set(["STU", "RET", "HW"]);
+
+/**
+ * Job titles with no income to prove. ONB excused free professions here as
+ * well: they have no payslip or employer letter to produce.
+ */
+const NO_INCOME_PROOF_JOB_CODES = new Set(["STU", "RET", "HW", "FREE"]);
 
 /**
  * The API still requires an employment type, but ONB dropped the question:
@@ -170,9 +177,14 @@ export function employmentStatusForJobCode(code: string): string {
   }
 }
 
-/** Whether this job title excuses the employer's name and the income proof. */
-export function isIncomeExempt(jobTitleCode: string): boolean {
+/** Whether this job title excuses naming an employer. */
+export function isEmployerExempt(jobTitleCode: string): boolean {
   return NO_EMPLOYER_JOB_CODES.has(jobTitleCode);
+}
+
+/** Whether this job title excuses proving where the income comes from. */
+export function isIncomeExempt(jobTitleCode: string): boolean {
+  return NO_INCOME_PROOF_JOB_CODES.has(jobTitleCode);
 }
 
 /** Today as YYYY-MM-DD in local time, comparable with ISO date strings. */
@@ -199,7 +211,9 @@ export function missingFields(
 ): string[] {
   const missing: string[] = [];
   const spouseRules = spouseFields(form);
-  const jobExempt = isIncomeExempt(codes.jobTitle?.[form.job_title] ?? "");
+  const jobCode = codes.jobTitle?.[form.job_title] ?? "";
+  const employerExempt = isEmployerExempt(jobCode);
+  const proofExempt = isIncomeExempt(jobCode);
   const text = (value: string, label: string) => {
     if (!value.trim()) missing.push(label);
   };
@@ -319,11 +333,11 @@ export function missingFields(
       if ((codes.otherIncome?.[form.income_other_sources] ?? "") === "other") {
         text(form.other_income_details, t.other_income_details);
       }
-      if (!jobExempt) text(form.employer_name, t.employer_name);
+      if (!employerExempt) text(form.employer_name, t.employer_name);
       text(form.monthly_income_amount, t.monthlyIncomeAmount);
       number(form.monthly_income_amount, t.monthlyIncomeAmount);
       positive(form.monthly_income_amount, t.monthlyIncomeAmount);
-      if (!jobExempt) file(FILE_INCOME_PROOF, t.incomeProof);
+      if (!proofExempt) file(FILE_INCOME_PROOF, t.incomeProof);
       break;
 
     case "financial":
@@ -809,7 +823,9 @@ function WorkStep({
   otherIncomeCodes,
   uploads,
 }: Props) {
-  const exempt = isIncomeExempt(jobTitleCodes[form.job_title] ?? "");
+  const jobCode = jobTitleCodes[form.job_title] ?? "";
+  const employerExempt = isEmployerExempt(jobCode);
+  const exempt = isIncomeExempt(jobCode);
 
   // The bank asks what the work or the income actually is whenever the chosen
   // option is a catch-all. Which options those are is decided by the
@@ -883,7 +899,7 @@ function WorkStep({
               employment_status: employmentStatusForJobCode(code),
               employment_type_specify: "",
               // No employer to name, so nothing stale is sent for one.
-              employer_name: nowExempt ? "" : previous.employer_name,
+              employer_name: isEmployerExempt(code) ? "" : previous.employer_name,
             }));
             // An income proof picked earlier would otherwise still upload.
             if (nowExempt) setFile(FILE_INCOME_PROOF, null);
@@ -922,7 +938,7 @@ function WorkStep({
           />
         )}
 
-        {!exempt && (
+        {!employerExempt && (
           <TextInput
             label={t.employer_name}
             value={form.employer_name}
