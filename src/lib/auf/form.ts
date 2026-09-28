@@ -611,8 +611,11 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     cif_number: optionalText(form.cif_number),
     business_sector: optionalText(form.business_sector),
     business_sector_other: optionalText(form.business_sector_other),
-    employment_status: optionalText(form.employment_status),
-    employment_type_specify: optionalText(form.employment_type_specify),
+    // The work type is no longer asked for, and the backend no longer wants
+    // one. Sent as null rather than omitted so a value stored before that
+    // change is cleared rather than left to trip the "specify" rule.
+    employment_status: null,
+    employment_type_specify: null,
     employer_name: optionalText(form.employer_name),
     employer_activity: optionalText(form.employer_activity),
     employer_address: optionalText(form.employer_address),

@@ -125,8 +125,6 @@ export function toFormState(request: AUFRequestRead): FormState {
     selected_bank_id: number("bank_id"),
     business_sector: text("business_sector"),
     business_sector_other: text("business_sector_other"),
-    employment_status: text("employment_status"),
-    employment_type_specify: text("employment_type_specify"),
     employer_name: text("employer_name"),
     employer_activity: text("employer_activity"),
     employer_address: text("employer_address"),

@@ -100,8 +100,9 @@ export interface AUFRequestCreate {
   cif_number?: string;
   business_sector?: string;
   business_sector_other?: string;
-  employment_status?: string;
-  employment_type_specify?: string;
+  /** Retired: the portal clears it, and the updated backend no longer asks. */
+  employment_status?: string | null;
+  employment_type_specify?: string | null;
   employer_name?: string;
   employer_activity?: string;
   employer_address?: string;
