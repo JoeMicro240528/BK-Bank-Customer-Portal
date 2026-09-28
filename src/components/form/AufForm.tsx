@@ -21,7 +21,6 @@ import {
   stepOrder,
   type LockedValues,
   type StepId,
-  employmentStatusForJobCode,
 } from "./steps";
 import FormStepper from "./FormStepper";
 import { useStates } from "@/lib/useStates";
@@ -215,27 +214,15 @@ export default function AufForm({
       // The work type question is gone; the API still wants the value, so it
       // follows the chosen job title -- including for a resumed draft, whose
       // stored value may predate that change.
-      const jobCode = jobTitleCodes[form.job_title] ?? "";
-      const employmentStatus = employmentStatusForJobCode(jobCode);
-      const payloadForm = form.job_title
-        ? {
-            ...form,
-            employment_status: employmentStatus,
-            // An "other" employment type has to say what it is. The customer
-            // already wrote that against the job title, which is required for
-            // "أخرى", so it answers both.
-            employment_type_specify:
-              employmentStatus === "other" ? form.job_title_details : "",
-          }
-        : form;
+
       let ref = refRef.current;
       let saved;
       if (!ref) {
         ref = `auf-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-        saved = await frontendApi.createRequest(buildCreatePayload(payloadForm, ref), options);
+        saved = await frontendApi.createRequest(buildCreatePayload(form, ref), options);
         refRef.current = ref;
       } else {
-        saved = await frontendApi.updateRequest(ref, buildUpdatePayload(payloadForm, ref), options);
+        saved = await frontendApi.updateRequest(ref, buildUpdatePayload(form, ref), options);
       }
 
       // The identity images hang off a saved identity line, so its server-side
@@ -319,7 +306,7 @@ export default function AufForm({
       setError(errorMessage(caught));
       return null;
     }
-  }, [form, language, ownerId, jobTitleCodes]);
+  }, [form, language, ownerId]);
 
   const goNext = async () => {
     // Check before saving: a half-filled step should not reach the backend,

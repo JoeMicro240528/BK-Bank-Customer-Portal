@@ -154,29 +154,6 @@ const NO_EMPLOYER_JOB_CODES = new Set(["STU", "RET", "HW"]);
  */
 const NO_INCOME_PROOF_JOB_CODES = new Set(["STU", "RET", "HW", "FREE"]);
 
-/**
- * The API still requires an employment type, but ONB dropped the question:
- * it repeated the job title the customer had already chosen. It is derived
- * from that answer instead.
- */
-export function employmentStatusForJobCode(code: string): string {
-  switch (code) {
-    case "RET":
-      return "retired";
-    case "STU":
-      return "student";
-    case "HW":
-      return "housewife";
-    case "BIZ":
-    case "FREE":
-      return "self_employed";
-    case "OTH":
-      return "other";
-    default:
-      return "salaried";
-  }
-}
-
 /** Whether this job title excuses naming an employer. */
 export function isEmployerExempt(jobTitleCode: string): boolean {
   return NO_EMPLOYER_JOB_CODES.has(jobTitleCode);
@@ -895,9 +872,6 @@ function WorkStep({
               job_title_details: NEEDS_JOB_TITLE_DETAILS.has(code)
                 ? previous.job_title_details
                 : "",
-              // The API still wants an employment type; it follows the title.
-              employment_status: employmentStatusForJobCode(code),
-              employment_type_specify: "",
               // No employer to name, so nothing stale is sent for one.
               employer_name: isEmployerExempt(code) ? "" : previous.employer_name,
             }));
