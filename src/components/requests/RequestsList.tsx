@@ -26,12 +26,12 @@ const copy = {
     },
     colReference: "رقم الطلب",
     colDate: "التاريخ",
-    colBanks: "البنوك",
+    colBranch: "الفرع",
     colStatus: "الحالة",
     colAction: "الإجراء",
     viewDetails: "عرض التفاصيل",
     continueRequest: "متابعة استكمال الطلب",
-    banksUnit: "بنوك",
+    branchUndefined: "غير محدد",
     emptyTitle: "لا توجد طلبات",
     emptyBody: "لم تقم بإنشاء أي طلب تحديث بعد.",
     emptyFilteredTitle: "لا توجد طلبات بهذه الحالة",
@@ -56,12 +56,12 @@ const copy = {
     },
     colReference: "Request no.",
     colDate: "Date",
-    colBanks: "Banks",
+    colBranch: "Branch",
     colStatus: "Status",
     colAction: "Action",
     viewDetails: "View details",
     continueRequest: "Continue this request",
-    banksUnit: "banks",
+    branchUndefined: "Not specified",
     emptyTitle: "No requests",
     emptyBody: "You have not created any update request yet.",
     emptyFilteredTitle: "No requests with this status",
@@ -151,7 +151,7 @@ export default function RequestsList({
                 <tr>
                   <th>{t.colReference}</th>
                   <th>{t.colDate}</th>
-                  <th>{t.colBanks}</th>
+                  <th>{t.colBranch}</th>
                   <th>{t.colStatus}</th>
                   <th>{t.colAction}</th>
                 </tr>
@@ -163,8 +163,8 @@ export default function RequestsList({
                       <span dir="ltr">{request.reference}</span>
                     </td>
                     <td data-label={t.colDate}>{request.date}</td>
-                    <td data-label={t.colBanks}>
-                      <BankNames request={request} banksUnit={t.banksUnit} />
+                    <td data-label={t.colBranch}>
+                      {request.branchName || t.branchUndefined}
                     </td>
                     <td data-label={t.colStatus}>
                       <StatusPill status={request.status} label={t.status[request.status]} />

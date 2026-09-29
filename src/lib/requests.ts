@@ -107,16 +107,13 @@ function banksOf(request: AUFRequestSummary, language: Language): string[] {
 }
 
 export function toRequestSummary(request: AUFRequestSummary, language: Language): RequestSummary {
-  const bankNames = banksOf(request, language);
-
   return {
     // external_ref is what the detail endpoint is keyed on; fall back to the
     // human reference so a row is never unroutable.
     id: request.external_ref || request.reference,
     reference: request.reference,
     date: formatDate(request.created, language),
-    bankCount: bankNames.length,
-    bankNames,
+    branchName: request.branch_name ?? null,
     status: overallStatus(
       request.state,
       (request.feedback || []).map((entry) => entry.state),

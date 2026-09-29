@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import StatusPill from "@/components/request/StatusPill";
 import { homeCopy } from "./copy";
-import BankNames from "./BankNames";
 import RowActions from "./RowActions";
 import styles from "./DashboardHome.module.css";
 import type { DashboardStats, Language, RequestSummary } from "./types";
@@ -86,7 +85,7 @@ export default function DashboardHome({
                   <tr>
                     <th>{t.colReference}</th>
                     <th>{t.colDate}</th>
-                    <th>{t.colBanks}</th>
+                    <th>{t.colBranch}</th>
                     <th>{t.colStatus}</th>
                     <th>{t.colAction}</th>
                   </tr>
@@ -98,8 +97,8 @@ export default function DashboardHome({
                         <span dir="ltr">{request.reference}</span>
                       </td>
                       <td data-label={t.colDate}>{request.date}</td>
-                      <td data-label={t.colBanks}>
-                        <BankNames request={request} banksUnit={t.banksUnit} />
+                      <td data-label={t.colBranch}>
+                        {request.branchName || t.branchUndefined}
                       </td>
                       <td data-label={t.colStatus}>
                         <StatusPill status={request.status} label={t.status[request.status]} />

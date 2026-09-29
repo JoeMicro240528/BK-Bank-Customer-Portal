@@ -223,6 +223,8 @@ export interface MessageRead {
 export interface AUFRequestSummary {
   reference: string;
   external_ref?: string | null;
+  branch_id?: number | null;
+  branch_name?: string | null;
   info_type: string;
   source: string;
   state: string;
