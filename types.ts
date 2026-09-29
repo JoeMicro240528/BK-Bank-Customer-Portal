@@ -6,8 +6,10 @@ export type RequestSummary = {
   id: string;
   reference: string;
   date: string;
+  bankCount: number;
+  /** Names of the banks on the request, when known. */
+  bankNames: string[];
   branchName: string | null;
-
   status: BankStatus;
 };
 
@@ -34,13 +36,12 @@ export type HomeCopy = {
   viewAll: string;
   colReference: string;
   colDate: string;
-  colBranch: string;
+  colBanks: string;
   colStatus: string;
   colAction: string;
   viewDetails: string;
   continueRequest: string;
-  branchName?: string;
-  branchUndefined: string;
+  banksUnit: string;
   emptyTitle: string;
   emptyBody: string;
 
