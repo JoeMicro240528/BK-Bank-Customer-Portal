@@ -255,6 +255,19 @@ export function formatApiError(detail: unknown): string {
 
   if (typeof detail === "object" && "detail" in detail) {
     const inner = (detail as { detail: unknown }).detail;
+
+    // Structured backend error: { status, message, reason }
+    // Prefer reason as it contains the most actionable text for the user.
+    if (inner && typeof inner === "object") {
+      const structured = inner as Record<string, unknown>;
+      if (typeof structured.reason === "string" && structured.reason) {
+        return structured.reason;
+      }
+      if (typeof structured.message === "string" && structured.message) {
+        return structured.message;
+      }
+    }
+
     if (typeof inner === "string") {
       return inner;
     }
@@ -268,6 +281,14 @@ export function formatApiError(detail: unknown): string {
           return String(item);
         })
         .join("; ");
+    }
+  }
+
+  // Top-level message fallback (e.g. { message: "..." })
+  if (typeof detail === "object" && "message" in detail) {
+    const msg = (detail as { message: unknown }).message;
+    if (typeof msg === "string" && msg) {
+      return msg;
     }
   }
 

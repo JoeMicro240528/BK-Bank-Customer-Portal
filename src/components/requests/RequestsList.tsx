@@ -2,7 +2,6 @@
 
 import { FileText, Plus } from "lucide-react";
 import { useState } from "react";
-import BankNames from "@/components/home/BankNames";
 import RowActions from "@/components/home/RowActions";
 import StatusPill from "@/components/request/StatusPill";
 import type { BankStatus } from "@/components/request/types";
