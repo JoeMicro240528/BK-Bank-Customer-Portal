@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_BACKEND_BASE = "http://localhost:8099/api/frontend/v1";
+const DEFAULT_BACKEND_BASE = "http://172.21.1.125:8069/api/frontend/v1";
 
 type RouteContext = {
   params: Promise<{

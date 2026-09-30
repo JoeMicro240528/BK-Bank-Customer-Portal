@@ -1913,22 +1913,212 @@ function SelectInput({
 }) {
   const id = useId();
   const placeholder = hasArabicText(label) ? copy.ar.selectPlaceholder : copy.en.selectPlaceholder;
+  const searchPlaceholder = hasArabicText(label) ? "ابحث..." : "Search...";
+  const noResultsText = hasArabicText(label) ? "لا توجد نتائج" : "No results";
+
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const selectedLabel = options.find((o) => o.value === value)?.label ?? "";
+
+  // Arabic-aware normalisation for search
+  function normalise(text: string): string {
+    return text
+      .toLowerCase()
+      .replace(/[\u064B-\u065F\u0670]/g, "")
+      .replace(/[أإآا]/g, "ا")
+      .replace(/ة/g, "ه");
+  }
+
+  const filtered = search
+    ? options.filter((o) => normalise(o.label).includes(normalise(search)))
+    : options;
+
+  const openDropdown = () => {
+    setOpen(true);
+    setSearch("");
+    setFocusedIndex(-1);
+    requestAnimationFrame(() => searchInputRef.current?.focus());
+  };
+
+  const closeDropdown = () => {
+    setOpen(false);
+    setSearch("");
+    setFocusedIndex(-1);
+  };
+
+  const selectOption = (optValue: string) => {
+    onChange(optValue);
+    closeDropdown();
+  };
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        closeDropdown();
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  // Scroll focused item into view
+  useEffect(() => {
+    if (focusedIndex < 0 || !listRef.current) return;
+    const item = listRef.current.children[focusedIndex] as HTMLElement | undefined;
+    item?.scrollIntoView({ block: "nearest" });
+  }, [focusedIndex]);
+
+  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+      e.preventDefault();
+      openDropdown();
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") { e.preventDefault(); closeDropdown(); return; }
+    if (e.key === "ArrowDown") { e.preventDefault(); setFocusedIndex((i) => Math.min(i + 1, filtered.length - 1)); return; }
+    if (e.key === "ArrowUp") { e.preventDefault(); setFocusedIndex((i) => Math.max(i - 1, 0)); return; }
+    if (e.key === "Enter" && focusedIndex >= 0 && filtered[focusedIndex]) {
+      e.preventDefault();
+      selectOption(filtered[focusedIndex].value);
+    }
+  };
+
+  const triggerStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    textAlign: "start",
+    width: "100%",
+    cursor: "pointer",
+    background: "var(--surface, #fff)",
+    border: "1px solid var(--border, #d1d5db)",
+    borderRadius: "8px",
+    padding: "0 12px",
+    height: "40px",
+    font: "inherit",
+    fontSize: "14px",
+    color: selectedLabel ? "inherit" : "var(--text-muted, #9ca3af)",
+  };
+
+  const dropdownStyle: React.CSSProperties = {
+    position: "absolute",
+    top: "calc(100% + 4px)",
+    insetInlineStart: 0,
+    width: "100%",
+    minWidth: "200px",
+    zIndex: 200,
+    background: "#fff",
+    border: "1px solid #d1d5db",
+    borderRadius: "10px",
+    boxShadow: "0 8px 28px rgba(0,0,0,0.12)",
+    overflow: "hidden",
+  };
 
   return (
-    <label className="field" htmlFor={id}>
-      <span>
-        {label}
-        {required && <b aria-label="required">*</b>}
-      </span>
-      <select id={id} value={value} onChange={(event) => onChange(event.target.value)} required={required}>
-        <option value="">{placeholder}</option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
+    <div style={{ position: "relative" }} ref={containerRef}>
+      <label className="field" htmlFor={id}>
+        <span>
+          {label}
+          {required && <b aria-label="required">*</b>}
+        </span>
+        <button
+          type="button"
+          id={id}
+          aria-controls={`${id}-list`}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          style={triggerStyle}
+          onClick={openDropdown}
+          onKeyDown={handleTriggerKeyDown}
+        >
+          {selectedLabel || placeholder}
+        </button>
+      </label>
+
+      {open && (
+        <div style={dropdownStyle} role="dialog">
+          {/* Search row */}
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", padding: "7px 10px", borderBottom: "1px solid #f0f0f0" }}>
+            <span style={{ color: "#9ca3af", display: "inline-flex" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </span>
+            <input
+              ref={searchInputRef}
+              type="text"
+              placeholder={searchPlaceholder}
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setFocusedIndex(-1); }}
+              onKeyDown={handleSearchKeyDown}
+              autoComplete="off"
+              style={{ flex: 1, border: "none", outline: "none", font: "inherit", fontSize: "14px", background: "transparent" }}
+            />
+            {search && (
+              <button
+                type="button"
+                onClick={() => { setSearch(""); setFocusedIndex(-1); searchInputRef.current?.focus(); }}
+                style={{ border: "none", background: "none", cursor: "pointer", padding: "2px", color: "#9ca3af", display: "inline-flex" }}
+                aria-label="Clear search"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            )}
+          </div>
+
+          {/* Options */}
+          <ul
+            ref={listRef}
+            role="listbox"
+            style={{ listStyle: "none", margin: 0, padding: "4px 0", maxHeight: "220px", overflowY: "auto" }}
+          >
+            {!search && (
+              <li
+                role="option"
+                aria-selected={value === ""}
+                onMouseDown={(e) => { e.preventDefault(); selectOption(""); }}
+                style={{ padding: "8px 12px", fontSize: "14px", cursor: "pointer", color: "#9ca3af", fontStyle: "italic" }}
+              >
+                {placeholder}
+              </li>
+            )}
+            {filtered.length === 0 && (
+              <li style={{ padding: "10px 12px", fontSize: "14px", color: "#9ca3af", textAlign: "center" }}>
+                {noResultsText}
+              </li>
+            )}
+            {filtered.map((opt, idx) => (
+              <li
+                key={opt.value}
+                role="option"
+                aria-selected={opt.value === value}
+                onMouseDown={(e) => { e.preventDefault(); selectOption(opt.value); }}
+                onMouseEnter={() => setFocusedIndex(idx)}
+                style={{
+                  padding: "8px 12px",
+                  fontSize: "14px",
+                  cursor: "pointer",
+                  background: opt.value === value ? "#e3f4ea" : idx === focusedIndex ? "#f0fdf4" : "transparent",
+                  color: opt.value === value ? "#115931" : "inherit",
+                  fontWeight: opt.value === value ? 600 : undefined,
+                }}
+              >
+                {opt.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
   );
 }
 

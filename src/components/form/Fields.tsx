@@ -1,8 +1,23 @@
 "use client";
 
-import { ChevronDown, FileCheck, Lock, Plus, ShieldCheck, Trash2, Upload, X } from "lucide-react";
-import { useId, type InputHTMLAttributes, type ReactNode } from "react";
+import { ChevronDown, FileCheck, Lock, Plus, Search, ShieldCheck, Trash2, Upload, X } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState, type InputHTMLAttributes, type ReactNode } from "react";
 import styles from "./Fields.module.css";
+
+/**
+ * Normalises an Arabic string for fuzzy search:
+ * - Strips diacritics (tashkeel)
+ * - Unifies alef variants (أ إ آ ا) → ا
+ * - Unifies taa marbuta / haa (ة → ه)
+ * - Lower-cases latin characters
+ */
+function normaliseArabic(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[\u064B-\u065F\u0670]/g, "") // strip diacritics
+    .replace(/[أإآا]/g, "ا")              // unify alef
+    .replace(/ة/g, "ه");                  // unify taa marbuta
+}
 
 export type Option = { value: string; label: string };
 
@@ -335,31 +350,169 @@ export function SelectInput({
   disabled?: boolean;
 }) {
   const id = useId();
+  const searchId = useId();
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  const selectedLabel = options.find((o) => o.value === value)?.label ?? "";
+
+  const filtered = search
+    ? options.filter((o) => normaliseArabic(o.label).includes(normaliseArabic(search)))
+    : options;
+
+  const openDropdown = useCallback(() => {
+    if (disabled) return;
+    setOpen(true);
+    setSearch("");
+    setFocusedIndex(-1);
+    // focus search after paint
+    requestAnimationFrame(() => searchRef.current?.focus());
+  }, [disabled]);
+
+  const closeDropdown = useCallback(() => {
+    setOpen(false);
+    setSearch("");
+    setFocusedIndex(-1);
+  }, []);
+
+  const selectOption = useCallback((optValue: string) => {
+    onChange(optValue);
+    closeDropdown();
+  }, [onChange, closeDropdown]);
+
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        closeDropdown();
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [open, closeDropdown]);
+
+  // Scroll focused item into view
+  useEffect(() => {
+    if (focusedIndex < 0 || !listRef.current) return;
+    const item = listRef.current.children[focusedIndex] as HTMLElement | undefined;
+    item?.scrollIntoView({ block: "nearest" });
+  }, [focusedIndex]);
+
+  const handleTriggerKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+      e.preventDefault();
+      openDropdown();
+    }
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Escape") { e.preventDefault(); closeDropdown(); return; }
+    if (e.key === "ArrowDown") { e.preventDefault(); setFocusedIndex((i) => Math.min(i + 1, filtered.length - 1)); return; }
+    if (e.key === "ArrowUp") { e.preventDefault(); setFocusedIndex((i) => Math.max(i - 1, 0)); return; }
+    if (e.key === "Enter" && focusedIndex >= 0 && filtered[focusedIndex]) {
+      e.preventDefault();
+      selectOption(filtered[focusedIndex].value);
+    }
+  };
 
   return (
     <div className={styles.field}>
-      <label className={styles.label} htmlFor={id}>
+      <span className={styles.label} id={id}>
         {label}
         {required && <span className={styles.required}>*</span>}
-      </label>
-      <div className={styles.control}>
-        <select
-          id={id}
-          className={styles.select}
-          value={value}
+      </span>
+      <div className={styles.control} ref={containerRef}>
+        {/* Trigger button */}
+        <button
+          type="button"
+          id={searchId}
+          aria-controls={`${searchId}-list`}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          aria-labelledby={`${id} ${searchId}`}
+          className={`${styles.select} ${styles.comboTrigger} ${disabled ? styles.comboDisabled : ""}`}
           disabled={disabled}
-          onChange={(event) => onChange(event.target.value)}
+          onClick={openDropdown}
+          onKeyDown={handleTriggerKeyDown}
         >
-          <option value="">{placeholder}</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-        <span className={styles.caret}>
-          <ChevronDown aria-hidden="true" size={16} />
+          <span className={selectedLabel ? "" : styles.comboPlaceholder}>
+            {selectedLabel || placeholder}
+          </span>
+        </button>
+        <span className={styles.caret} aria-hidden="true">
+          <ChevronDown size={16} />
         </span>
+
+        {/* Dropdown */}
+        {open && (
+          <div className={styles.comboDropdown} role="dialog">
+            {/* Search input */}
+            <div className={styles.comboSearchWrap}>
+              <Search aria-hidden="true" size={14} className={styles.comboSearchIcon} />
+              <input
+                ref={searchRef}
+                className={styles.comboSearch}
+                type="text"
+                placeholder="ابحث..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setFocusedIndex(-1); }}
+                onKeyDown={handleSearchKeyDown}
+                aria-label="بحث في القائمة"
+                autoComplete="off"
+              />
+              {search && (
+                <button
+                  type="button"
+                  className={styles.comboClear}
+                  onClick={() => { setSearch(""); setFocusedIndex(-1); searchRef.current?.focus(); }}
+                  aria-label="مسح البحث"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
+
+            {/* Options list */}
+            <ul
+              ref={listRef}
+              className={styles.comboList}
+              role="listbox"
+              aria-labelledby={id}
+            >
+              {/* Blank/placeholder option */}
+              {!search && (
+                <li
+                  role="option"
+                  aria-selected={value === ""}
+                  className={`${styles.comboOption} ${value === "" ? styles.comboOptionSelected : ""}`}
+                  onMouseDown={(e) => { e.preventDefault(); selectOption(""); }}
+                >
+                  <em className={styles.comboPlaceholder}>{placeholder}</em>
+                </li>
+              )}
+              {filtered.length === 0 && (
+                <li className={styles.comboEmpty}>لا توجد نتائج</li>
+              )}
+              {filtered.map((opt, idx) => (
+                <li
+                  key={opt.value}
+                  role="option"
+                  aria-selected={opt.value === value}
+                  className={`${styles.comboOption} ${opt.value === value ? styles.comboOptionSelected : ""} ${idx === focusedIndex ? styles.comboOptionFocused : ""}`}
+                  onMouseDown={(e) => { e.preventDefault(); selectOption(opt.value); }}
+                  onMouseEnter={() => setFocusedIndex(idx)}
+                >
+                  {opt.label}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
