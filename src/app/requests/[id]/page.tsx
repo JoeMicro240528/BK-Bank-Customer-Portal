@@ -12,6 +12,7 @@ import RequestDetails from "@/components/request/RequestDetails";
 import type { RequestDetailsData } from "@/components/request/types";
 import { frontendApi, errorMessage } from "@/lib/api";
 import { toRequestDetails } from "@/lib/requestDetails";
+import { canEditRequest } from "@/lib/requests";
 import { SUPPORT_PHONE } from "@/lib/contact";
 
 
@@ -98,8 +99,10 @@ export default function RequestDetailsPage() {
         <RequestDetails
           request={request}
           language={language}
-          onContinue={() =>
-            router.push(`/new-request?ref=${encodeURIComponent(request.externalRef)}`)
+          onContinue={
+            canEditRequest(request.rawState)
+              ? () => router.push(`/new-request?ref=${encodeURIComponent(request.externalRef)}`)
+              : undefined
           }
         />
       ) : (

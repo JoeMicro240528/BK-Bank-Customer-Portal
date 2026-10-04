@@ -65,28 +65,25 @@ export default function RequestDetails({
 
           <RequestStepper steps={request.stepper} />
 
-          {isDraft ? (
-            <>
-              <p className={styles.noticeInfo}>
-                <Info aria-hidden="true" size={15} />
-                {t.draftNotice}
-              </p>
-              {onContinue && request.externalRef && (
-                <button type="button" className={styles.continueButton} onClick={onContinue}>
-                  <ArrowLeft aria-hidden="true" size={16} />
-                  {t.continueRequest}
-                </button>
-              )}
-            </>
-          ) : (
-            // Suppressed when a bank has sent the request back -- promising the
-            // user it is on its way to approval would contradict the notice below.
-            !needsAction && (
-              <p className={styles.noticeInfo}>
-                <Info aria-hidden="true" size={15} />
-                {t.submittedNotice}
-              </p>
-            )
+          {isDraft && (
+            <p className={styles.noticeInfo}>
+              <Info aria-hidden="true" size={15} />
+              {t.draftNotice}
+            </p>
+          )}
+
+          {!isDraft && !needsAction && (
+            <p className={styles.noticeInfo}>
+              <Info aria-hidden="true" size={15} />
+              {t.submittedNotice}
+            </p>
+          )}
+
+          {onContinue && request.externalRef && (
+            <button type="button" className={styles.continueButton} onClick={onContinue}>
+              <ArrowLeft aria-hidden="true" size={16} />
+              {t.continueRequest}
+            </button>
           )}
         </section>
 

@@ -1,13 +1,16 @@
 "use client";
 
 import { Eye, Pencil } from "lucide-react";
+import { canEditRequest } from "@/lib/requests";
 import type { RequestSummary } from "./types";
 import styles from "./RowActions.module.css";
 
 /**
- * The action cell of a request row. Icons rather than words, so the column
- * stays narrow; each carries a label for screen readers and a tooltip.
- * Continuing is offered only on a draft -- a submitted request cannot be edited.
+ * The action cell of a request row.
+ * - The Eye (view) button is always present.
+ * - The Pencil (edit) button appears only when the raw API state permits
+ *   editing (draft or rejected). All other states — submitted, reviewed,
+ *   verified, approved — are view-only.
  */
 export default function RowActions({
   request,
@@ -22,6 +25,8 @@ export default function RowActions({
   onView: (id: string) => void;
   onContinue: (id: string) => void;
 }) {
+  const editable = canEditRequest(request.rawState);
+
   return (
     <span className={styles.actions}>
       <button
@@ -34,7 +39,7 @@ export default function RowActions({
         <Eye aria-hidden="true" size={17} />
       </button>
 
-      {request.status === "draft" && (
+      {editable && (
         <button
           type="button"
           className={`${styles.action} ${styles.actionPrimary}`}

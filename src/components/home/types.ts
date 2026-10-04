@@ -7,8 +7,10 @@ export type RequestSummary = {
   reference: string;
   date: string;
   branchName: string | null;
-
+  /** Mapped display status used for UI pills and filters. */
   status: BankStatus;
+  /** Raw `state` string from the API — used for editable/new-request guards. */
+  rawState: string;
 };
 
 export type DashboardStats = {

@@ -15,6 +15,7 @@ export const previewRequests: RequestSummary[] = [
     date: "30 أغسطس 2026",
     branchName: "فرع السوق العربي",
     status: "under_review",
+    rawState: "in_progress",
   },
   {
     id: "2",
@@ -22,6 +23,7 @@ export const previewRequests: RequestSummary[] = [
     date: "12 أغسطس 2026",
     branchName: "فرع أمدرمان الرئيسي",
     status: "rejected",
+    rawState: "rejected",
   },
   {
     id: "3",
@@ -29,6 +31,7 @@ export const previewRequests: RequestSummary[] = [
     date: "28 يوليو 2026",
     branchName: "فرع الخرطوم",
     status: "approved",
+    rawState: "approved",
   },
   {
     id: "4",
@@ -36,5 +39,6 @@ export const previewRequests: RequestSummary[] = [
     date: "19 يوليو 2026",
     branchName: "فرع الرياض",
     status: "draft",
+    rawState: "draft",
   },
 ];

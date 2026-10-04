@@ -12,10 +12,11 @@ import NewRequestScreen from "@/components/wizard/NewRequestScreen";
 import type { AddedAccount } from "@/components/wizard/types";
 import AufForm from "@/components/form/AufForm";
 import { initialForm, type FormState } from "@/lib/auf/form";
-import { useBanks } from "@/lib/useBanks";
 import { useDraft } from "@/lib/auf/useDraft";
 import { useCountries } from "@/lib/useCountries";
 import { resolveNationalityId } from "@/lib/format";
+import { useRequests } from "@/lib/useRequests";
+import { useBanks } from "@/lib/useBanks";
 
 function NewRequestFlow() {
   const { data: session, status } = useSession();
@@ -34,6 +35,7 @@ function NewRequestFlow() {
   const { banks, error: banksError } = useBanks(language);
   const { draft, loading: draftLoading } = useDraft(session?.user?.national_id, language, resumeRef);
   const { countries, codeToId, idToCode } = useCountries(language);
+  const { requests, loading: requestsLoading } = useRequests(session?.user?.national_id, language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -41,13 +43,27 @@ function NewRequestFlow() {
     }
   }, [status, router]);
 
+  // Guard: if the user already has requests and is NOT explicitly resuming one,
+  // they cannot create a new request. Send them back to their list.
+  useEffect(() => {
+    if (!requestsLoading && !resumeRef && requests.length > 0) {
+      router.push("/requests");
+    }
+  }, [requestsLoading, resumeRef, requests.length, router]);
+
   // When resuming, wait for the draft so the bank picker never flashes first.
-  if (status === "loading" || status === "unauthenticated" || draftLoading) {
+  // Wait for requests to finish loading so the page doesn't flash before redirecting.
+  if (status === "loading" || status === "unauthenticated" || draftLoading || requestsLoading) {
     return (
       <div className="page-loading">
         <Loader2 className="page-loading-spinner" aria-hidden="true" />
       </div>
     );
+  }
+
+  // Double check in render to prevent UI from appearing while useEffect redirect runs
+  if (!resumeRef && requests.length > 0) {
+    return null;
   }
 
   const t = dashboardCopy[language];

@@ -79,18 +79,25 @@ const filterOrder: Filter[] = ["all", "draft", "under_review", "approved", "reje
 export default function RequestsList({
   language,
   requests,
+  loading = false,
   onNewRequest,
   onViewRequest,
   onContinueRequest,
 }: {
   language: Language;
   requests: RequestSummary[];
+  /** While true the list is still loading — hide the New Request button to avoid a flash. */
+  loading?: boolean;
   onNewRequest?: () => void;
   onViewRequest?: (id: string) => void;
   onContinueRequest?: (id: string) => void;
 }) {
   const [filter, setFilter] = useState<Filter>("all");
   const t = copy[language];
+
+  // A new request is only allowed when the customer has no existing ones.
+  // We also wait for loading to finish so the button never flashes then disappears.
+  const canCreateNewRequest = !loading && requests.length === 0;
 
   const visible =
     filter === "all" ? requests : requests.filter((request) => request.status === filter);
@@ -105,10 +112,12 @@ export default function RequestsList({
           <h1>{t.title}</h1>
           <p>{t.subtitle}</p>
         </div>
-        <button type="button" className={styles.newButton} onClick={onNewRequest}>
-          <Plus aria-hidden="true" size={17} />
-          {t.newRequest}
-        </button>
+        {canCreateNewRequest && (
+          <button type="button" className={styles.newButton} onClick={onNewRequest}>
+            <Plus aria-hidden="true" size={17} />
+            {t.newRequest}
+          </button>
+        )}
       </div>
 
       {requests.length > 0 && (
@@ -136,7 +145,7 @@ export default function RequestsList({
             </span>
             <strong>{requests.length === 0 ? t.emptyTitle : t.emptyFilteredTitle}</strong>
             <p>{requests.length === 0 ? t.emptyBody : t.emptyFilteredBody}</p>
-            {requests.length === 0 && (
+            {canCreateNewRequest && (
               <button type="button" className={styles.newButton} onClick={onNewRequest}>
                 <Plus aria-hidden="true" size={17} />
                 {t.newRequest}

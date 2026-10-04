@@ -4,6 +4,7 @@ import type { RequestDetailsData } from "./types";
 export const previewRequest: RequestDetailsData = {
   reference: "CU-2026-001245",
   status: "under_review",
+  rawState: "in_progress",
   createdAt: "30 أغسطس 2026 - 10:30 ص",
   externalRef: "auf-preview-001",
   accountCount: 2,

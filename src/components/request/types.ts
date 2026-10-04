@@ -32,6 +32,7 @@ export type RequestDetailsData = {
   /** Key the update and submit endpoints are addressed by; empty if unsaved. */
   externalRef: string;
   status: BankStatus;
+  rawState: string;
   createdAt: string;
   accountCount: number;
   requestType: string;

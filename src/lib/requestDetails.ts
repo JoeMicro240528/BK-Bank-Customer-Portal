@@ -120,6 +120,7 @@ export function toRequestDetails(
   return {
     reference: request.reference,
     externalRef: request.external_ref || "",
+    rawState: (request.state || "").toLowerCase(),
     status,
     createdAt: `${formatDateTime(request.created, language)} - ${formatTime(request.created, language)}`,
     accountCount: accounts.length,

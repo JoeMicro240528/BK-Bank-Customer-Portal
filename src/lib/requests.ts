@@ -102,9 +102,27 @@ export function toRequestSummary(request: AUFRequestSummary, language: Language)
     reference: request.reference,
     date: formatDate(request.created, language),
     branchName: request.branch_name ?? null,
+    rawState: (request.state || "").toLowerCase(),
     status: overallStatus(
       request.state,
       (request.feedback || []).map((entry) => entry.state),
     ),
   };
+}
+
+/**
+ * API states that permit the customer to edit/continue the request.
+ * Any state not in this list is treated as non-editable (safe default).
+ */
+export const EDITABLE_STATUSES = ["draft", "rejected"] as const;
+
+/**
+ * Returns true only when the customer is allowed to open the request in edit
+ * mode. Uses the raw API state so mapping quirks cannot accidentally unlock
+ * a submitted or approved request.
+ */
+export function canEditRequest(rawState: string): boolean {
+  return (EDITABLE_STATUSES as readonly string[]).includes(
+    (rawState || "").toLowerCase(),
+  );
 }

@@ -16,7 +16,7 @@ export default function RequestsPage() {
   const [language, setLanguage] = useLanguage();
 
   // Called before the early return below -- hooks cannot run conditionally.
-  const { requests } = useRequests(session?.user?.national_id, language);
+  const { requests, loading: requestsLoading } = useRequests(session?.user?.national_id, language);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -48,6 +48,7 @@ export default function RequestsPage() {
       <RequestsList
         language={language}
         requests={requests}
+        loading={requestsLoading}
         onNewRequest={() => router.push("/new-request")}
         onViewRequest={(id) => router.push(`/requests/${encodeURIComponent(id)}`)}
         onContinueRequest={(id) => router.push(`/new-request?ref=${encodeURIComponent(id)}`)}
