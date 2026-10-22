@@ -20,6 +20,7 @@ export interface AttachmentRead {
   name: string;
   mimetype: string;
   size: number;
+  face?: "front" | "back" | string;
   download_url: string;
 }
 
@@ -33,6 +34,8 @@ export interface IdentityLineRead {
   nationality_id?: number;
   is_primary?: boolean;
   attachments: AttachmentRead[];
+  front_attachment?: AttachmentRead | null;
+  back_attachment?: AttachmentRead | null;
 }
 
 export interface IncomeSourceSchema {

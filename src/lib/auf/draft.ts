@@ -1,6 +1,7 @@
 import type { AUFRequestRead } from "@/lib/swagger-types";
 import {
   FILE_ID_DOCUMENT,
+  FILE_ID_DOCUMENT_BACK,
   FILE_INCOME_PROOF,
   FILE_PERSONAL_PHOTO,
   FILE_SIGNATURE,
@@ -266,8 +267,36 @@ export function existingUploads(request: AUFRequestRead): Record<string, Existin
   const identityLines = (request.identity_lines ?? []) as unknown as Record<string, unknown>[];
   const identity =
     identityLines.find((line) => line.is_primary === true) ?? identityLines[0];
-  const identityImage = identity ? first(identity.attachments) : null;
-  if (identityImage) uploads[FILE_ID_DOCUMENT] = identityImage;
+
+  if (identity) {
+    const toExistingUpload = (item: unknown): ExistingUpload | null => {
+      if (!item || typeof item !== "object") return null;
+      const record = item as Record<string, unknown>;
+      return {
+        name: typeof record.name === "string" ? record.name : "",
+        size: typeof record.size === "number" ? record.size : 0,
+      };
+    };
+
+    const attachmentsList = Array.isArray(identity.attachments)
+      ? (identity.attachments as Record<string, unknown>[])
+      : [];
+
+    const frontObj =
+      identity.front_attachment ??
+      attachmentsList.find((a) => a.face === "front") ??
+      attachmentsList[0];
+
+    const backObj =
+      identity.back_attachment ??
+      attachmentsList.find((a) => a.face === "back");
+
+    const frontUpload = toExistingUpload(frontObj);
+    if (frontUpload) uploads[FILE_ID_DOCUMENT] = frontUpload;
+
+    const backUpload = toExistingUpload(backObj);
+    if (backUpload) uploads[FILE_ID_DOCUMENT_BACK] = backUpload;
+  }
 
   // Income proof goes up as a supporting document. An unrecognised type is
   // retried as "other" carrying the intended one, so either spelling counts.

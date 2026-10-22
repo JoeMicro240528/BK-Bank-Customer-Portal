@@ -220,6 +220,7 @@ export const optionSets = {
   identityType: [
     { value: "national_id", label: "National ID" },
     { value: "passport", label: "Passport" },
+    { value: "residency", label: "Residency" },
     { value: "other", label: "Other" },
   ],
   businessSector: [
@@ -695,15 +696,18 @@ export function buildUpdatePayload(form: FormState, externalRef: string): AUFReq
 }
 
 function buildIdentityLines(form: FormState) {
-  return form.identity_lines.filter(isCompleteIdentity).map((line) => ({
-    id_type: line.id_type,
-    id_number: line.id_number.trim(),
-    id_type_other: optionalText(line.id_type_other),
-    issuance_date: optionalText(line.issuance_date),
-    expiry_date: optionalText(line.expiry_date),
-    nationality_id: parseOptionalInt(line.nationality_id),
-    is_primary: line.is_primary,
-  }));
+  return form.identity_lines
+    .filter(isCompleteIdentity)
+    .slice(0, 1)
+    .map((line) => ({
+      id_type: line.id_type,
+      id_number: line.id_number.trim(),
+      id_type_other: optionalText(line.id_type_other),
+      issuance_date: optionalText(line.issuance_date),
+      expiry_date: optionalText(line.expiry_date),
+      nationality_id: parseOptionalInt(line.nationality_id),
+      is_primary: true,
+    }));
 }
 
 function buildIncomeSourceLines(form: FormState) {

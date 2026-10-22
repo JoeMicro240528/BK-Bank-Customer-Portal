@@ -9,11 +9,12 @@ import {
   Cloud,
   Loader2,
 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Banner from "@/components/ui/Banner";
 import { CheckboxInput } from "./Fields";
 import {
   FILE_ID_DOCUMENT,
+  FILE_ID_DOCUMENT_BACK,
   FILE_PERSONAL_PHOTO,
   FILE_SIGNATURE,
   StepContent,
@@ -128,6 +129,7 @@ export default function AufForm({
     jobTitles,
     primaryIncomeSources,
     otherIncomeSources,
+    idTypes,
     jobTitleCodes,
     primaryIncomeCodes,
     otherIncomeCodes,
@@ -142,6 +144,16 @@ export default function AufForm({
   );
   /** Attachments, held outside the draft: a File cannot be serialised. */
   const [files, setFiles] = useState<Record<string, File | null>>({});
+  const [clearedUploads, setClearedUploads] = useState<Set<string>>(new Set());
+
+  const activeUploads = useMemo(() => {
+    if (clearedUploads.size === 0) return existingUploads;
+    const active = { ...existingUploads };
+    for (const key of clearedUploads) {
+      delete active[key];
+    }
+    return active;
+  }, [existingUploads, clearedUploads]);
 
   // Held in a ref so the first save can create the request and later saves
   // update it, without re-rendering on every change.
@@ -195,7 +207,15 @@ export default function AufForm({
       setError("");
       // A new pick replaces whatever went up before, so it has to be sent;
       // left marked as sent, a replacement was silently never uploaded.
-      if (file) uploadedRef.current.delete(key);
+      if (file) {
+        uploadedRef.current.delete(key);
+      } else {
+        setClearedUploads((prev) => {
+          const next = new Set(prev);
+          next.add(key);
+          return next;
+        });
+      }
       setFiles((previous) => ({ ...previous, [key]: file }));
     },
     [t],
@@ -246,7 +266,12 @@ export default function AufForm({
 
         // Three of the four attachments have their own endpoint; only the
         // supporting documents still go up with a document_type.
-        if (key === FILE_PERSONAL_PHOTO || key === FILE_SIGNATURE || key === FILE_ID_DOCUMENT) {
+        if (
+          key === FILE_PERSONAL_PHOTO ||
+          key === FILE_SIGNATURE ||
+          key === FILE_ID_DOCUMENT ||
+          key === FILE_ID_DOCUMENT_BACK
+        ) {
           try {
             if (key === FILE_PERSONAL_PHOTO) {
               await frontendApi.uploadPersonalPhoto(ref, file, options);
@@ -256,7 +281,8 @@ export default function AufForm({
               // Without an identity line there is nothing to attach the image
               // to; leaving it pending means the next save retries it.
               if (!identityId) return;
-              await frontendApi.uploadIdentityDocument(ref, identityId, file, options);
+              const face = key === FILE_ID_DOCUMENT_BACK ? "back" : "front";
+              await frontendApi.uploadIdentityDocument(ref, identityId, file, face, options);
             }
             uploadedRef.current.add(key);
           } catch (caught) {
@@ -320,7 +346,7 @@ export default function AufForm({
           t,
           { statesLoading: birthStatesLoading, stateCount: birthStates.length },
           { stateCount: residenceStates.length, cityCount: residenceCities.length },
-          existingUploads,
+          activeUploads,
           {
             jobTitle: jobTitleCodes,
             primaryIncome: primaryIncomeCodes,
@@ -367,16 +393,43 @@ export default function AufForm({
     try {
       // Re-fetch the AUF to verify identity attachments are in place.
       const latest = await frontendApi.getRequest(ref, { language, ownerId });
-      const primaryLine = latest.identity_lines?.find((line) => line.is_primary);
+      const primaryLine = latest.identity_lines?.find((line) => line.is_primary) ?? latest.identity_lines?.[0];
 
-      if (
-        !primaryLine ||
-        !Array.isArray(primaryLine.attachments) ||
-        primaryLine.attachments.length === 0
-      ) {
-        setError(t.identityImageRequired);
+      if (!primaryLine) {
+        setError(t.identityRequired);
         setSubmitting(false);
         return;
+      }
+
+      const isNationalIdCard = primaryLine.id_type === "national_id_card";
+      const attachments = Array.isArray(primaryLine.attachments) ? primaryLine.attachments : [];
+      const hasFront = Boolean(
+        primaryLine.front_attachment ||
+        attachments.some((a) => a.face === "front") ||
+        attachments.length > 0
+      );
+      const hasBack = Boolean(
+        primaryLine.back_attachment ||
+        attachments.some((a) => a.face === "back")
+      );
+
+      if (isNationalIdCard) {
+        if (!hasFront) {
+          setError(t.frontImageRequired);
+          setSubmitting(false);
+          return;
+        }
+        if (!hasBack) {
+          setError(t.backImageRequired);
+          setSubmitting(false);
+          return;
+        }
+      } else {
+        if (!hasFront && attachments.length === 0) {
+          setError(t.identityImageRequired);
+          setSubmitting(false);
+          return;
+        }
       }
 
       await frontendApi.submitRequest(ref, { language, ownerId });
@@ -535,7 +588,7 @@ export default function AufForm({
             setFile={setFile}
             birthStates={birthStates}
             birthStatesLoading={birthStatesLoading}
-            uploads={existingUploads}
+            uploads={activeUploads}
             residenceStates={residenceStates}
             residenceStatesLoading={residenceStatesLoading}
             residenceCities={residenceCities}
@@ -543,6 +596,7 @@ export default function AufForm({
             jobTitles={jobTitles}
             primaryIncomeSources={primaryIncomeSources}
             otherIncomeSources={otherIncomeSources}
+            idTypes={idTypes}
             jobTitleCodes={jobTitleCodes}
             primaryIncomeCodes={primaryIncomeCodes}
             otherIncomeCodes={otherIncomeCodes}
