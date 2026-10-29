@@ -43,12 +43,19 @@ export const stepOrder: StepId[] = ["personal", "contact", "work", "financial"];
 
 import {
   FILE_ID_DOCUMENT,
+  FILE_ID_DOCUMENT_BACK,
   FILE_INCOME_PROOF,
   FILE_PERSONAL_PHOTO,
   FILE_SIGNATURE,
 } from "@/lib/auf/files";
 
-export { FILE_ID_DOCUMENT, FILE_INCOME_PROOF, FILE_PERSONAL_PHOTO, FILE_SIGNATURE };
+export {
+  FILE_ID_DOCUMENT,
+  FILE_ID_DOCUMENT_BACK,
+  FILE_INCOME_PROOF,
+  FILE_PERSONAL_PHOTO,
+  FILE_SIGNATURE,
+};
 
 type Props = {
   t: AufCopy;
@@ -70,6 +77,7 @@ type Props = {
   jobTitles: Option[];
   primaryIncomeSources: Option[];
   otherIncomeSources: Option[];
+  idTypes: Option[];
   /** Option id -> master-data code, which decides which detail box is shown. */
   jobTitleCodes: Record<string, string>;
   primaryIncomeCodes: Record<string, string>;
@@ -275,7 +283,25 @@ export function missingFields(
       if (form.birth_country_id && (birthPlace.statesLoading || birthPlace.stateCount > 0)) {
         text(form.birth_state_id, t.birthState);
       }
-      file(FILE_ID_DOCUMENT, t.idDocument);
+      const primaryIdentity = form.identity_lines?.[0];
+      const primaryIdType = primaryIdentity?.id_type || "national_id";
+      const primaryIdNumber = primaryIdentity?.id_number || "";
+
+      if (
+        primaryIdNumber.trim() &&
+        (primaryIdType === "national_id" || primaryIdType === "national_id_card")
+      ) {
+        if (!/^\d{11}$/.test(primaryIdNumber.trim())) {
+          missing.push(`${t.id_number} (${t.invalidNationalId})`);
+        }
+      }
+
+      if (primaryIdType === "national_id_card") {
+        file(FILE_ID_DOCUMENT, t.frontFace || t.frontImageRequired);
+        file(FILE_ID_DOCUMENT_BACK, t.backFace || t.backImageRequired);
+      } else {
+        file(FILE_ID_DOCUMENT, t.documentImage || t.idDocument);
+      }
       file(FILE_PERSONAL_PHOTO, t.personalPhoto);
       break;
 
@@ -405,6 +431,7 @@ function PersonalStep({
   setFile,
   birthStates,
   birthStatesLoading,
+  idTypes,
   uploads,
 }: Props) {
   const spouse = spouseFields(form);
@@ -418,6 +445,13 @@ function PersonalStep({
     hint: t.fileSizeHint,
     uploadedLabel: t.alreadyUploaded,
   };
+
+  const primaryIdentity = form.identity_lines[0] || {
+    id_type: "national_id",
+    id_number: locked.nationalId || "",
+    is_primary: true,
+  };
+  const isNationalIdCard = primaryIdentity.id_type === "national_id_card";
 
   return (
     <>
@@ -593,7 +627,6 @@ function PersonalStep({
       </FieldGrid>
 
       <FieldGrid>
-
         {/* Resolved from the SudaPass nationality code; only asked for when
             that code could not be matched to a country. */}
         {locked.nationality && form.nationality_id ? (
@@ -651,14 +684,66 @@ function PersonalStep({
       </FieldGrid>
 
       <FieldGrid>
-        <FileInput
-          label={t.idDocument}
+        <SelectInput
+          label={t.id_type}
+          value={primaryIdentity.id_type}
+          options={idTypes}
+          placeholder={t.selectPlaceholder}
           required
-          file={files[FILE_ID_DOCUMENT] ?? null}
-          uploaded={uploads[FILE_ID_DOCUMENT]}
-          onChange={(file) => setFile(FILE_ID_DOCUMENT, file)}
-          {...fileLabels}
+          onChange={(value) => {
+            setFile(FILE_ID_DOCUMENT, null);
+            setFile(FILE_ID_DOCUMENT_BACK, null);
+            setForm((previous) => {
+              const lines = [...previous.identity_lines];
+              if (lines.length > 0) {
+                lines[0] = { ...lines[0], id_type: value, id_number: locked.nationalId || "" };
+              } else {
+                lines.push({
+                  id_type: value,
+                  id_number: locked.nationalId || "",
+                  id_type_other: "",
+                  issuance_date: "",
+                  expiry_date: "",
+                  nationality_id: "",
+                  is_primary: true,
+                });
+              }
+              return { ...previous, identity_lines: lines };
+            });
+          }}
         />
+      </FieldGrid>
+
+      <FieldGrid>
+        {isNationalIdCard ? (
+          <>
+            <FileInput
+              label={t.frontFace}
+              required
+              file={files[FILE_ID_DOCUMENT] ?? null}
+              uploaded={uploads[FILE_ID_DOCUMENT]}
+              onChange={(file) => setFile(FILE_ID_DOCUMENT, file)}
+              {...fileLabels}
+            />
+            <FileInput
+              label={t.backFace}
+              required
+              file={files[FILE_ID_DOCUMENT_BACK] ?? null}
+              uploaded={uploads[FILE_ID_DOCUMENT_BACK]}
+              onChange={(file) => setFile(FILE_ID_DOCUMENT_BACK, file)}
+              {...fileLabels}
+            />
+          </>
+        ) : (
+          <FileInput
+            label={t.documentImage || t.idDocument}
+            required
+            file={files[FILE_ID_DOCUMENT] ?? null}
+            uploaded={uploads[FILE_ID_DOCUMENT]}
+            onChange={(file) => setFile(FILE_ID_DOCUMENT, file)}
+            {...fileLabels}
+          />
+        )}
         <FileInput
           label={t.personalPhoto}
           required

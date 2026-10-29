@@ -125,6 +125,13 @@ export const frontendApi = {
   getJobTitles: (options: RequestOptions) =>
     requestJson<MasterDataLookup[]>("/master-data/job-titles", { method: "GET" }, options),
 
+  getIdTypes: (options: RequestOptions) =>
+    requestJson<{ value: string; label: string }[]>(
+      "/master-data/selection-options/id_type",
+      { method: "GET" },
+      options,
+    ),
+
   getPrimaryIncomeSources: (options: RequestOptions) =>
     requestJson<MasterDataLookup[]>(
       "/master-data/primary-income-sources",
@@ -197,13 +204,28 @@ export const frontendApi = {
     externalRef: string,
     identityId: number,
     file: File,
+    face: "front" | "back" = "front",
     options: RequestOptions,
   ) =>
     uploadFiles(
       `/auf-requests/${encodeURIComponent(externalRef)}/identity-documents/${encodeURIComponent(
         String(identityId),
-      )}/attachments`,
+      )}/attachments?face=${face}`,
       file,
+      options,
+    ),
+
+  deleteIdentityAttachment: (
+    externalRef: string,
+    identityId: number,
+    attachmentId: number,
+    options: RequestOptions,
+  ) =>
+    requestJson<unknown>(
+      `/auf-requests/${encodeURIComponent(externalRef)}/identity-documents/${encodeURIComponent(
+        String(identityId),
+      )}/attachments/${encodeURIComponent(String(attachmentId))}`,
+      { method: "DELETE" },
       options,
     ),
 

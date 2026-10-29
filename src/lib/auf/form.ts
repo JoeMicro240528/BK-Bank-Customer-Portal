@@ -220,6 +220,7 @@ export const optionSets = {
   identityType: [
     { value: "national_id", label: "National ID" },
     { value: "passport", label: "Passport" },
+    { value: "residency", label: "Residency" },
     { value: "other", label: "Other" },
   ],
   businessSector: [
@@ -603,6 +604,8 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     street: optionalText(form.street),
     block: optionalText(form.block),
     house_no: optionalText(form.house_no),
+    bank_id: parseOptionalInt(form.selected_bank_id) ?? form.selected_accounts[0]?.bank_id,
+    account_number: optionalText(form.selected_accounts[0]?.account_number),
     bank_account_id: parseOptionalInt(form.bank_account_id),
     // Required by the API on create; parseOptionalInt gives undefined for an
     // empty draft, which surfaces as a clear "Field required" rather than a 0.
@@ -695,15 +698,18 @@ export function buildUpdatePayload(form: FormState, externalRef: string): AUFReq
 }
 
 function buildIdentityLines(form: FormState) {
-  return form.identity_lines.filter(isCompleteIdentity).map((line) => ({
-    id_type: line.id_type,
-    id_number: line.id_number.trim(),
-    id_type_other: optionalText(line.id_type_other),
-    issuance_date: optionalText(line.issuance_date),
-    expiry_date: optionalText(line.expiry_date),
-    nationality_id: parseOptionalInt(line.nationality_id),
-    is_primary: line.is_primary,
-  }));
+  return form.identity_lines
+    .filter(isCompleteIdentity)
+    .slice(0, 1)
+    .map((line) => ({
+      id_type: line.id_type,
+      id_number: line.id_number.trim(),
+      id_type_other: optionalText(line.id_type_other),
+      issuance_date: optionalText(line.issuance_date),
+      expiry_date: optionalText(line.expiry_date),
+      nationality_id: parseOptionalInt(line.nationality_id),
+      is_primary: true,
+    }));
 }
 
 function buildIncomeSourceLines(form: FormState) {

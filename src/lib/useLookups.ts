@@ -21,6 +21,7 @@ export function useLookups(language: Language) {
   const [jobTitles, setJobTitles] = useState<Option[]>([]);
   const [primaryIncomeSources, setPrimaryIncomeSources] = useState<Option[]>([]);
   const [otherIncomeSources, setOtherIncomeSources] = useState<Option[]>([]);
+  const [idTypes, setIdTypes] = useState<Option[]>([]);
   const [jobTitleCodes, setJobTitleCodes] = useState<CodeMap>({});
   const [primaryIncomeCodes, setPrimaryIncomeCodes] = useState<CodeMap>({});
   const [otherIncomeCodes, setOtherIncomeCodes] = useState<CodeMap>({});
@@ -44,12 +45,14 @@ export function useLookups(language: Language) {
       frontendApi.getJobTitles({ language }).catch(() => []),
       frontendApi.getPrimaryIncomeSources({ language }).catch(() => []),
       frontendApi.getOtherIncomeSources({ language }).catch(() => []),
+      frontendApi.getIdTypes({ language }).catch(() => []),
     ])
-      .then(([jobs, primary, other]) => {
+      .then(([jobs, primary, other, ids]) => {
         if (cancelled) return;
         setJobTitles(toOptions(jobs));
         setPrimaryIncomeSources(toOptions(primary));
         setOtherIncomeSources(toOptions(other));
+        setIdTypes(ids);
         setJobTitleCodes(toCodes(jobs));
         setPrimaryIncomeCodes(toCodes(primary));
         setOtherIncomeCodes(toCodes(other));
@@ -67,6 +70,7 @@ export function useLookups(language: Language) {
     jobTitles,
     primaryIncomeSources,
     otherIncomeSources,
+    idTypes,
     jobTitleCodes,
     primaryIncomeCodes,
     otherIncomeCodes,

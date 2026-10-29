@@ -1,6 +1,7 @@
 import type { AUFRequestRead } from "@/lib/swagger-types";
 import {
   FILE_ID_DOCUMENT,
+  FILE_ID_DOCUMENT_BACK,
   FILE_INCOME_PROOF,
   FILE_PERSONAL_PHOTO,
   FILE_SIGNATURE,
@@ -31,7 +32,9 @@ export function toFormState(request: AUFRequestRead): FormState {
 
   const number = (key: string) => {
     const value = source[key];
-    return typeof value === "number" ? String(value) : "";
+    if (typeof value === "number") return String(value);
+    if (typeof value === "string" && value.trim()) return value.trim();
+    return "";
   };
 
   const lines = (value: unknown): Record<string, unknown>[] =>
@@ -122,7 +125,10 @@ export function toFormState(request: AUFRequestRead): FormState {
 
     cif_number: request.cif_number || "",
     branch_id: number("branch_id"),
-    selected_bank_id: number("bank_id"),
+    selected_bank_id:
+      number("selected_bank_id") ||
+      number("bank_id") ||
+      (request.selected_accounts?.[0]?.bank_id ? String(request.selected_accounts[0].bank_id) : ""),
     business_sector: text("business_sector"),
     business_sector_other: text("business_sector_other"),
     employer_name: text("employer_name"),
@@ -228,10 +234,20 @@ export function toFormState(request: AUFRequestRead): FormState {
       guardian_account_no: str(line.guardian_account_no),
       annual_income_amount: num(line.annual_income_amount),
     })),
-    selected_accounts: (request.selected_accounts || []).map((account) => ({
-      bank_id: account.bank_id,
-      account_number: account.account_number,
-    })),
+    selected_accounts:
+      request.selected_accounts && request.selected_accounts.length > 0
+        ? request.selected_accounts.map((account) => ({
+            bank_id: account.bank_id,
+            account_number: String(account.account_number || ""),
+          }))
+        : source.account_number
+          ? [
+              {
+                bank_id: Number(source.bank_id || source.selected_bank_id || 1),
+                account_number: String(source.account_number),
+              },
+            ]
+          : [],
   };
 }
 
@@ -266,8 +282,36 @@ export function existingUploads(request: AUFRequestRead): Record<string, Existin
   const identityLines = (request.identity_lines ?? []) as unknown as Record<string, unknown>[];
   const identity =
     identityLines.find((line) => line.is_primary === true) ?? identityLines[0];
-  const identityImage = identity ? first(identity.attachments) : null;
-  if (identityImage) uploads[FILE_ID_DOCUMENT] = identityImage;
+
+  if (identity) {
+    const toExistingUpload = (item: unknown): ExistingUpload | null => {
+      if (!item || typeof item !== "object") return null;
+      const record = item as Record<string, unknown>;
+      return {
+        name: typeof record.name === "string" ? record.name : "",
+        size: typeof record.size === "number" ? record.size : 0,
+      };
+    };
+
+    const attachmentsList = Array.isArray(identity.attachments)
+      ? (identity.attachments as Record<string, unknown>[])
+      : [];
+
+    const frontObj =
+      identity.front_attachment ??
+      attachmentsList.find((a) => a.face === "front") ??
+      attachmentsList[0];
+
+    const backObj =
+      identity.back_attachment ??
+      attachmentsList.find((a) => a.face === "back");
+
+    const frontUpload = toExistingUpload(frontObj);
+    if (frontUpload) uploads[FILE_ID_DOCUMENT] = frontUpload;
+
+    const backUpload = toExistingUpload(backObj);
+    if (backUpload) uploads[FILE_ID_DOCUMENT_BACK] = backUpload;
+  }
 
   // Income proof goes up as a supporting document. An unrecognised type is
   // retried as "other" carrying the intended one, so either spelling counts.

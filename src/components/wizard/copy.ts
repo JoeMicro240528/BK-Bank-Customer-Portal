@@ -55,6 +55,9 @@ export const wizardCopy: Record<Language, WizardCopy> = {
 
     back: "الرجوع",
     continue: "متابعة",
+    saveChanges: "حفظ التعديلات",
+    continueRequest: "متابعة استكمال الطلب",
+    savedSuccessfully: "تم حفظ تعديلات بيانات الطلب بنجاح",
 
     summaryTitle: "ملخص طلب التحديث",
     requestTypeLabel: "نوع الطلب",
@@ -133,6 +136,9 @@ export const wizardCopy: Record<Language, WizardCopy> = {
 
     back: "Back",
     continue: "Continue",
+    saveChanges: "Save changes",
+    continueRequest: "Continue to request details",
+    savedSuccessfully: "Request details saved successfully",
 
     summaryTitle: "Update request summary",
     requestTypeLabel: "Request type",
