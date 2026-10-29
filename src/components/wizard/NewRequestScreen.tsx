@@ -25,8 +25,6 @@ export default function NewRequestScreen({
   initialBranchId = "",
   initialBranchName = "",
   initialAccountNumber = "",
-  onSave,
-  saving = false,
   onBack,
   onContinue,
 }: {
@@ -38,8 +36,6 @@ export default function NewRequestScreen({
   initialBranchId?: string;
   initialBranchName?: string;
   initialAccountNumber?: string;
-  onSave?: (data: { branchId: string; accountNumber: string; accounts: AddedAccount[] }) => Promise<void>;
-  saving?: boolean;
   onBack?: () => void;
   onContinue?: (accounts: AddedAccount[]) => void;
 }) {
@@ -117,8 +113,6 @@ export default function NewRequestScreen({
           onAdd={handleAdd}
           onUpdateAccount={handleUpdateAccount}
           onRemove={handleRemove}
-          onSave={onSave}
-          saving={saving}
           onBack={() => onBack?.()}
           onContinue={(effectiveAccounts) => onContinue?.(effectiveAccounts)}
         />
