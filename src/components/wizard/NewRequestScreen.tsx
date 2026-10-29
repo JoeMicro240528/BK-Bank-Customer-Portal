@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DocumentsModal from "./DocumentsModal";
 import StepsAside from "./StepsAside";
 import AccountsCard from "./AccountsCard";
@@ -10,7 +10,6 @@ import { wizardCopy } from "./copy";
 import styles from "./NewRequestScreen.module.css";
 import type { AddedAccount, BankOption, Language, WizardStep } from "./types";
 import { SUPPORT_PHONE } from "@/lib/contact";
-
 
 /**
  * The "new update request" wizard step. Renders content only -- the page
@@ -22,6 +21,12 @@ export default function NewRequestScreen({
   banks,
   nationalId,
   initialAccounts = [],
+  isEdit = false,
+  initialBranchId = "",
+  initialBranchName = "",
+  initialAccountNumber = "",
+  onSave,
+  saving = false,
   onBack,
   onContinue,
 }: {
@@ -29,13 +34,24 @@ export default function NewRequestScreen({
   banks: BankOption[];
   nationalId?: string;
   initialAccounts?: AddedAccount[];
+  isEdit?: boolean;
+  initialBranchId?: string;
+  initialBranchName?: string;
+  initialAccountNumber?: string;
+  onSave?: (data: { branchId: string; accountNumber: string; accounts: AddedAccount[] }) => Promise<void>;
+  saving?: boolean;
   onBack?: () => void;
   onContinue?: (accounts: AddedAccount[]) => void;
 }) {
   const [accounts, setAccounts] = useState<AddedAccount[]>(initialAccounts);
-  // The attachments are asked for across four later steps, so they are listed
-  // up front while the customer can still go and find them.
-  const [showDocuments, setShowDocuments] = useState(true);
+  // In create mode, list attachments upfront; in edit mode, don't show the popup.
+  const [showDocuments, setShowDocuments] = useState(!isEdit);
+
+  useEffect(() => {
+    if (initialAccounts && initialAccounts.length > 0 && accounts.length === 0) {
+      setAccounts(initialAccounts);
+    }
+  }, [initialAccounts, accounts.length]);
 
   const t = wizardCopy[language];
   const locale = language === "ar" ? "ar-EG" : "en-GB";
@@ -61,6 +77,18 @@ export default function NewRequestScreen({
     ]);
   };
 
+  const handleUpdateAccount = (index: number, updated: AddedAccount) => {
+    setAccounts((previous) => {
+      const next = [...previous];
+      if (next[index]) {
+        next[index] = updated;
+      } else {
+        next.push(updated);
+      }
+      return next;
+    });
+  };
+
   const handleRemove = (id: string) => {
     setAccounts((previous) => previous.filter((account) => account.id !== id));
   };
@@ -82,10 +110,17 @@ export default function NewRequestScreen({
           banks={banks}
           nationalId={nationalId}
           accounts={accounts}
+          isEdit={isEdit}
+          initialBranchId={initialBranchId}
+          initialBranchName={initialBranchName}
+          initialAccountNumber={initialAccountNumber}
           onAdd={handleAdd}
+          onUpdateAccount={handleUpdateAccount}
           onRemove={handleRemove}
+          onSave={onSave}
+          saving={saving}
           onBack={() => onBack?.()}
-          onContinue={() => onContinue?.(accounts)}
+          onContinue={(effectiveAccounts) => onContinue?.(effectiveAccounts)}
         />
 
         <SummaryAside

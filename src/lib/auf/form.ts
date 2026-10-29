@@ -604,6 +604,8 @@ export function buildCreatePayload(form: FormState, externalRef: string): AUFReq
     street: optionalText(form.street),
     block: optionalText(form.block),
     house_no: optionalText(form.house_no),
+    bank_id: parseOptionalInt(form.selected_bank_id) ?? form.selected_accounts[0]?.bank_id,
+    account_number: optionalText(form.selected_accounts[0]?.account_number),
     bank_account_id: parseOptionalInt(form.bank_account_id),
     // Required by the API on create; parseOptionalInt gives undefined for an
     // empty draft, which surfaces as a clear "Field required" rather than a 0.

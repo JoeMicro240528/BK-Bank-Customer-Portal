@@ -96,6 +96,7 @@ export default function AufForm({
   bankNames = {},
   existingUploads = {},
   onSubmitted,
+  onBackToDetails,
 }: {
   language: Language;
   ownerId: string;
@@ -112,6 +113,7 @@ export default function AufForm({
   /** Attachments a resumed draft already holds on the server. */
   existingUploads?: Record<string, ExistingUpload>;
   onSubmitted?: (externalRef: string) => void;
+  onBackToDetails?: () => void;
 }) {
   const t = copy[language];
   const [form, setForm] = useState<FormState>(initialState ?? initialForm());
@@ -366,7 +368,13 @@ export default function AufForm({
   };
 
   const goBack = async () => {
-    if (stepIndex === 0) return;
+    if (stepIndex === 0) {
+      if (onBackToDetails) {
+        await save();
+        onBackToDetails();
+      }
+      return;
+    }
     await save();
     setStepIndex((index) => Math.max(index - 1, 0));
   };

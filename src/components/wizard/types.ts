@@ -71,6 +71,9 @@ export type WizardCopy = {
 
   back: string;
   continue: string;
+  saveChanges: string;
+  continueRequest: string;
+  savedSuccessfully: string;
 
   summaryTitle: string;
   requestTypeLabel: string;

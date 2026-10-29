@@ -32,7 +32,9 @@ export function toFormState(request: AUFRequestRead): FormState {
 
   const number = (key: string) => {
     const value = source[key];
-    return typeof value === "number" ? String(value) : "";
+    if (typeof value === "number") return String(value);
+    if (typeof value === "string" && value.trim()) return value.trim();
+    return "";
   };
 
   const lines = (value: unknown): Record<string, unknown>[] =>
@@ -123,7 +125,10 @@ export function toFormState(request: AUFRequestRead): FormState {
 
     cif_number: request.cif_number || "",
     branch_id: number("branch_id"),
-    selected_bank_id: number("bank_id"),
+    selected_bank_id:
+      number("selected_bank_id") ||
+      number("bank_id") ||
+      (request.selected_accounts?.[0]?.bank_id ? String(request.selected_accounts[0].bank_id) : ""),
     business_sector: text("business_sector"),
     business_sector_other: text("business_sector_other"),
     employer_name: text("employer_name"),
@@ -229,10 +234,20 @@ export function toFormState(request: AUFRequestRead): FormState {
       guardian_account_no: str(line.guardian_account_no),
       annual_income_amount: num(line.annual_income_amount),
     })),
-    selected_accounts: (request.selected_accounts || []).map((account) => ({
-      bank_id: account.bank_id,
-      account_number: account.account_number,
-    })),
+    selected_accounts:
+      request.selected_accounts && request.selected_accounts.length > 0
+        ? request.selected_accounts.map((account) => ({
+            bank_id: account.bank_id,
+            account_number: String(account.account_number || ""),
+          }))
+        : source.account_number
+          ? [
+              {
+                bank_id: Number(source.bank_id || source.selected_bank_id || 1),
+                account_number: String(source.account_number),
+              },
+            ]
+          : [],
   };
 }
 

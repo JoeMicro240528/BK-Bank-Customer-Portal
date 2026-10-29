@@ -6,16 +6,18 @@ import {
   ChevronDown,
   ClipboardList,
   AlertCircle,
+  Check,
   CreditCard,
   IdCard,
   Info,
+  Loader2,
   Lock,
   ShieldCheck,
   Landmark,
   Plus,
   Trash2,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cleanDigits } from "@/components/form/Fields";
 import styles from "./AccountsCard.module.css";
 import type { AddedAccount, BankOption, Language, WizardCopy } from "./types";
@@ -26,8 +28,15 @@ export default function AccountsCard({
   banks,
   nationalId,
   accounts,
+  isEdit = false,
+  initialBranchId = "",
+  initialBranchName = "",
+  initialAccountNumber = "",
   onAdd,
+  onUpdateAccount,
   onRemove,
+  onSave,
+  saving = false,
   onBack,
   onContinue,
 }: {
@@ -37,17 +46,41 @@ export default function AccountsCard({
   /** From SudaPass; shown locked, never typed by the customer. */
   nationalId?: string;
   accounts: AddedAccount[];
+  isEdit?: boolean;
+  initialBranchId?: string;
+  initialBranchName?: string;
+  initialAccountNumber?: string;
   onAdd: (account: Omit<AddedAccount, "id">) => void;
+  onUpdateAccount?: (index: number, account: AddedAccount) => void;
   onRemove: (id: string) => void;
+  onSave?: (data: { branchId: string; accountNumber: string; accounts: AddedAccount[] }) => Promise<void>;
+  saving?: boolean;
   onBack: () => void;
-  onContinue: () => void;
+  onContinue: (effectiveAccounts: AddedAccount[]) => void;
 }) {
   // The portal only ever offers one bank (Omdurman National Bank), so there's
   // nothing to pick -- just use whatever master-data returned for it.
   const selectedBank = banks[0];
 
-  const [branchId, setBranchId] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
+  const [branchId, setBranchId] = useState(
+    initialBranchId || accounts[0]?.branchId || ""
+  );
+  const [accountNumber, setAccountNumber] = useState(
+    initialAccountNumber || accounts[0]?.accountNumber || ""
+  );
+
+  // Sync with initial values when they load from API
+  useEffect(() => {
+    if (initialBranchId) {
+      setBranchId((cur) => cur || initialBranchId);
+    }
+  }, [initialBranchId]);
+
+  useEffect(() => {
+    if (initialAccountNumber) {
+      setAccountNumber((cur) => cur || initialAccountNumber);
+    }
+  }, [initialAccountNumber]);
 
   const canAdd = Boolean(selectedBank && branchId && accountNumber.trim());
 
@@ -56,22 +89,101 @@ export default function AccountsCard({
   // than being silently sent.
   const nationalIdValid = /^\d{11}$/.test(nationalId ?? "");
 
+  const handleBranchSelect = (newBranchId: string) => {
+    setBranchId(newBranchId);
+    if (accounts.length > 0 && onUpdateAccount) {
+      const branchObj = selectedBank?.branches.find(
+        (item) => String(item.id) === String(newBranchId)
+      );
+      onUpdateAccount(0, {
+        ...accounts[0],
+        branchId: newBranchId,
+        branch: branchObj?.name || initialBranchName || "",
+      });
+    }
+  };
+
+  const handleAccountChange = (val: string) => {
+    const clean = cleanDigits(val, false);
+    setAccountNumber(clean);
+    if (accounts.length > 0 && onUpdateAccount) {
+      onUpdateAccount(0, {
+        ...accounts[0],
+        accountNumber: clean,
+      });
+    }
+  };
+
   const handleAdd = () => {
     if (!canAdd || !selectedBank) return;
 
-    const branch = selectedBank.branches.find((item) => item.id === branchId);
+    const branch = selectedBank.branches.find((item) => String(item.id) === String(branchId));
 
     onAdd({
       bankId: selectedBank.id,
       bankName: selectedBank.name,
       bankColor: selectedBank.color,
       branchId,
-      branch: branch?.name ?? "",
+      branch: branch?.name || initialBranchName || "",
       accountNumber: accountNumber.trim(),
     });
 
-    setBranchId("");
-    setAccountNumber("");
+    if (!isEdit) {
+      setBranchId("");
+      setAccountNumber("");
+    }
+  };
+
+  const getEffectiveAccounts = (): AddedAccount[] => {
+    const branchObj = selectedBank?.branches.find(
+      (item) => String(item.id) === String(branchId)
+    );
+    const branchName = branchObj?.name || initialBranchName || "";
+
+    if (accounts.length === 0) {
+      if (branchId && accountNumber.trim()) {
+        return [
+          {
+            id: "account-0",
+            bankId: selectedBank?.id || "1",
+            bankName: selectedBank?.name || "بنك أمدرمان الوطني",
+            bankColor: selectedBank?.color || "#283f76",
+            branchId,
+            branch: branchName,
+            accountNumber: accountNumber.trim(),
+          },
+        ];
+      }
+      return [];
+    }
+
+    const next = [...accounts];
+    if (branchId || accountNumber.trim()) {
+      next[0] = {
+        ...next[0],
+        branchId: branchId || next[0].branchId,
+        branch: branchName || next[0].branch,
+        accountNumber: accountNumber.trim() || next[0].accountNumber,
+      };
+    }
+    return next;
+  };
+
+  const handleContinueClick = () => {
+    const effective = getEffectiveAccounts();
+    onContinue(effective);
+  };
+
+  const handleSaveClick = async () => {
+    if (!branchId || !accountNumber.trim()) return;
+    const effective = getEffectiveAccounts();
+    if (onSave) {
+      await onSave({
+        branchId,
+        accountNumber: accountNumber.trim(),
+        accounts: effective,
+      });
+    }
   };
 
   const ContinueArrow = language === "ar" ? ArrowLeft : ArrowRight;
@@ -144,10 +256,18 @@ export default function AccountsCard({
               <select
                 id="branch"
                 value={branchId}
-                disabled={!selectedBank}
-                onChange={(event) => setBranchId(event.target.value)}
+                disabled={!selectedBank && !branchId}
+                onChange={(event) => handleBranchSelect(event.target.value)}
               >
                 <option value="">{t.selectBranch}</option>
+                {branchId &&
+                  !selectedBank?.branches.some(
+                    (branch) => String(branch.id) === String(branchId)
+                  ) && (
+                    <option value={branchId}>
+                      {initialBranchName || branchId}
+                    </option>
+                  )}
                 {selectedBank?.branches.map((branch) => (
                   <option key={branch.id} value={branch.id}>
                     {branch.name}
@@ -173,7 +293,7 @@ export default function AccountsCard({
                 value={accountNumber}
                 inputMode="numeric"
                 placeholder={t.accountNumberPlaceholder}
-                onChange={(event) => setAccountNumber(cleanDigits(event.target.value, false))}
+                onChange={(event) => handleAccountChange(event.target.value)}
               />
             </div>
           </div>
@@ -217,33 +337,33 @@ export default function AccountsCard({
                     banks.find((bank) => bank.id === account.bankId)?.name ?? account.bankName;
 
                   return (
-                  <tr key={account.id}>
-                    <td data-label={t.colBank}>
-                      <span className={styles.bankCell}>
-                        <span className={styles.logo} style={{ background: account.bankColor }}>
-                          {bankName.charAt(0)}
+                    <tr key={account.id}>
+                      <td data-label={t.colBank}>
+                        <span className={styles.bankCell}>
+                          <span className={styles.logo} style={{ background: account.bankColor }}>
+                            {bankName.charAt(0)}
+                          </span>
+                          {bankName}
                         </span>
-                        {bankName}
-                      </span>
-                    </td>
-                    <td data-label={t.colBranch}>{account.branch}</td>
-                    <td data-label={t.colAccount}>
-                      <span dir="ltr">{account.accountNumber}</span>
-                    </td>
-                    <td data-label={t.colStatus}>
-                      <span className={styles.addedPill}>{t.statusAdded}</span>
-                    </td>
-                    <td data-label={t.colActions}>
-                      <button
-                        type="button"
-                        className={styles.removeButton}
-                        aria-label={t.removeAccount}
-                        onClick={() => onRemove(account.id)}
-                      >
-                        <Trash2 aria-hidden="true" size={17} />
-                      </button>
-                    </td>
-                  </tr>
+                      </td>
+                      <td data-label={t.colBranch}>{account.branch}</td>
+                      <td data-label={t.colAccount}>
+                        <span dir="ltr">{account.accountNumber}</span>
+                      </td>
+                      <td data-label={t.colStatus}>
+                        <span className={styles.addedPill}>{t.statusAdded}</span>
+                      </td>
+                      <td data-label={t.colActions}>
+                        <button
+                          type="button"
+                          className={styles.removeButton}
+                          aria-label={t.removeAccount}
+                          onClick={() => onRemove(account.id)}
+                        >
+                          <Trash2 aria-hidden="true" size={17} />
+                        </button>
+                      </td>
+                    </tr>
                   );
                 })}
               </tbody>
@@ -257,14 +377,34 @@ export default function AccountsCard({
           <BackArrow aria-hidden="true" size={17} />
           {t.back}
         </button>
+
+        {isEdit && onSave && (
+          <button
+            type="button"
+            className={styles.saveButton}
+            disabled={saving || !branchId || !accountNumber.trim()}
+            onClick={handleSaveClick}
+          >
+            {saving ? (
+              <Loader2 className="spinner" size={17} aria-hidden="true" />
+            ) : (
+              <Check aria-hidden="true" size={17} />
+            )}
+            {t.saveChanges}
+          </button>
+        )}
+
         <button
           type="button"
           className={styles.continueButton}
-          disabled={accounts.length === 0 || !nationalIdValid}
-          onClick={onContinue}
+          disabled={
+            (accounts.length === 0 && (!branchId || !accountNumber.trim())) ||
+            !nationalIdValid
+          }
+          onClick={handleContinueClick}
         >
           <ContinueArrow aria-hidden="true" size={17} />
-          {t.continue}
+          {isEdit ? t.continueRequest : t.continue}
         </button>
       </div>
     </section>
