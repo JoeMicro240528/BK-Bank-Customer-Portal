@@ -17,7 +17,7 @@ import { useCountries } from "@/lib/useCountries";
 import { resolveNationalityId } from "@/lib/format";
 import { useRequests } from "@/lib/useRequests";
 import { useBanks } from "@/lib/useBanks";
-import { frontendApi, formatApiError } from "@/lib/api";
+import { frontendApi } from "@/lib/api";
 
 function NewRequestFlow() {
   const { data: session, status } = useSession();
@@ -25,8 +25,7 @@ function NewRequestFlow() {
   const searchParams = useSearchParams();
   const [language, setLanguage] = useLanguage();
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [saving, setSaving] = useState(false);
+  const [successMessage] = useState("");
 
   // Supports both ?external_ref=... and ?ref=...
   const resumeRef =
@@ -45,7 +44,6 @@ function NewRequestFlow() {
     loading: draftLoading,
     error: draftError,
     canEdit,
-    reload,
   } = useDraft(session?.user?.national_id, language, resumeRef);
 
   const { countries, codeToId, idToCode } = useCountries(language);
@@ -260,50 +258,8 @@ function NewRequestFlow() {
         };
   };
 
-  /** Saves Branch and Account changes directly to the existing request via PATCH */
-  const handleSaveBranchAndAccount = async (data: {
-    branchId: string;
-    accountNumber: string;
-    accounts: AddedAccount[];
-  }) => {
-    if (!resumeRef || !ownerId) return;
-
-    setSaving(true);
-    setError("");
-    setSuccessMessage("");
-
-    try {
-      const currentState = draft?.state ?? initialForm();
-      const updatedState: FormState = {
-        ...currentState,
-        ...(user?.name ? { name_arabic: user.name } : {}),
-        ...(user?.birthDate ? { date_of_birth: user.birthDate } : {}),
-        branch_id: data.branchId,
-        selected_bank_id: data.accounts[0]?.bankId || "1",
-        selected_accounts: data.accounts.map((a) => ({
-          bank_id: Number(a.bankId),
-          account_number: a.accountNumber,
-        })),
-      };
-
-      const payload = buildUpdatePayload(updatedState, resumeRef);
-      await frontendApi.updateRequest(resumeRef, payload, { language, ownerId });
-
-      setSuccessMessage(
-        language === "ar"
-          ? "تم حفظ تعديلات بيانات الطلب بنجاح."
-          : "Request details saved successfully.",
-      );
-      await reload();
-    } catch (caught) {
-      setError(formatApiError(caught));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  /** Continues from Request Data screen to the multi-step form */
-  const handleContinue = (accounts: AddedAccount[]) => {
+  /** Continues from Request Data screen to the multi-step form and saves updated branch/account on existing request */
+  const handleContinue = async (accounts: AddedAccount[]) => {
     if (!ownerId) {
       setError("Missing national ID on the session.");
       return;
@@ -332,6 +288,16 @@ function NewRequestFlow() {
         account_number: account.accountNumber,
       })),
     };
+
+    // If editing existing request, update branch and account number via PATCH
+    if (resumeRef) {
+      try {
+        const payload = buildUpdatePayload(nextState, resumeRef);
+        await frontendApi.updateRequest(resumeRef, payload, { language, ownerId });
+      } catch (caught) {
+        console.warn("Could not save updated branch immediately:", caught);
+      }
+    }
 
     setFormState(nextState);
     setScreen("form");
@@ -400,8 +366,6 @@ function NewRequestFlow() {
           initialBranchId={initialBranchId}
           initialBranchName={initialBranchName}
           initialAccountNumber={initialAccountNumber}
-          onSave={isEditMode ? handleSaveBranchAndAccount : undefined}
-          saving={saving}
           onBack={() => router.push("/requests")}
           onContinue={handleContinue}
         />

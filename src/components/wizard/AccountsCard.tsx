@@ -6,11 +6,9 @@ import {
   ChevronDown,
   ClipboardList,
   AlertCircle,
-  Check,
   CreditCard,
   IdCard,
   Info,
-  Loader2,
   Lock,
   ShieldCheck,
   Landmark,
@@ -35,8 +33,6 @@ export default function AccountsCard({
   onAdd,
   onUpdateAccount,
   onRemove,
-  onSave,
-  saving = false,
   onBack,
   onContinue,
 }: {
@@ -53,8 +49,6 @@ export default function AccountsCard({
   onAdd: (account: Omit<AddedAccount, "id">) => void;
   onUpdateAccount?: (index: number, account: AddedAccount) => void;
   onRemove: (id: string) => void;
-  onSave?: (data: { branchId: string; accountNumber: string; accounts: AddedAccount[] }) => Promise<void>;
-  saving?: boolean;
   onBack: () => void;
   onContinue: (effectiveAccounts: AddedAccount[]) => void;
 }) {
@@ -172,18 +166,6 @@ export default function AccountsCard({
   const handleContinueClick = () => {
     const effective = getEffectiveAccounts();
     onContinue(effective);
-  };
-
-  const handleSaveClick = async () => {
-    if (!branchId || !accountNumber.trim()) return;
-    const effective = getEffectiveAccounts();
-    if (onSave) {
-      await onSave({
-        branchId,
-        accountNumber: accountNumber.trim(),
-        accounts: effective,
-      });
-    }
   };
 
   const ContinueArrow = language === "ar" ? ArrowLeft : ArrowRight;
@@ -377,22 +359,6 @@ export default function AccountsCard({
           <BackArrow aria-hidden="true" size={17} />
           {t.back}
         </button>
-
-        {isEdit && onSave && (
-          <button
-            type="button"
-            className={styles.saveButton}
-            disabled={saving || !branchId || !accountNumber.trim()}
-            onClick={handleSaveClick}
-          >
-            {saving ? (
-              <Loader2 className="spinner" size={17} aria-hidden="true" />
-            ) : (
-              <Check aria-hidden="true" size={17} />
-            )}
-            {t.saveChanges}
-          </button>
-        )}
 
         <button
           type="button"
